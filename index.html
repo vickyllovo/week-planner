@@ -30,6 +30,19 @@
   
   /* 左页：日期 + 任务列表（占1/3） */
   .left-page { width: 33.33%; flex: none; display: flex; flex-direction: column; overflow-y: auto; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); position: relative; }
+  
+  /* 临时待办区 */
+  .inbox-section { border-bottom: 2px dashed var(--separator); padding: 8px; background: #FDFCF9; }
+  .inbox-title { font-size: 11px; font-weight: 600; color: var(--accent); display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .inbox-input-row { display: flex; gap: 2px; }
+  .inbox-input-row input { flex: 1; border: 1px solid var(--separator); border-radius: 4px; padding: 4px; font-size: 11px; outline: none; background: var(--card); color: var(--text); min-width: 0; }
+  .inbox-input-row button { background: var(--accent); color: #fff; border: none; border-radius: 4px; padding: 0 6px; font-size: 12px; cursor: pointer; }
+  .inbox-task-item { display: flex; align-items: center; gap: 4px; padding: 4px 0; border-bottom: 1px solid var(--separator); font-size: 11px; }
+  .inbox-task-item:last-child { border-bottom: none; }
+  .inbox-task-item .ttl { flex: 1; word-break: break-word; }
+  .inbox-task-item select { font-size: 10px; border: 1px solid var(--separator); border-radius: 4px; background: var(--card); color: var(--text-secondary); outline: none; max-width: 50px; }
+
+  /* 每日计划 */
   .day-group { display: flex; flex-direction: column; border-bottom: 1px solid var(--separator); }
   .day-group:last-child { border-bottom: none; }
   .day-head { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 8px 6px 8px; cursor: pointer; }
@@ -39,7 +52,7 @@
   .task-list { padding: 0 2px 8px 2px; display: flex; flex-direction: column; }
   .task-item { display: flex; align-items: flex-start; gap: 4px; padding: 4px 4px; border-radius: 6px; cursor: pointer; }
   .task-item.active { background: var(--accent-soft); }
-  .task-item .chk { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
+  .task-item .chk { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
   .task-item.done .chk { background: var(--accent); border-color: var(--accent); }
   .task-item.done .chk::after { content: ''; width: 3px; height: 6px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
   .task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; user-select: none; font-weight: 500; }
@@ -72,9 +85,24 @@
   .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 12px; font-size: 14px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: #FDFCF9; color: var(--text); }
   .note-box textarea:focus { border-color: var(--accent); background: var(--card); }
 
-  /* 翻周动画提示 */
-  .week-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(58, 50, 43, 0.8); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; z-index: 999; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-  .week-toast.show { opacity: 1; }
+  /* 右侧底部翻周栏 */
+  .right-footer { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .right-footer button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .right-footer button:active { background: var(--accent); color: #fff; }
+  .right-footer .week-display { font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; padding: 4px 12px; border-radius: 6px; background: var(--accent-soft); }
+  .right-footer .week-display:active { background: #FDE8D8; }
+
+  /* 翻周弹窗（日历） */
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+  .calendar-cell { border: 1px solid var(--separator); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
+  .calendar-cell:active { background: var(--accent-soft); }
+  .calendar-cell.active { border-color: var(--accent); background: var(--accent-soft); }
+  .calendar-cell .cal-date { font-weight: 700; font-size: 16px; color: var(--text); }
+  .calendar-cell .cal-day { font-size: 11px; color: var(--text-secondary); }
+  .calendar-cell .cal-badges { display: flex; justify-content: center; gap: 4px; margin-top: 4px; font-size: 10px; }
+  .calendar-cell .badge { padding: 1px 3px; border-radius: 4px; }
+  .badge.task { background: #E8F0FE; color: #1A73E8; }
+  .badge.note { background: #FCE8E6; color: #C5221F; }
 
   /* ================= 视图 2：习惯打卡 ================= */
   #view-habits { flex-direction: column; gap: 0; }
@@ -102,7 +130,13 @@
   .book-page-header { padding: 12px; border-bottom: 1px solid var(--separator); background: #FDFCF9; }
   .book-page-header h3 { margin: 0; font-size: 15px; font-weight: 600; }
   .book-page-header p { margin: 2px 0 0 0; font-size: 12px; color: var(--text-secondary); }
-  .book-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .book-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  
+  .book-section-title { font-size: 13px; font-weight: 600; color: var(--text); margin: 4px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--separator); display: flex; align-items: center; gap: 4px; }
+  .book-task-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .book-task-item { font-size: 12px; color: var(--text); display: flex; gap: 4px; align-items: baseline; }
+  .book-task-item .done-icon { color: var(--success); font-weight: bold; }
+  
   .book-item { padding-bottom: 10px; border-bottom: 1px dashed var(--separator); }
   .book-item:last-child { border-bottom: none; }
   .book-item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
@@ -155,13 +189,16 @@
     .book-container { flex-direction: column; }
     .book-left, .book-right { flex: 1; min-height: 0; }
     .list-grid { grid-template-columns: 1fr; }
+    .right-footer { padding: 10px; }
+    .right-footer button { padding: 6px 10px; font-size: 12px; }
+    .right-footer .week-display { font-size: 13px; padding: 4px 8px; }
   }
 
   /* 弹窗 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(58, 50, 43, 0.3); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
   .modal-overlay.show { display: flex; }
   @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-content { background: var(--card); border-radius: 16px; padding: 20px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(160, 130, 90, 0.15); animation: slideUp 0.3s ease; }
+  .modal-content { background: var(--card); border-radius: 16px; padding: 20px; width: 90%; max-width: 420px; box-shadow: 0 20px 60px rgba(160, 130, 90, 0.15); animation: slideUp 0.3s ease; }
   .modal-content h3 { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; text-align: center; }
   .modal-content input, .modal-content textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--separator); border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; font-family: inherit; background: #FDFCF9; color: var(--text); }
   .modal-content textarea { resize: vertical; min-height: 100px; }
@@ -190,11 +227,22 @@
 
 <!-- 视图 1：周计划 -->
 <div class="view active" id="view-plan">
-  <!-- 左侧：占1/3，日期+任务 -->
+  <!-- 左侧：占1/3，待办+日期+任务 -->
   <div class="left-page" id="left-page">
-    <!-- 动态渲染 7 天 -->
+    <!-- 临时待办区 -->
+    <div class="inbox-section">
+      <div class="inbox-title">📥 临时待办 <span id="inbox-count" style="font-weight: normal; color: var(--text-secondary);">0</span></div>
+      <div class="inbox-input-row">
+        <input type="text" id="inbox-input" placeholder="想到什么先扔这..." onkeydown="if(event.key==='Enter') addInboxTask(this)">
+        <button onclick="addInboxTask(this.previousElementSibling)">+</button>
+      </div>
+      <div id="inbox-list" style="margin-top: 4px;"></div>
+    </div>
+    <!-- 每日计划 -->
+    <div id="days-container"></div>
   </div>
-  <!-- 右侧：占2/3，详情+复盘 -->
+
+  <!-- 右侧：占2/3，详情+复盘+翻周 -->
   <div class="right-page" id="right-page">
     <div class="right-card" id="right-detail-card">
       <div class="detail-header">
@@ -224,6 +272,13 @@
         <h4>📝 日常反思 / 复盘</h4>
         <textarea id="daily-note" placeholder="今天完成了什么？有什么感想？"></textarea>
       </div>
+    </div>
+
+    <!-- 翻周栏 -->
+    <div class="right-footer">
+      <button onclick="changeWeek(-1)">‹ 上一周</button>
+      <div class="week-display" onclick="openCalendarModal()" id="footer-week-display">第 38 周</div>
+      <button onclick="changeWeek(1)">下一周 ›</button>
     </div>
   </div>
 </div>
@@ -273,21 +328,25 @@
 </div>
 
 <!-- 弹窗 -->
-<div id="reminder-modal" class="modal-overlay"><div class="modal-content"><h3>编辑提醒</h3><input type="text" id="reminder-edit-title" placeholder="提醒事项"><input type="datetime-local" id="reminder-edit-time" placeholder="提醒时间"><div class="modal-btns"><button class="cancel" onclick="closeReminderModal()">取消</button><button class="save" onclick="saveReminderEdit()">保存</button></div></div></div>
+<div id="calendar-modal" class="modal-overlay">
+  <div class="modal-content">
+    <h3>选择日期</h3>
+    <div id="calendar-container"></div>
+    <div class="modal-btns" style="margin-top: 16px;">
+      <button class="cancel" onclick="closeCalendarModal()">关闭</button>
+    </div>
+  </div>
+</div>
 <div id="list-modal" class="modal-overlay"><div class="modal-content"><h3>新建清单</h3><input type="text" id="list-name" placeholder="清单名称"><div style="text-align: center;"><label class="file-upload-label">📁 上传 TXT / CSV 文件<input type="file" id="list-file-input" accept=".txt,.csv" style="display:none;" onchange="handleFileUpload(this)"></label></div><p style="font-size:12px; color:var(--text-tertiary); text-align:center; margin:0 0 10px 0;">或直接粘贴（每行一个）</p><textarea id="list-batch-items" placeholder="例如：&#10;肖申克的救赎"></textarea><div class="modal-btns"><button class="cancel" onclick="closeListModal()">取消</button><button class="save" onclick="saveNewList()">创建</button></div></div></div>
-
-<!-- 翻周提示（动画） -->
-<div class="week-toast" id="week-toast">已切换到下一周</div>
 
 <script>
 // ================= 本地数据存储 =================
-const STORAGE_KEY = 'weekly-plan-book-v5';
-let db = { tasks: [], notes: {}, habits: [], reminders: [], summaries: {}, lists: [] };
+const STORAGE_KEY = 'weekly-plan-book-v5'; 
+let db = { tasks: [], notes: {}, habits: [], summaries: {}, lists: [] };
 let currentMonday = getMonday(new Date());
 let currentWeekKey = getWeekKey(currentMonday);
 let selectedDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
 let selectedTaskId = null;
-let editingReminderId = null;
 let bookPeriod = 'week';
 let bookDate = new Date();
 
@@ -304,10 +363,9 @@ function loadLocal() {
     if (!db.tasks) db.tasks = [];
     if (!db.notes) db.notes = {};
     if (!db.habits) db.habits = [];
-    if (!db.reminders) db.reminders = [];
     if (!db.summaries) db.summaries = {};
     if (!db.lists) db.lists = [];
-  } catch(e) { db = { tasks: [], notes: {}, habits: [], reminders: [], summaries: {}, lists: [] }; }
+  } catch(e) { db = { tasks: [], notes: {}, habits: [], summaries: {}, lists: [] }; }
 }
 function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
 
@@ -316,7 +374,7 @@ function exportData() {
   const dataStr = JSON.stringify(db, null, 2);
   const blob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `周计划备份-${formatDate(new Date())}.json`; a.click(); URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = `vicky-planner-备份-${formatDate(new Date())}.json`; a.click(); URL.revokeObjectURL(url);
 }
 function importData(event) {
   const file = event.target.files[0]; if (!file) return;
@@ -334,8 +392,8 @@ function importData(event) {
 }
 
 // ================= 数据操作 =================
-function addTask(inputEl, day) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: currentWeekKey, day, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
-function addTaskFromInput(inputEl) { addTask(inputEl, selectedDay); }
+function addInboxTask(inputEl) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: null, day: null, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
+function moveToDay(taskId, day) { const t = db.tasks.find(x => x.id === taskId); if (!t) return; t.week_key = currentWeekKey; t.day = Number(day); saveLocal(); renderAll(); }
 function toggleTask(id) { const t = db.tasks.find(x => x.id === id); if (!t) return; t.done = !t.done; saveLocal(); renderAll(); }
 function deleteTask(id) { if (!confirm('确定要删除吗？')) return; db.tasks = db.tasks.filter(x => x.id !== id); if (selectedTaskId === id) selectedTaskId = null; saveLocal(); renderAll(); }
 function deleteSelectedTask() { if (selectedTaskId) deleteTask(selectedTaskId); }
@@ -344,9 +402,11 @@ function saveSelectedTask() {
   t.title = document.getElementById('detail-edit-title').value.trim() || t.title;
   t.dueDate = document.getElementById('detail-edit-time').value;
   t.details = document.getElementById('detail-edit-desc').value;
-  saveLocal(); renderAll();
-  alert('任务详情已保存！');
+  saveLocal(); renderAll(); alert('任务详情已保存！');
 }
+function addTask(inputEl, day) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: currentWeekKey, day, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
+function addTaskFromInput(inputEl) { addTask(inputEl, selectedDay); }
+
 function addHabit() { const name = prompt('输入新习惯的名称（例如：戒奶茶、背单词）：'); if (!name || !name.trim()) return; db.habits.push({ id: 'habit-' + Date.now(), name: name.trim(), records: {} }); saveLocal(); renderHabits(); }
 function toggleHabitRecord(habitId, dateStr) { const h = db.habits.find(x => x.id === habitId); if (!h) return; if (h.records[dateStr]) delete h.records[dateStr]; else h.records[dateStr] = true; saveLocal(); renderHabits(); }
 function deleteHabit(habitId) { if (!confirm('确定要删除这个习惯吗？')) return; db.habits = db.habits.filter(x => x.id !== habitId); saveLocal(); renderHabits(); }
@@ -365,11 +425,32 @@ function renderAll() {
   const end = new Date(currentMonday); end.setDate(end.getDate() + 6);
   document.getElementById('week-num').textContent = `第 ${currentWeekKey.split('-W')[1]} 周`;
   document.getElementById('week-range').textContent = `${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 – ${end.getMonth()+1}月${end.getDate()}日`;
+  document.getElementById('footer-week-display').textContent = `第 ${currentWeekKey.split('-W')[1]} 周`;
 
-  const leftPage = document.getElementById('left-page');
-  // 保留滚动位置的大致逻辑（刷新时不重置）
-  const oldScrollTop = leftPage.scrollTop;
-  leftPage.innerHTML = '';
+  // 渲染待办
+  const inboxTasks = db.tasks.filter(t => t.week_key === null);
+  document.getElementById('inbox-count').textContent = inboxTasks.length;
+  const inboxList = document.getElementById('inbox-list'); inboxList.innerHTML = '';
+  if (inboxTasks.length === 0) { inboxList.innerHTML = '<div style="font-size:11px;color:var(--text-tertiary);text-align:center;padding:4px 0;">暂无待办</div>'; }
+  else {
+    inboxTasks.forEach(t => {
+      const el = document.createElement('div'); el.className = 'inbox-task-item';
+      el.innerHTML = `
+        <button class="chk" style="width:12px;height:12px;" onclick="toggleTask('${t.id}')"></button>
+        <span class="ttl" onclick="selectedTaskId='${t.id}'; renderAll();" style="cursor:pointer; ${t.done?'text-decoration:line-through;color:var(--text-tertiary);':''}">${esc(t.title)}</span>
+        <select onchange="if(this.value!==''){ moveToDay('${t.id}', this.value); }">
+          <option value="">移动</option>
+          <option value="0">周一</option><option value="1">周二</option><option value="2">周三</option>
+          <option value="3">周四</option><option value="4">周五</option><option value="5">周六</option><option value="6">周日</option>
+        </select>
+      `;
+      inboxList.appendChild(el);
+    });
+  }
+
+  // 渲染左侧日期
+  const daysContainer = document.getElementById('days-container');
+  daysContainer.innerHTML = '';
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
   
   for (let d = 0; d < 7; d++) {
@@ -402,11 +483,10 @@ function renderAll() {
       });
     }
     group.appendChild(taskList);
-    leftPage.appendChild(group);
+    daysContainer.appendChild(group);
   }
-  // 恢复滚动位置
-  leftPage.scrollTop = oldScrollTop;
 
+  // 右侧详情
   const detailTitle = document.getElementById('right-detail-title');
   const detailDate = document.getElementById('right-detail-date');
   const taskDetailContent = document.getElementById('task-detail-content');
@@ -442,91 +522,53 @@ function renderAll() {
   textarea.oninput = (e) => { db.notes[noteKey] = e.target.value; saveLocal(); };
 }
 
-// ================= 滑动翻周逻辑 =================
-let isThrottled = false;
-const leftPageEl = document.getElementById('left-page');
-
-function showWeekToast(msg) {
-  const toast = document.getElementById('week-toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => { toast.classList.remove('show'); }, 800);
+// ================= 翻周与日历弹窗 =================
+function changeWeek(offset) {
+  currentMonday.setDate(currentMonday.getDate() + (offset * 7));
+  currentWeekKey = getWeekKey(currentMonday);
+  selectedDay = 0; selectedTaskId = null;
+  renderAll();
 }
 
-leftPageEl.addEventListener('scroll', function() {
-  const el = this;
-  const atTop = el.scrollTop === 0;
-  const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+function openCalendarModal() {
+  const container = document.getElementById('calendar-container');
+  container.innerHTML = '';
+  const dayNames = ['一','二','三','四','五','六','日'];
   
-  if (isThrottled) return;
+  const grid = document.createElement('div');
+  grid.className = 'calendar-grid';
   
-  if (atBottom) {
-    isThrottled = true;
-    // 延迟 300ms 确认用户确实想要翻页（减速效果）
-    setTimeout(() => {
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 5) {
-        currentMonday.setDate(currentMonday.getDate() + 7);
-        currentWeekKey = getWeekKey(currentMonday);
-        selectedDay = 0;
-        selectedTaskId = null;
-        renderAll();
-        el.scrollTop = 0; // 重置到顶部
-        showWeekToast(`已切换到下一周（第 ${currentWeekKey.split('-W')[1]} 周）`);
-      }
-      setTimeout(() => { isThrottled = false; }, 400); // 冷却 400ms
-    }, 250);
-  } else if (atTop) {
-    isThrottled = true;
-    setTimeout(() => {
-      if (el.scrollTop <= 0) {
-        currentMonday.setDate(currentMonday.getDate() - 7);
-        currentWeekKey = getWeekKey(currentMonday);
-        selectedDay = 0;
-        selectedTaskId = null;
-        renderAll();
-        el.scrollTop = el.scrollHeight; // 重置到底部
-        showWeekToast(`已切换到上一周（第 ${currentWeekKey.split('-W')[1]} 周）`);
-      }
-      setTimeout(() => { isThrottled = false; }, 400);
-    }, 250);
+  for (let d = 0; d < 7; d++) {
+    const date = getDateForDay(d);
+    const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
+    const hasTask = dayTasks.length > 0;
+    const hasNote = db.notes[`${currentWeekKey}-${d}`] && db.notes[`${currentWeekKey}-${d}`].trim() !== '';
+    
+    const cell = document.createElement('div');
+    cell.className = 'calendar-cell' + (selectedDay === d ? ' active' : '');
+    cell.innerHTML = `
+      <div class="cal-date">${date.getDate()}</div>
+      <div class="cal-day">周${dayNames[d]}</div>
+      <div class="cal-badges">
+        ${hasTask ? `<span class="badge task">任务</span>` : ''}
+        ${hasNote ? `<span class="badge note">日记</span>` : ''}
+      </div>
+    `;
+    cell.onclick = () => {
+      selectedDay = d;
+      selectedTaskId = null;
+      closeCalendarModal();
+      renderAll();
+    };
+    grid.appendChild(cell);
   }
-});
+  container.appendChild(grid);
+  document.getElementById('calendar-modal').classList.add('show');
+}
 
-// 桌面端滚轮支持
-leftPageEl.addEventListener('wheel', function(e) {
-  if (isThrottled) return;
-  const el = this;
-  const atTop = el.scrollTop === 0;
-  const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
-  
-  if (e.deltaY > 0 && atBottom) {
-    e.preventDefault();
-    isThrottled = true;
-    setTimeout(() => {
-      currentMonday.setDate(currentMonday.getDate() + 7);
-      currentWeekKey = getWeekKey(currentMonday);
-      selectedDay = 0;
-      selectedTaskId = null;
-      renderAll();
-      el.scrollTop = 0;
-      showWeekToast(`已切换到下一周（第 ${currentWeekKey.split('-W')[1]} 周）`);
-      setTimeout(() => { isThrottled = false; }, 400);
-    }, 200);
-  } else if (e.deltaY < 0 && atTop) {
-    e.preventDefault();
-    isThrottled = true;
-    setTimeout(() => {
-      currentMonday.setDate(currentMonday.getDate() - 7);
-      currentWeekKey = getWeekKey(currentMonday);
-      selectedDay = 0;
-      selectedTaskId = null;
-      renderAll();
-      el.scrollTop = el.scrollHeight;
-      showWeekToast(`已切换到上一周（第 ${currentWeekKey.split('-W')[1]} 周）`);
-      setTimeout(() => { isThrottled = false; }, 400);
-    }, 200);
-  }
-}, { passive: false });
+function closeCalendarModal() {
+  document.getElementById('calendar-modal').classList.remove('show');
+}
 
 // ================= 渲染：习惯 =================
 function renderHabits() {
@@ -568,15 +610,48 @@ function renderBook() {
   const { start, end } = getPeriodRange();
   const leftContent = document.getElementById('book-left-content'); leftContent.innerHTML = ''; let hasContent = false;
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
-  let current = new Date(start);
-  while (current <= end) {
-    const weekKey = getWeekKey(getMonday(current)); const dayIndex = (current.getDay() + 6) % 7;
-    const noteText = db.notes[`${weekKey}-${dayIndex}`];
-    if (noteText && noteText.trim()) { hasContent = true; const item = document.createElement('div'); item.className = 'book-item'; item.innerHTML = `<div class="book-item-header"><span class="book-item-date">${current.getMonth()+1}月${current.getDate()}日</span><span class="book-item-meta">${dayNames[dayIndex]}</span></div><div class="book-item-text">${esc(noteText)}</div>`; leftContent.appendChild(item); }
-    current.setDate(current.getDate() + 1);
+  
+  let weekKeysInRange = new Set();
+  let curr = new Date(start);
+  while (curr <= end) {
+    weekKeysInRange.add(getWeekKey(getMonday(curr)));
+    curr.setDate(curr.getDate() + 7);
   }
-  if (!hasContent) leftContent.innerHTML = '<div style="text-align:center;color:var(--text-tertiary);margin-top:40px;">这段时间还没有写每日复盘哦～</div>';
+  
+  const completedTasks = db.tasks.filter(t => t.done && t.week_key && weekKeysInRange.has(t.week_key));
+  let completedTasksHtml = '';
+  if (completedTasks.length > 0) {
+    completedTasksHtml += `<div class="book-section-title">✅ 已完成的任务 (${completedTasks.length})</div><div class="book-task-list">`;
+    completedTasks.forEach(t => {
+      completedTasksHtml += `<div class="book-task-item"><span class="done-icon">✓</span> <span>${esc(t.title)}</span></div>`;
+    });
+    completedTasksHtml += `</div>`;
+    hasContent = true;
+  }
+
+  let dailyNotesHtml = '';
+  curr = new Date(start);
+  while (curr <= end) {
+    const weekKey = getWeekKey(getMonday(curr)); 
+    const dayIndex = (curr.getDay() + 6) % 7;
+    const noteText = db.notes[`${weekKey}-${dayIndex}`];
+    if (noteText && noteText.trim()) { 
+      hasContent = true; 
+      dailyNotesHtml += `<div class="book-item"><div class="book-item-header"><span class="book-item-date">${curr.getMonth()+1}月${curr.getDate()}日</span><span class="book-item-meta">${dayNames[dayIndex]}</span></div><div class="book-item-text">${esc(noteText)}</div></div>`; 
+    }
+    curr.setDate(curr.getDate() + 1);
+  }
+  
+  if (dailyNotesHtml) {
+    dailyNotesHtml = `<div class="book-section-title">📝 每日反思</div>` + dailyNotesHtml;
+  }
+  
+  leftContent.innerHTML = completedTasksHtml + dailyNotesHtml;
+  
+  if (!hasContent) leftContent.innerHTML = '<div style="text-align:center;color:var(--text-tertiary);margin-top:40px;">这段时间还没有任何记录哦～</div>';
   document.getElementById('book-left-header').querySelector('h3').textContent = getPeriodLabel() + ' 回顾';
+  document.getElementById('book-left-header').querySelector('p').textContent = `收集了 ${start.getMonth()+1}月${start.getDate()}日 至 ${end.getMonth()+1}月${end.getDate()}日 的任务与反思`;
+  
   const summaryKey = `${bookPeriod}-${getPeriodKey()}`;
   const textarea = document.getElementById('book-summary-input'); textarea.value = db.summaries[summaryKey] || '';
   textarea.oninput = (e) => { db.summaries[summaryKey] = e.target.value; saveLocal(); };
@@ -626,6 +701,9 @@ document.querySelectorAll('.tab').forEach(tab => {
     else { document.getElementById('header-center').style.display = 'none'; if(view === 'habits') renderHabits(); else if(view === 'book') renderBook(); else if(view === 'lists') renderLists(); }
   });
 });
+
+document.getElementById('calendar-modal').addEventListener('click', (e) => { if (e.target.id === 'calendar-modal') closeCalendarModal(); });
+document.getElementById('list-modal').addEventListener('click', (e) => { if (e.target.id === 'list-modal') closeListModal(); });
 
 loadLocal(); renderAll(); renderHabits(); renderBook(); renderLists();
 </script>

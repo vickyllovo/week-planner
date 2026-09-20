@@ -8,173 +8,159 @@
   :root {
     --bg: #FDFBF7; --card: #FFFDFA; --text: #3A322B; --text-secondary: #8C8279; --text-tertiary: #C2B8A3;
     --accent: #D97736; --accent-soft: #FDF3E8; --danger: #D9534F; --success: #5C9A71;
-    --separator: #EFE9DF; --radius-card: 16px; --radius-btn: 10px; --shadow-card: 0 2px 12px rgba(160, 130, 90, 0.04);
+    --separator: #EFE9DF; --radius-card: 12px; --radius-btn: 8px; --shadow-card: 0 1px 8px rgba(160, 130, 90, 0.04);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; font: 15px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); overflow: hidden; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; font: 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); overflow: hidden; -webkit-font-smoothing: antialiased; }
   
-  /* 顶部导航 */
-  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; box-shadow: 0 1px 4px rgba(0,0,0,0.02); flex-wrap: wrap; }
-  .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; overflow-x: auto; width: 100%; max-width: 360px; margin: 0 auto; }
-  .tab { flex: 1; padding: 8px 0; text-align: center; border-radius: 8px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; flex-wrap: wrap; }
+  .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; overflow-x: auto; width: 100%; max-width: 380px; margin: 0 auto; }
+  .tab { flex: 1; padding: 6px 0; text-align: center; border-radius: 6px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
   .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .hcenter { text-align: center; flex: 1; display: flex; justify-content: center; align-items: baseline; gap: 8px; }
+  .hcenter { text-align: center; flex: 1; display: flex; justify-content: center; align-items: baseline; gap: 6px; }
   .wkn { font-weight: 600; font-size: 14px; color: var(--text); }
-  .range { font-size: 12px; color: var(--text-secondary); }
+  .range { font-size: 11px; color: var(--text-secondary); }
   .header-spacer { display: none; }
 
-  .view { flex: 1; display: none; overflow: hidden; padding: 12px; gap: 12px; }
+  .view { flex: 1; display: none; overflow: hidden; padding: 8px; gap: 8px; }
   .view.active { display: flex; }
   
-  /* ================= 视图 1：周计划 ================= */
+  /* ================= 视图 1：周计划（Goalday 风格） ================= */
   #view-plan { flex-direction: row; }
-  .left-page { width: 80px; flex: none; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; padding-bottom: 20px; }
-  .right-page { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
   
-  .card { background: var(--card); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.8); }
-  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .card-title { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 4px; color: var(--text); }
-  .card-count { font-size: 11px; color: var(--text-secondary); background: #F4F0E8; padding: 2px 6px; border-radius: 10px; }
+  /* 左页：日期 + 任务列表 */
+  .left-page { width: 44%; flex: none; display: flex; flex-direction: column; gap: 0; overflow-y: auto; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 4px 0; }
+  .day-group { display: flex; flex-direction: column; border-bottom: 1px solid var(--separator); }
+  .day-group:last-child { border-bottom: none; }
+  .day-head { display: flex; align-items: baseline; gap: 6px; padding: 8px 8px 4px 8px; cursor: pointer; }
+  .day-head.active { background: var(--accent-soft); }
+  .dnum { font-size: 16px; font-weight: 600; color: var(--text); }
+  .dname { font-size: 12px; color: var(--text-secondary); }
+  .task-list { padding: 0 4px 6px 4px; display: flex; flex-direction: column; }
+  .task-item { display: flex; align-items: flex-start; gap: 6px; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .task-item.active { background: var(--accent-soft); }
+  .task-item .chk { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .task-item.done .chk { background: var(--accent); border-color: var(--accent); }
+  .task-item.done .chk::after { content: ''; width: 3px; height: 6px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
+  .task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; user-select: none; }
+  .task-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
 
-  /* 左页：日期卡片（极简） */
-  .day-card { background: var(--card); border-radius: 10px; padding: 10px 6px; text-align: center; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
-  .day-card.active { border-color: var(--accent); background: var(--accent-soft); }
-  .day-head { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .dname { font-weight: 600; font-size: 13px; color: var(--text); }
-  .ddate { font-size: 11px; color: var(--text-secondary); }
-  .dcount { font-size: 10px; color: var(--accent); background: #FEF3E2; padding: 1px 4px; border-radius: 6px; font-weight: 500; margin-top: 2px; }
+  /* 右页：详情与复盘 */
+  .right-page { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .right-card { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 6px; }
   
-  /* 右页：任务与笔记 */
-  .right-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--separator); }
-  .right-head .dname { font-size: 18px; font-weight: 600; }
-  .right-head .ddate { font-size: 13px; color: var(--text-secondary); }
-  .right-tasks { flex: 1; display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; overflow-y: auto; }
+  .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .detail-title { font-weight: 600; font-size: 14px; color: var(--text); }
+  .detail-date { font-size: 12px; color: var(--text-secondary); }
   
-  .task { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--separator); cursor: pointer; }
-  .task:last-child { border-bottom: none; }
-  .chk { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-  .task.done .chk { background: var(--accent); border-color: var(--accent); }
-  .task.done .chk::after { content: ''; width: 5px; height: 9px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
-  .ttl { flex: 1; min-width: 0; word-break: break-word; font-size: 15px; user-select: none; }
-  .task.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
-  .task-time { font-size: 11px; color: var(--accent); background: #FEF3E2; padding: 2px 6px; border-radius: 6px; white-space: nowrap; font-weight: 500; }
-  
-  .add-task-row { display: flex; gap: 6px; margin-top: 4px; margin-bottom: 12px; }
-  .add-task-row input { flex: 1; border: none; background: #F4F0E8; border-radius: 8px; padding: 10px 12px; font-size: 14px; outline: none; font-family: inherit; color: var(--text); transition: 0.2s; }
+  .add-task-row { display: flex; gap: 4px; }
+  .add-task-row input { flex: 1; border: none; background: #F4F0E8; border-radius: 6px; padding: 8px 10px; font-size: 13px; outline: none; font-family: inherit; color: var(--text); }
   .add-task-row input:focus { background: var(--card); box-shadow: 0 0 0 1px var(--accent); }
-  .add-task-row button { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0 14px; cursor: pointer; font-size: 18px; }
+  .add-task-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 12px; cursor: pointer; font-size: 16px; }
+
+  .task-detail-area { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; min-height: 60px; }
+  .task-detail-area .title-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .task-detail-area .title-row input { flex: 1; border: none; border-bottom: 1px solid var(--separator); font-size: 14px; font-weight: 600; background: transparent; outline: none; padding-bottom: 4px; color: var(--text); }
+  .task-detail-area .time-row { display: flex; gap: 6px; align-items: center; }
+  .task-detail-area .time-row input { flex: 1; border: none; font-size: 13px; background: transparent; outline: none; color: var(--text-secondary); }
+  .task-detail-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .task-detail-actions button { padding: 6px 12px; border-radius: 6px; border: none; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .task-detail-actions .delete-btn { background: #FDE8E8; color: var(--danger); }
+  .task-detail-actions .save-btn { background: var(--accent); color: #fff; }
 
   .note-box { display: flex; flex-direction: column; min-height: 120px; }
-  .note-box h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-secondary); font-weight: 600; }
-  .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 12px; padding: 12px; font-size: 14px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: #FDFCF9; color: var(--text); transition: 0.2s; }
+  .note-box h4 { margin: 0 0 6px 0; font-size: 13px; color: var(--text-secondary); font-weight: 600; }
+  .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: #FDFCF9; color: var(--text); }
   .note-box textarea:focus { border-color: var(--accent); background: var(--card); }
-
-  .week-switcher { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); margin-top: 8px; }
-  .week-switcher button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .week-switcher span { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
 
   /* ================= 视图 2：习惯打卡 ================= */
   #view-habits { flex-direction: column; gap: 0; }
-  .habits-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 16px 4px; }
-  .habits-header h2 { margin: 0; font-size: 20px; font-weight: 600; }
-  .add-habit-btn { background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); padding: 8px 16px; cursor: pointer; font-size: 14px; font-weight: 600; }
-  .habit-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
-  .habit-card { background: var(--card); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-card); }
-  .habit-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .habit-name { font-weight: 600; font-size: 16px; }
-  .habit-streak { font-size: 13px; color: var(--accent); background: #FEF3E2; padding: 4px 10px; border-radius: 12px; font-weight: 500; }
-  .heatmap-grid { display: grid; gap: 3px; overflow-x: auto; padding-bottom: 8px; }
+  .habits-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 12px 4px; }
+  .habits-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+  .add-habit-btn { background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .habit-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+  .habit-card { background: var(--card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); }
+  .habit-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .habit-name { font-weight: 600; font-size: 15px; }
+  .habit-streak { font-size: 12px; color: var(--accent); background: #FEF3E2; padding: 3px 8px; border-radius: 10px; font-weight: 500; }
+  .heatmap-grid { display: grid; grid-template-rows: repeat(4, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 2px; overflow-x: auto; padding-bottom: 6px; }
   .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; background: #F0ECE3; cursor: pointer; transition: 0.15s; }
   .heatmap-cell.done { background: var(--success); }
-  .habit-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 12px; color: var(--text-secondary); }
-  .habit-actions button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 13px; }
+  .habit-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
+  .habit-actions button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 12px; }
 
   /* ================= 视图 3：总结书 ================= */
-  #view-book { flex-direction: column; gap: 12px; }
-  .book-toolbar { display: flex; gap: 8px; justify-content: center; }
-  .book-toolbar button { background: #F4F0E8; color: var(--text-secondary); border: none; border-radius: 20px; padding: 6px 16px; font-size: 14px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+  #view-book { flex-direction: column; gap: 8px; }
+  .book-toolbar { display: flex; gap: 6px; justify-content: center; }
+  .book-toolbar button { background: #F4F0E8; color: var(--text-secondary); border: none; border-radius: 16px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
   .book-toolbar button.active { background: var(--accent); color: #fff; }
-  .book-container { flex: 1; display: flex; gap: 12px; overflow: hidden; }
-  .book-left, .book-right { flex: 1; display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); border: 1px solid rgba(255,255,255,0.8); }
-  .book-page-header { padding: 16px; border-bottom: 1px solid var(--separator); background: #FDFCF9; border-radius: var(--radius-card) var(--radius-card) 0 0; }
-  .book-page-header h3 { margin: 0; font-size: 18px; font-weight: 600; color: var(--text); }
-  .book-page-header p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-secondary); }
-  .book-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-  .book-item { padding-bottom: 12px; border-bottom: 1px dashed var(--separator); }
+  .book-container { flex: 1; display: flex; gap: 8px; overflow: hidden; }
+  .book-left, .book-right { flex: 1; display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+  .book-page-header { padding: 12px; border-bottom: 1px solid var(--separator); background: #FDFCF9; }
+  .book-page-header h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .book-page-header p { margin: 2px 0 0 0; font-size: 12px; color: var(--text-secondary); }
+  .book-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .book-item { padding-bottom: 10px; border-bottom: 1px dashed var(--separator); }
   .book-item:last-child { border-bottom: none; }
-  .book-item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-  .book-item-date { font-weight: 600; font-size: 14px; color: var(--accent); }
-  .book-item-meta { font-size: 12px; color: var(--text-secondary); }
-  .book-item-text { font-size: 14px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+  .book-item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .book-item-date { font-weight: 600; font-size: 13px; color: var(--accent); }
+  .book-item-meta { font-size: 11px; color: var(--text-secondary); }
+  .book-item-text { font-size: 13px; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
   .book-right .book-content { background: #FDFCF9; }
-  .book-summary-textarea { flex: 1; width: 100%; border: none; background: transparent; font-size: 15px; font-family: inherit; resize: none; outline: none; line-height: 1.8; color: var(--text); }
+  .book-summary-textarea { flex: 1; width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; color: var(--text); }
   .book-nav { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-  .book-nav button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .book-nav span { font-size: 14px; color: var(--text); font-weight: 500; }
+  .book-nav button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
   /* ================= 视图 4：清单 ================= */
-  #view-lists { flex-direction: column; gap: 12px; overflow-y: auto; padding: 12px; }
+  #view-lists { flex-direction: column; gap: 8px; overflow-y: auto; padding: 8px; }
   .lists-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 8px 4px; }
-  .lists-header h2 { margin: 0; font-size: 20px; font-weight: 600; }
-  .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding-bottom: 20px; }
-  .list-card { background: var(--card); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(255,255,255,0.8); }
+  .lists-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+  .list-grid { display: grid; grid-template-columns: 1fr; gap: 10px; padding-bottom: 20px; }
+  .list-card { background: var(--card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 8px; }
   .list-card-header { display: flex; justify-content: space-between; align-items: center; }
-  .list-card-title { font-weight: 600; font-size: 16px; color: var(--text); }
-  .list-card-actions button { background: none; border: none; color: var(--text-tertiary); cursor: pointer; font-size: 15px; padding: 0 2px; }
-  .list-progress { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-secondary); }
-  .progress-bar { flex: 1; height: 6px; background: #F0ECE3; border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s ease; }
-  .list-items { display: flex; flex-direction: column; gap: 2px; max-height: 250px; overflow-y: auto; }
-  .list-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--separator); font-size: 14px; }
+  .list-card-title { font-weight: 600; font-size: 15px; }
+  .list-progress { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); }
+  .progress-bar { flex: 1; height: 5px; background: #F0ECE3; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+  .list-items { display: flex; flex-direction: column; max-height: 220px; overflow-y: auto; }
+  .list-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid var(--separator); font-size: 13px; }
   .list-item:last-child { border-bottom: none; }
-  .chk-square { width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+  .chk-square { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
   .list-item.done .chk-square { background: var(--success); border-color: var(--success); }
-  .list-item.done .chk-square::after { content: ''; width: 4px; height: 8px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
+  .list-item.done .chk-square::after { content: ''; width: 3px; height: 6px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
   .list-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
 
-  .backup-area { display: flex; gap: 10px; justify-content: center; padding: 10px 0 20px 0; }
-  .backup-btn { background: #F4F0E8; color: var(--text-secondary); border: 1px solid var(--separator); border-radius: 8px; padding: 10px 16px; font-size: 13px; cursor: pointer; transition: 0.2s; }
-  .backup-btn:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .backup-area { display: flex; gap: 8px; justify-content: center; padding: 8px 0 20px 0; }
+  .backup-btn { background: #F4F0E8; color: var(--text-secondary); border: 1px solid var(--separator); border-radius: 8px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
 
-  /* ================= 手机端专属布局 ================= */
+  /* 手机端适配 */
   @media (max-width: 768px) {
-    header { flex-direction: column; padding: 10px 12px; gap: 8px; }
-    .tabs { width: 100%; max-width: none; }
-    .hcenter { width: 100%; display: flex; justify-content: center; align-items: baseline; gap: 8px; }
-    
-    #view-plan { flex-direction: row; padding: 8px; gap: 8px; }
-    .left-page { width: 72px; flex: none; gap: 4px; }
-    .day-card { padding: 8px 4px; }
-    .dname { font-size: 12px; } .ddate { font-size: 10px; } .dcount { display: none; }
-    
-    .right-page { flex: 1; }
-    .card { padding: 12px; }
-    
-    /* 修复习惯热力图 */
-    .heatmap-grid { display: grid; grid-template-rows: repeat(4, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 2px; overflow-x: auto; padding-bottom: 6px; }
-    .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; }
-    
-    .book-container { flex-direction: column; }
-    .book-left, .book-right { flex: 1; min-height: 0; }
-    .list-grid { grid-template-columns: 1fr; }
+    #view-plan { padding: 6px; gap: 6px; }
+    .left-page { width: 45%; padding: 2px 0; }
+    .day-head { padding: 6px 6px 2px 6px; }
+    .dnum { font-size: 14px; }
+    .dname { font-size: 11px; }
+    .task-item { padding: 3px 4px; }
+    .task-item .ttl { font-size: 11px; }
+    .right-card { padding: 10px; }
+    .detail-title { font-size: 13px; }
+    .task-detail-area .title-row input { font-size: 13px; }
+    .note-box textarea { font-size: 12px; }
   }
 
   /* 弹窗 */
   .modal-overlay { position: fixed; inset: 0; background: rgba(58, 50, 43, 0.3); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
-  .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-overlay.show { display: flex; }
   @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-content { background: var(--card); border-radius: 20px; padding: 24px; width: 90%; max-width: 420px; box-shadow: 0 20px 60px rgba(160, 130, 90, 0.15); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-  .modal-content h3 { margin: 0 0 20px 0; font-size: 18px; font-weight: 600; text-align: center; }
-  .modal-content input, .modal-content textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--separator); border-radius: 10px; margin-bottom: 12px; font-size: 14px; outline: none; font-family: inherit; background: #FDFCF9; color: var(--text); }
-  .modal-content textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
-  .modal-content input:focus, .modal-content textarea:focus { border-color: var(--accent); }
-  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
-  .modal-btns button { padding: 12px 20px; border-radius: 10px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .modal-content { background: var(--card); border-radius: 16px; padding: 20px; width: 90%; max-width: 400px; box-shadow: 0 20px 60px rgba(160, 130, 90, 0.15); animation: slideUp 0.3s ease; }
+  .modal-content h3 { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; text-align: center; }
+  .modal-content input, .modal-content textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--separator); border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; font-family: inherit; background: #FDFCF9; color: var(--text); }
+  .modal-content textarea { resize: vertical; min-height: 100px; }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+  .modal-btns button { padding: 10px 18px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
   .modal-btns .cancel { background: #F4F0E8; color: var(--text); }
   .modal-btns .save { background: var(--accent); color: #fff; }
-  .file-upload-label { display: inline-block; background: #F4F0E8; color: var(--text-secondary); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; border: 1px dashed var(--separator); transition: 0.2s; margin-bottom: 12px; }
-  .file-upload-label:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .file-upload-label { display: inline-block; background: #F4F0E8; color: var(--text-secondary); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; border: 1px dashed var(--separator); margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -195,27 +181,39 @@
 
 <!-- 视图 1：周计划 -->
 <div class="view active" id="view-plan">
-  <!-- 左侧：纯日期列表 -->
+  <!-- 左侧：日期 + 任务列表 -->
   <div class="left-page" id="left-page">
-    <div class="card inbox-card" style="padding: 8px; margin-bottom: 4px;">
-      <div class="card-title" style="font-size: 11px;">📥 收件箱</div>
-      <div id="inbox-count" style="font-size: 14px; font-weight: 600; text-align: center; margin-top: 4px;">0</div>
-    </div>
-    <div id="days-container"></div>
+    <!-- 动态渲染 7 天 -->
   </div>
-
-  <!-- 右侧：当天任务与笔记 -->
-  <div class="right-page">
-    <div class="card">
-      <div class="right-head"><span class="dname" id="right-day-name">周一</span><span class="ddate" id="right-day-date"></span></div>
-      <div class="right-tasks" id="right-tasks"></div>
-      
-      <div class="add-task-row" id="right-add-task-row">
-        <input type="text" id="new-task-input" placeholder="添加任务..." onkeydown="if(event.key==='Enter') addTaskFromInput(this)">
+  <!-- 右侧：详情与复盘 -->
+  <div class="right-page" id="right-page">
+    <div class="right-card" id="right-detail-card">
+      <div class="detail-header">
+        <span class="detail-title" id="right-detail-title">选中任务查看详情</span>
+        <span class="detail-date" id="right-detail-date"></span>
+      </div>
+      <div id="task-detail-content" style="display: none;">
+        <div class="task-detail-area">
+          <div class="title-row"><input type="text" id="detail-edit-title" placeholder="任务名称"></div>
+          <div class="time-row"><input type="datetime-local" id="detail-edit-time"></div>
+        </div>
+        <div class="task-detail-actions">
+          <button class="delete-btn" onclick="deleteSelectedTask()">删除</button>
+          <button class="save-btn" onclick="saveSelectedTask()">保存修改</button>
+        </div>
+      </div>
+      <div id="task-no-selection" style="color: var(--text-tertiary); font-size: 13px; padding: 8px 0;">点击左侧任务查看详情</div>
+    </div>
+    
+    <div class="right-card">
+      <div class="add-task-row" style="margin-bottom: 4px;">
+        <input type="text" id="new-task-input" placeholder="添加到当前日期..." onkeydown="if(event.key==='Enter') addTaskFromInput(this)">
         <button onclick="addTaskFromInput(this.previousElementSibling)">+</button>
       </div>
-      
-      <div class="note-box"><h4>📝 今日记录 / 复盘</h4><textarea id="daily-note" placeholder="今天完成了什么？有什么感想？"></textarea></div>
+      <div class="note-box">
+        <h4>📝 日常反思 / 复盘</h4>
+        <textarea id="daily-note" placeholder="今天完成了什么？有什么感想？"></textarea>
+      </div>
     </div>
   </div>
 </div>
@@ -265,9 +263,8 @@
 </div>
 
 <!-- 弹窗 -->
-<div id="edit-modal" class="modal-overlay"><div class="modal-content"><h3>编辑任务</h3><input type="text" id="edit-title" placeholder="任务名称"><input type="datetime-local" id="edit-time" placeholder="截止时间（可选）"><div class="modal-btns"><button class="cancel" onclick="closeEditModal()">取消</button><button class="save" onclick="saveEditTask()">保存</button></div></div></div>
 <div id="reminder-modal" class="modal-overlay"><div class="modal-content"><h3>编辑提醒</h3><input type="text" id="reminder-edit-title" placeholder="提醒事项"><input type="datetime-local" id="reminder-edit-time" placeholder="提醒时间"><div class="modal-btns"><button class="cancel" onclick="closeReminderModal()">取消</button><button class="save" onclick="saveReminderEdit()">保存</button></div></div></div>
-<div id="list-modal" class="modal-overlay"><div class="modal-content"><h3>新建清单</h3><input type="text" id="list-name" placeholder="清单名称（如：豆瓣 Top 100）"><div style="text-align: center;"><label class="file-upload-label">📁 上传 TXT / CSV 文件<input type="file" id="list-file-input" accept=".txt,.csv" style="display:none;" onchange="handleFileUpload(this)"></label></div><p style="font-size:12px; color:var(--text-tertiary); text-align:center; margin:0 0 10px 0;">或者直接在下方粘贴（每行一个）</p><textarea id="list-batch-items" placeholder="例如：&#10;肖申克的救赎&#10;霸王别姬&#10;阿甘正传"></textarea><div class="modal-btns"><button class="cancel" onclick="closeListModal()">取消</button><button class="save" onclick="saveNewList()">创建</button></div></div></div>
+<div id="list-modal" class="modal-overlay"><div class="modal-content"><h3>新建清单</h3><input type="text" id="list-name" placeholder="清单名称"><div style="text-align: center;"><label class="file-upload-label">📁 上传 TXT / CSV 文件<input type="file" id="list-file-input" accept=".txt,.csv" style="display:none;" onchange="handleFileUpload(this)"></label></div><p style="font-size:12px; color:var(--text-tertiary); text-align:center; margin:0 0 10px 0;">或直接粘贴（每行一个）</p><textarea id="list-batch-items" placeholder="例如：&#10;肖申克的救赎"></textarea><div class="modal-btns"><button class="cancel" onclick="closeListModal()">取消</button><button class="save" onclick="saveNewList()">创建</button></div></div></div>
 
 <script>
 // ================= 本地数据存储 =================
@@ -275,8 +272,8 @@ const STORAGE_KEY = 'weekly-plan-book-v5';
 let db = { tasks: [], notes: {}, habits: [], reminders: [], summaries: {}, lists: [] };
 let currentMonday = getMonday(new Date());
 let currentWeekKey = getWeekKey(currentMonday);
-let selectedDay = 0;
-let editingTaskId = null;
+let selectedDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1; // 默认选中今天
+let selectedTaskId = null; // 右侧当前展示的任务
 let editingReminderId = null;
 let bookPeriod = 'week';
 let bookDate = new Date();
@@ -306,11 +303,7 @@ function exportData() {
   const dataStr = JSON.stringify(db, null, 2);
   const blob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `周计划备份-${formatDate(new Date())}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = `周计划备份-${formatDate(new Date())}.json`; a.click(); URL.revokeObjectURL(url);
 }
 function importData(event) {
   const file = event.target.files[0]; if (!file) return;
@@ -328,15 +321,17 @@ function importData(event) {
 }
 
 // ================= 数据操作 =================
-function addInboxTask(inputEl) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: null, day: null, title, done: false, dueDate: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
-function moveToDay(taskId, day) { const t = db.tasks.find(x => x.id === taskId); if (!t) return; t.week_key = currentWeekKey; t.day = day; saveLocal(); renderAll(); }
 function addTask(inputEl, day) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: currentWeekKey, day, title, done: false, dueDate: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
 function addTaskFromInput(inputEl) { addTask(inputEl, selectedDay); }
 function toggleTask(id) { const t = db.tasks.find(x => x.id === id); if (!t) return; t.done = !t.done; saveLocal(); renderAll(); }
-function deleteTask(id) { if (!confirm('确定要删除吗？')) return; db.tasks = db.tasks.filter(x => x.id !== id); saveLocal(); renderAll(); }
-function openEditModal(id) { const t = db.tasks.find(x => x.id === id); if (!t) return; editingTaskId = id; document.getElementById('edit-title').value = t.title || ''; document.getElementById('edit-time').value = t.dueDate || ''; document.getElementById('edit-modal').classList.add('show'); }
-function closeEditModal() { document.getElementById('edit-modal').classList.remove('show'); editingTaskId = null; }
-function saveEditTask() { const t = db.tasks.find(x => x.id === editingTaskId); if (!t) return; t.title = document.getElementById('edit-title').value.trim() || t.title; t.dueDate = document.getElementById('edit-time').value; saveLocal(); closeEditModal(); renderAll(); }
+function deleteTask(id) { if (!confirm('确定要删除吗？')) return; db.tasks = db.tasks.filter(x => x.id !== id); if (selectedTaskId === id) selectedTaskId = null; saveLocal(); renderAll(); }
+function deleteSelectedTask() { if (selectedTaskId) deleteTask(selectedTaskId); }
+function saveSelectedTask() {
+  const t = db.tasks.find(x => x.id === selectedTaskId); if (!t) return;
+  t.title = document.getElementById('detail-edit-title').value.trim() || t.title;
+  t.dueDate = document.getElementById('detail-edit-time').value;
+  saveLocal(); renderAll();
+}
 function addHabit() { const name = prompt('输入新习惯的名称（例如：戒奶茶、背单词）：'); if (!name || !name.trim()) return; db.habits.push({ id: 'habit-' + Date.now(), name: name.trim(), records: {} }); saveLocal(); renderHabits(); }
 function toggleHabitRecord(habitId, dateStr) { const h = db.habits.find(x => x.id === habitId); if (!h) return; if (h.records[dateStr]) delete h.records[dateStr]; else h.records[dateStr] = true; saveLocal(); renderHabits(); }
 function deleteHabit(habitId) { if (!confirm('确定要删除这个习惯吗？')) return; db.habits = db.habits.filter(x => x.id !== habitId); saveLocal(); renderHabits(); }
@@ -356,71 +351,84 @@ function renderAll() {
   document.getElementById('week-num').textContent = `第 ${currentWeekKey.split('-W')[1]} 周`;
   document.getElementById('week-range').textContent = `${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 – ${end.getMonth()+1}月${end.getDate()}日`;
 
-  // 收件箱计数
-  const inboxTasks = db.tasks.filter(t => t.week_key === null);
-  document.getElementById('inbox-count').textContent = inboxTasks.length ? `${inboxTasks.filter(t=>t.done).length}/${inboxTasks.length}` : '0';
-
-  // 渲染左侧日期
+  // 渲染左侧（Goalday 风格）
   const leftPage = document.getElementById('left-page');
-  // 只清除日期容器，保留收件箱卡片
-  const daysContainer = document.getElementById('days-container'); 
-  daysContainer.innerHTML = '';
+  leftPage.innerHTML = '';
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
+  
   for (let d = 0; d < 7; d++) {
-    const date = getDateForDay(d); 
+    const date = getDateForDay(d);
     const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
-    const doneCount = dayTasks.filter(t => t.done).length;
     
-    const card = document.createElement('div'); 
-    card.className = 'day-card' + (selectedDay === d ? ' active' : ''); 
-    card.dataset.day = d;
-    card.innerHTML = `
-      <div class="day-head">
-        <span class="dname">${dayNames[d]}</span>
-        <span class="ddate">${date.getMonth()+1}/${date.getDate()}</span>
-        ${dayTasks.length ? `<span class="dcount">${doneCount}/${dayTasks.length}</span>` : ''}
-      </div>`;
-    card.addEventListener('click', () => selectDay(d));
-    daysContainer.appendChild(card);
+    const group = document.createElement('div');
+    group.className = 'day-group';
+    
+    // 日期头
+    const head = document.createElement('div');
+    head.className = 'day-head' + (selectedDay === d ? ' active' : '');
+    head.innerHTML = `<span class="dnum">${date.getDate()}</span><span class="dname">${dayNames[d]}</span>`;
+    head.onclick = () => { selectedDay = d; selectedTaskId = null; renderAll(); };
+    group.appendChild(head);
+    
+    // 任务列表
+    const taskList = document.createElement('div');
+    taskList.className = 'task-list';
+    if (dayTasks.length === 0) {
+      taskList.innerHTML = '<div style="color:var(--text-tertiary); font-size:11px; padding:2px 6px;">无任务</div>';
+    } else {
+      dayTasks.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'task-item' + (t.done ? ' done' : '') + (selectedTaskId === t.id ? ' active' : '');
+        item.innerHTML = `
+          <button class="chk" onclick="event.stopPropagation(); toggleTask('${t.id}')"></button>
+          <span class="ttl">${esc(t.title)}</span>
+        `;
+        item.onclick = (e) => { e.stopPropagation(); selectedTaskId = t.id; selectedDay = d; renderAll(); };
+        taskList.appendChild(item);
+      });
+    }
+    group.appendChild(taskList);
+    leftPage.appendChild(group);
   }
 
-  // 渲染右侧任务与笔记
-  renderRightPage();
-}
-
-function renderRightPage() {
-  const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
-  const date = getDateForDay(selectedDay);
-  document.getElementById('right-day-name').textContent = dayNames[selectedDay];
-  document.getElementById('right-day-date').textContent = `${date.getMonth()+1}月${date.getDate()}日`;
+  // 渲染右侧详情
+  const detailTitle = document.getElementById('right-detail-title');
+  const detailDate = document.getElementById('right-detail-date');
+  const taskDetailContent = document.getElementById('task-detail-content');
+  const noSelection = document.getElementById('task-no-selection');
   
-  const weekTasks = db.tasks.filter(t => t.week_key === currentWeekKey); 
-  const dayTasks = weekTasks.filter(t => t.day === selectedDay);
-  renderTaskContainer(dayTasks, 'right-tasks');
+  const selectedDate = getDateForDay(selectedDay);
+  detailDate.textContent = `${selectedDate.getMonth()+1}月${selectedDate.getDate()}日`;
   
+  if (selectedTaskId) {
+    const t = db.tasks.find(x => x.id === selectedTaskId);
+    if (t) {
+      detailTitle.textContent = '任务详情';
+      taskDetailContent.style.display = 'block';
+      noSelection.style.display = 'none';
+      document.getElementById('detail-edit-title').value = t.title || '';
+      document.getElementById('detail-edit-time').value = t.dueDate || '';
+    } else {
+      selectedTaskId = null;
+      detailTitle.textContent = '任务详情';
+      taskDetailContent.style.display = 'none';
+      noSelection.style.display = 'block';
+    }
+  } else {
+    detailTitle.textContent = '今日详情';
+    taskDetailContent.style.display = 'none';
+    noSelection.style.display = 'block';
+  }
+  
+  // 渲染右侧反思
   const noteKey = `${currentWeekKey}-${selectedDay}`;
   const textarea = document.getElementById('daily-note'); 
   textarea.value = db.notes[noteKey] || '';
   textarea.oninput = (e) => { db.notes[noteKey] = e.target.value; saveLocal(); };
+  
+  // 渲染提醒区（如果有）
+  // ...
 }
-
-function renderTaskContainer(taskList, containerId) {
-  const container = document.getElementById(containerId); if (!container) return; container.innerHTML = '';
-  if (!taskList.length) { container.innerHTML = '<div style="color:var(--text-tertiary); font-size:13px; padding:8px 0;">暂无任务</div>'; return; }
-  taskList.forEach(t => {
-    const el = document.createElement('div'); el.className = 'task' + (t.done ? ' done' : '');
-    const timeBadge = t.dueDate ? `<span class="task-time">⏰ ${t.dueDate.replace('T', ' ')}</span>` : '';
-    el.innerHTML = `
-      <button type="button" class="chk" onclick="event.stopPropagation(); toggleTask('${t.id}')"></button>
-      <span class="ttl" onclick="event.stopPropagation(); openEditModal('${t.id}')">${esc(t.title)}</span>
-      ${timeBadge}
-      <button type="button" style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:16px;padding:0 4px;" onclick="event.stopPropagation(); deleteTask('${t.id}')">×</button>
-    `;
-    container.appendChild(el);
-  });
-}
-
-function selectDay(dayIndex) { selectedDay = dayIndex; renderAll(); }
 
 // ================= 渲染：习惯 =================
 function renderHabits() {
@@ -440,7 +448,7 @@ function renderHabits() {
     card.innerHTML = `
       <div class="habit-top"><span class="habit-name">${esc(h.name)}</span><span class="habit-streak">连续 ${streak} 天</span></div>
       <div class="heatmap-grid">${heatmapHtml}</div>
-      <div class="habit-actions"><span>近 120 天打卡记录（可滑动）</span><button onclick="deleteHabit('${h.id}')">删除习惯</button></div>
+      <div class="habit-actions"><span>可横向滑动查看</span><button onclick="deleteHabit('${h.id}')">删除习惯</button></div>
     `;
     list.appendChild(card);
   });
@@ -471,7 +479,6 @@ function renderBook() {
   }
   if (!hasContent) leftContent.innerHTML = '<div style="text-align:center;color:var(--text-tertiary);margin-top:40px;">这段时间还没有写每日复盘哦～</div>';
   document.getElementById('book-left-header').querySelector('h3').textContent = getPeriodLabel() + ' 回顾';
-  document.getElementById('book-left-header').querySelector('p').textContent = `自动收集了 ${start.getMonth()+1}月${start.getDate()}日 至 ${end.getMonth()+1}月${end.getDate()}日 的每日记录`;
   const summaryKey = `${bookPeriod}-${getPeriodKey()}`;
   const textarea = document.getElementById('book-summary-input'); textarea.value = db.summaries[summaryKey] || '';
   textarea.oninput = (e) => { db.summaries[summaryKey] = e.target.value; saveLocal(); };
@@ -507,8 +514,6 @@ function renderLists() {
 }
 
 // ================= 事件绑定 =================
-document.getElementById('btn-prev-week')?.addEventListener('click', () => { currentMonday.setDate(currentMonday.getDate() - 7); currentWeekKey = getWeekKey(currentMonday); selectedDay = 0; renderAll(); });
-document.getElementById('btn-next-week')?.addEventListener('click', () => { currentMonday.setDate(currentMonday.getDate() + 7); currentWeekKey = getWeekKey(currentMonday); selectedDay = 0; renderAll(); });
 document.getElementById('book-prev').addEventListener('click', () => { if (bookPeriod === 'week') bookDate.setDate(bookDate.getDate() - 7); else if (bookPeriod === 'month') bookDate.setMonth(bookDate.getMonth() - 1); else bookDate.setFullYear(bookDate.getFullYear() - 1); renderBook(); });
 document.getElementById('book-next').addEventListener('click', () => { if (bookPeriod === 'week') bookDate.setDate(bookDate.getDate() + 7); else if (bookPeriod === 'month') bookDate.setMonth(bookDate.getMonth() + 1); else bookDate.setFullYear(bookDate.getFullYear() + 1); renderBook(); });
 
@@ -523,10 +528,6 @@ document.querySelectorAll('.tab').forEach(tab => {
     else { document.getElementById('header-center').style.display = 'none'; if(view === 'habits') renderHabits(); else if(view === 'book') renderBook(); else if(view === 'lists') renderLists(); }
   });
 });
-
-document.getElementById('edit-modal').addEventListener('click', (e) => { if (e.target.id === 'edit-modal') closeEditModal(); });
-document.getElementById('reminder-modal').addEventListener('click', (e) => { if (e.target.id === 'reminder-modal') closeReminderModal(); });
-document.getElementById('list-modal').addEventListener('click', (e) => { if (e.target.id === 'list-modal') closeListModal(); });
 
 loadLocal(); renderAll(); renderHabits(); renderBook(); renderLists();
 </script>

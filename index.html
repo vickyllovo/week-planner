@@ -14,13 +14,15 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; font: 15px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); overflow: hidden; -webkit-font-smoothing: antialiased; }
   
-  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; box-shadow: 0 1px 4px rgba(0,0,0,0.02); }
-  .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; }
-  .tab { padding: 6px 10px; border-radius: 8px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  /* 顶部导航（适配手机） */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; box-shadow: 0 1px 4px rgba(0,0,0,0.02); flex-wrap: wrap; }
+  .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; overflow-x: auto; }
+  .tab { padding: 6px 10px; border-radius: 8px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
   .hcenter { text-align: center; flex: 1; }
-  .wkn { font-weight: 600; font-size: 15px; color: var(--text); }
-  .range { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+  .wkn { font-weight: 600; font-size: 15px; color: var(--text); display: inline-block; margin-right: 8px; }
+  .range { font-size: 11px; color: var(--text-secondary); display: inline-block; }
+  .header-spacer { width: 100px; }
 
   .view { flex: 1; display: none; overflow: hidden; padding: 12px; gap: 12px; }
   .view.active { display: flex; }
@@ -150,15 +152,24 @@
   .backup-btn { background: #F4F0E8; color: var(--text-secondary); border: 1px solid var(--separator); border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: 0.2s; }
   .backup-btn:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 
-  /* 手机端适配 */
+  /* ================= 手机端适配（彻底修复） ================= */
   @media (max-width: 768px) {
+    header { flex-direction: column; padding: 10px 12px; gap: 8px; }
+    .tabs { width: 100%; justify-content: center; }
+    .tab { flex: 1; text-align: center; padding: 8px 0; }
+    .hcenter { width: 100%; display: flex; justify-content: center; align-items: baseline; gap: 8px; }
+    .wkn { font-size: 14px; margin-right: 4px; }
+    .range { font-size: 11px; }
+    .header-spacer { display: none; }
+    
     #view-plan { flex-direction: column; }
-    .left-page { flex: none; max-height: 40vh; overflow-y: auto; }
+    .left-page { flex: none; max-height: 45vh; overflow-y: auto; }
     .right-page { flex: 1; }
     .book-container { flex-direction: column; }
     .book-left, .book-right { flex: 1; min-height: 0; }
     .heatmap-grid { grid-template-columns: repeat(40, 1fr); }
     .list-grid { grid-template-columns: 1fr; }
+    .week-switcher { padding: 10px 12px; }
   }
 
   /* 弹窗 */
@@ -192,7 +203,7 @@
     <div class="wkn" id="week-num"></div>
     <div class="range" id="week-range"></div>
   </div>
-  <div style="width: 100px;"></div>
+  <div class="header-spacer"></div>
 </header>
 
 <!-- 视图 1：周计划 -->
@@ -529,7 +540,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     const view = tab.dataset.view;
     document.getElementById('view-' + view).classList.add('active');
-    if (view === 'plan') { document.getElementById('header-center').style.display = 'block'; document.getElementById('header-center').innerHTML = `<div class="wkn" id="week-num"></div><div class="range" id="week-range"></div>`; renderAll(); }
+    if (view === 'plan') { document.getElementById('header-center').style.display = 'flex'; renderAll(); }
     else { document.getElementById('header-center').style.display = 'none'; if(view === 'habits') renderHabits(); else if(view === 'book') renderBook(); else if(view === 'lists') renderLists(); }
   });
 });

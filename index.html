@@ -8,12 +8,12 @@
   :root {
     --bg: #FDFBF7; --card: #FFFDFA; --text: #3A322B; --text-secondary: #8C8279; --text-tertiary: #C2B8A3;
     --accent: #D97736; --accent-soft: #FDF3E8; --danger: #D9534F; --success: #5C9A71;
-    --separator: #EFE9DF; --radius-card: 12px; --radius-btn: 8px; --shadow-card: 0 1px 8px rgba(160, 130, 90, 0.04);
+    --separator: #EFE9DF; --radius-card: 10px; --radius-btn: 8px; --shadow-card: 0 1px 6px rgba(160, 130, 90, 0.04);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; font: 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); overflow: hidden; -webkit-font-smoothing: antialiased; }
   
-  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; flex-wrap: wrap; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; flex-wrap: wrap; }
   .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; overflow-x: auto; width: 100%; max-width: 380px; margin: 0 auto; }
   .tab { flex: 1; padding: 6px 0; text-align: center; border-radius: 6px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
   .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
@@ -22,55 +22,55 @@
   .range { font-size: 11px; color: var(--text-secondary); }
   .header-spacer { display: none; }
 
-  .view { flex: 1; display: none; overflow: hidden; padding: 8px; gap: 8px; }
+  .view { flex: 1; display: none; overflow: hidden; padding: 6px; gap: 6px; }
   .view.active { display: flex; }
   
-  /* ================= 视图 1：周计划（Goalday 风格） ================= */
+  /* ================= 视图 1：周计划 ================= */
   #view-plan { flex-direction: row; }
   
-  /* 左页：日期 + 任务列表 */
-  .left-page { width: 44%; flex: none; display: flex; flex-direction: column; gap: 0; overflow-y: auto; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 4px 0; }
+  /* 左页：日期 + 任务列表（占1/3） */
+  .left-page { width: 33.33%; flex: none; display: flex; flex-direction: column; overflow-y: auto; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
   .day-group { display: flex; flex-direction: column; border-bottom: 1px solid var(--separator); }
   .day-group:last-child { border-bottom: none; }
-  .day-head { display: flex; align-items: baseline; gap: 6px; padding: 8px 8px 4px 8px; cursor: pointer; }
-  .day-head.active { background: var(--accent-soft); }
-  .dnum { font-size: 16px; font-weight: 600; color: var(--text); }
-  .dname { font-size: 12px; color: var(--text-secondary); }
-  .task-list { padding: 0 4px 6px 4px; display: flex; flex-direction: column; }
-  .task-item { display: flex; align-items: flex-start; gap: 6px; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .day-head { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 8px 6px 8px; cursor: pointer; }
+  .day-head.active { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  .dnum { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
+  .dname { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+  .task-list { padding: 0 2px 8px 2px; display: flex; flex-direction: column; }
+  .task-item { display: flex; align-items: flex-start; gap: 4px; padding: 4px 4px; border-radius: 6px; cursor: pointer; }
   .task-item.active { background: var(--accent-soft); }
-  .task-item .chk { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .task-item .chk { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
   .task-item.done .chk { background: var(--accent); border-color: var(--accent); }
   .task-item.done .chk::after { content: ''; width: 3px; height: 6px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
-  .task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; user-select: none; }
+  .task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; user-select: none; font-weight: 500; }
   .task-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
 
-  /* 右页：详情与复盘 */
-  .right-page { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
-  .right-card { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 6px; }
+  /* 右页：详情与复盘（占2/3） */
+  .right-page { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+  .right-card { background: var(--card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 8px; }
   
-  .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .detail-title { font-weight: 600; font-size: 14px; color: var(--text); }
-  .detail-date { font-size: 12px; color: var(--text-secondary); }
+  .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+  .detail-title { font-weight: 600; font-size: 15px; color: var(--text); }
+  .detail-date { font-size: 13px; color: var(--text-secondary); }
   
-  .add-task-row { display: flex; gap: 4px; }
-  .add-task-row input { flex: 1; border: none; background: #F4F0E8; border-radius: 6px; padding: 8px 10px; font-size: 13px; outline: none; font-family: inherit; color: var(--text); }
-  .add-task-row input:focus { background: var(--card); box-shadow: 0 0 0 1px var(--accent); }
-  .add-task-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 12px; cursor: pointer; font-size: 16px; }
-
-  .task-detail-area { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; min-height: 60px; }
-  .task-detail-area .title-row { display: flex; gap: 6px; margin-bottom: 6px; }
-  .task-detail-area .title-row input { flex: 1; border: none; border-bottom: 1px solid var(--separator); font-size: 14px; font-weight: 600; background: transparent; outline: none; padding-bottom: 4px; color: var(--text); }
+  .task-detail-area { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 12px; min-height: 80px; }
+  .task-detail-area .title-row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .task-detail-area .title-row input { flex: 1; border: none; border-bottom: 1px solid var(--separator); font-size: 15px; font-weight: 600; background: transparent; outline: none; padding-bottom: 6px; color: var(--text); }
   .task-detail-area .time-row { display: flex; gap: 6px; align-items: center; }
   .task-detail-area .time-row input { flex: 1; border: none; font-size: 13px; background: transparent; outline: none; color: var(--text-secondary); }
-  .task-detail-actions { display: flex; gap: 6px; margin-top: 8px; }
-  .task-detail-actions button { padding: 6px 12px; border-radius: 6px; border: none; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .task-detail-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .task-detail-actions button { padding: 8px 14px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
   .task-detail-actions .delete-btn { background: #FDE8E8; color: var(--danger); }
-  .task-detail-actions .save-btn { background: var(--accent); color: #fff; }
+  .task-detail-actions .save-btn { background: var(--accent); color: #fff; flex: 1; }
 
-  .note-box { display: flex; flex-direction: column; min-height: 120px; }
-  .note-box h4 { margin: 0 0 6px 0; font-size: 13px; color: var(--text-secondary); font-weight: 600; }
-  .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: #FDFCF9; color: var(--text); }
+  .add-task-row { display: flex; gap: 4px; }
+  .add-task-row input { flex: 1; border: none; background: #F4F0E8; border-radius: 6px; padding: 10px 12px; font-size: 13px; outline: none; font-family: inherit; color: var(--text); }
+  .add-task-row input:focus { background: var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  .add-task-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 16px; cursor: pointer; font-size: 18px; font-weight: 600; }
+
+  .note-box { display: flex; flex-direction: column; min-height: 150px; }
+  .note-box h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-secondary); font-weight: 600; }
+  .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 12px; font-size: 14px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: #FDFCF9; color: var(--text); }
   .note-box textarea:focus { border-color: var(--accent); background: var(--card); }
 
   /* ================= 视图 2：习惯打卡 ================= */
@@ -133,19 +133,33 @@
   .backup-area { display: flex; gap: 8px; justify-content: center; padding: 8px 0 20px 0; }
   .backup-btn { background: #F4F0E8; color: var(--text-secondary); border: 1px solid var(--separator); border-radius: 8px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
 
-  /* 手机端适配 */
+  /* ================= 手机端专属精准适配 ================= */
   @media (max-width: 768px) {
-    #view-plan { padding: 6px; gap: 6px; }
-    .left-page { width: 45%; padding: 2px 0; }
-    .day-head { padding: 6px 6px 2px 6px; }
-    .dnum { font-size: 14px; }
-    .dname { font-size: 11px; }
-    .task-item { padding: 3px 4px; }
-    .task-item .ttl { font-size: 11px; }
-    .right-card { padding: 10px; }
-    .detail-title { font-size: 13px; }
-    .task-detail-area .title-row input { font-size: 13px; }
-    .note-box textarea { font-size: 12px; }
+    #view-plan { padding: 4px; gap: 4px; }
+    
+    /* 严格 1/3 布局 */
+    .left-page { width: 33.33%; flex: none; }
+    .right-page { flex: 1; } /* 剩余的 2/3 */
+    
+    /* 日期放大加粗 */
+    .day-head { padding: 12px 4px 6px 8px; }
+    .dnum { font-size: 24px; font-weight: 800; } /* 极大极粗 */
+    .dname { font-size: 14px; font-weight: 600; } 
+    
+    /* 调整任务项，适配窄空间 */
+    .task-item { gap: 4px; padding: 4px 2px; }
+    .task-item .ttl { font-size: 12px; line-height: 1.3; }
+    .task-item .chk { width: 14px; height: 14px; margin-top: 2px; }
+    
+    /* 右侧卡片充分利用2/3宽度 */
+    .right-card { padding: 12px; gap: 6px; }
+    .detail-title { font-size: 16px; }
+    .note-box textarea { font-size: 13px; min-height: 100px; }
+    
+    /* 其他视图适配 */
+    .book-container { flex-direction: column; }
+    .book-left, .book-right { flex: 1; min-height: 0; }
+    .list-grid { grid-template-columns: 1fr; }
   }
 
   /* 弹窗 */
@@ -181,11 +195,11 @@
 
 <!-- 视图 1：周计划 -->
 <div class="view active" id="view-plan">
-  <!-- 左侧：日期 + 任务列表 -->
+  <!-- 左侧：占1/3，日期+任务 -->
   <div class="left-page" id="left-page">
     <!-- 动态渲染 7 天 -->
   </div>
-  <!-- 右侧：详情与复盘 -->
+  <!-- 右侧：占2/3，详情+复盘 -->
   <div class="right-page" id="right-page">
     <div class="right-card" id="right-detail-card">
       <div class="detail-header">
@@ -272,8 +286,8 @@ const STORAGE_KEY = 'weekly-plan-book-v5';
 let db = { tasks: [], notes: {}, habits: [], reminders: [], summaries: {}, lists: [] };
 let currentMonday = getMonday(new Date());
 let currentWeekKey = getWeekKey(currentMonday);
-let selectedDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1; // 默认选中今天
-let selectedTaskId = null; // 右侧当前展示的任务
+let selectedDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+let selectedTaskId = null;
 let editingReminderId = null;
 let bookPeriod = 'week';
 let bookDate = new Date();
@@ -351,7 +365,6 @@ function renderAll() {
   document.getElementById('week-num').textContent = `第 ${currentWeekKey.split('-W')[1]} 周`;
   document.getElementById('week-range').textContent = `${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 – ${end.getMonth()+1}月${end.getDate()}日`;
 
-  // 渲染左侧（Goalday 风格）
   const leftPage = document.getElementById('left-page');
   leftPage.innerHTML = '';
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
@@ -363,14 +376,12 @@ function renderAll() {
     const group = document.createElement('div');
     group.className = 'day-group';
     
-    // 日期头
     const head = document.createElement('div');
     head.className = 'day-head' + (selectedDay === d ? ' active' : '');
     head.innerHTML = `<span class="dnum">${date.getDate()}</span><span class="dname">${dayNames[d]}</span>`;
     head.onclick = () => { selectedDay = d; selectedTaskId = null; renderAll(); };
     group.appendChild(head);
     
-    // 任务列表
     const taskList = document.createElement('div');
     taskList.className = 'task-list';
     if (dayTasks.length === 0) {
@@ -391,7 +402,6 @@ function renderAll() {
     leftPage.appendChild(group);
   }
 
-  // 渲染右侧详情
   const detailTitle = document.getElementById('right-detail-title');
   const detailDate = document.getElementById('right-detail-date');
   const taskDetailContent = document.getElementById('task-detail-content');
@@ -420,14 +430,10 @@ function renderAll() {
     noSelection.style.display = 'block';
   }
   
-  // 渲染右侧反思
   const noteKey = `${currentWeekKey}-${selectedDay}`;
   const textarea = document.getElementById('daily-note'); 
   textarea.value = db.notes[noteKey] || '';
   textarea.oninput = (e) => { db.notes[noteKey] = e.target.value; saveLocal(); };
-  
-  // 渲染提醒区（如果有）
-  // ...
 }
 
 // ================= 渲染：习惯 =================

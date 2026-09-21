@@ -7,7 +7,8 @@
 <style>
   :root {
     --bg: #FDFBF7; --card: #FFFDFA; --text: #3A322B; --text-secondary: #8C8279; --text-tertiary: #C2B8A3;
-    --accent: #D97736; --accent-soft: #FDF3E8; --danger: #D9534F; --success: #5C9A71;
+    --accent: #D97736; --accent-soft: #FDF3E8; --danger: #D9534F; --success: #E6A23C;
+    --habit-bg: #F4F0E8;
     --separator: #EFE9DF; --radius-card: 10px; --radius-btn: 8px; --shadow-card: 0 1px 6px rgba(160, 130, 90, 0.04);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -15,32 +16,27 @@
   
   /* ================= 顶部导航 ================= */
   header { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; flex-wrap: wrap; }
-  .header-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; overflow-x: auto; flex: 1; max-width: 400px; }
-  .tab { flex: 1; padding: 6px 10px; text-align: center; border-radius: 6px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
+  .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; flex: 1; max-width: 300px; }
+  .tab { flex: 1; padding: 6px 0; text-align: center; border-radius: 6px; background: transparent; color: var(--text-secondary); border: none; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
   .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .sync-btn-header { background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-  
-  .header-bottom { display: flex; justify-content: center; align-items: baseline; gap: 6px; font-size: 13px; }
-  .wkn { font-weight: 600; color: var(--text); }
-  .range { font-size: 11px; color: var(--text-secondary); }
+  .sync-btn-header { background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); padding: 6px 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .header-bottom { text-align: center; font-size: 13px; font-weight: 600; color: var(--text); }
 
   .view { flex: 1; display: none; overflow: hidden; padding: 4px; gap: 4px; }
   .view.active { display: flex; }
   
   /* ================= 视图 1：周计划 ================= */
   #view-plan { flex-direction: row; }
-  
-  /* 左侧：只有日期和任务（占1/3） */
-  .left-page { width: 33.33%; flex: none; display: flex; flex-direction: column; overflow-y: auto; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); position: relative; }
+  .left-page { width: 33.33%; flex: none; display: flex; flex-direction: column; overflow-y: auto; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
   .day-group { display: flex; flex-direction: column; border-bottom: 1px solid var(--separator); }
   .day-group:last-child { border-bottom: none; }
-  .day-head { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 6px 6px 8px; cursor: pointer; }
+  .day-head { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 8px 6px 8px; cursor: pointer; }
   .day-head.active { background: var(--accent-soft); border-left: 3px solid var(--accent); }
   .dnum { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
   .dname { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
   .task-list { padding: 0 2px 8px 2px; display: flex; flex-direction: column; }
-  .task-item { display: flex; align-items: flex-start; gap: 4px; padding: 4px; border-radius: 6px; cursor: pointer; }
+  .task-item { display: flex; align-items: flex-start; gap: 4px; padding: 4px 4px; border-radius: 6px; cursor: pointer; }
   .task-item.active { background: var(--accent-soft); }
   .task-item .chk { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
   .task-item.done .chk { background: var(--accent); border-color: var(--accent); }
@@ -48,70 +44,88 @@
   .task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; user-select: none; font-weight: 500; }
   .task-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
 
-  /* 右侧：2/3 区域，完全重新组织 */
-  .right-page { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
-  
-  /* 1. 临时待办区（顶部，宽敞） */
-  .inbox-section { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); flex: none; }
-  .inbox-title { font-size: 13px; font-weight: 600; color: var(--accent); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .inbox-input-row { display: flex; gap: 4px; margin-bottom: 6px; }
-  .inbox-input-row input { flex: 1; border: 1px solid var(--separator); border-radius: 6px; padding: 8px 10px; font-size: 13px; outline: none; background: var(--bg); color: var(--text); }
-  .inbox-input-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 12px; font-size: 16px; cursor: pointer; }
-  .inbox-list { display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto; }
-  .inbox-task-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid var(--separator); font-size: 13px; }
+  .right-page { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+  .right-card { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 6px; }
+  .inbox-section { border-bottom: 1px solid var(--separator); padding-bottom: 8px; }
+  .inbox-title { font-size: 12px; font-weight: 600; color: var(--accent); display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .inbox-input-row { display: flex; gap: 4px; }
+  .inbox-input-row input { flex: 1; border: 1px solid var(--separator); border-radius: 6px; padding: 6px 8px; font-size: 12px; outline: none; background: var(--bg); color: var(--text); min-width: 0; }
+  .inbox-input-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 10px; font-size: 14px; cursor: pointer; }
+  .inbox-task-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid var(--separator); font-size: 12px; }
   .inbox-task-item:last-child { border-bottom: none; }
   .inbox-task-item .ttl { flex: 1; word-break: break-word; }
-  .inbox-task-item select { font-size: 11px; border: 1px solid var(--separator); border-radius: 4px; background: var(--card); color: var(--text-secondary); outline: none; padding: 2px 4px; }
-
-  /* 2. 今日计划详情（中部） */
-  .right-card { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); flex: none; display: flex; flex-direction: column; gap: 8px; }
-  .detail-header { display: flex; justify-content: space-between; align-items: center; }
-  .detail-title { font-weight: 600; font-size: 15px; color: var(--text); }
-  .detail-date { font-size: 13px; color: var(--text-secondary); }
-  .task-detail-area { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-  .task-detail-area .title-row input { width: 100%; border: none; border-bottom: 1px solid var(--separator); font-size: 15px; font-weight: 600; background: transparent; outline: none; padding-bottom: 6px; color: var(--text); }
-  .task-detail-area .time-row input { width: 100%; border: none; font-size: 13px; background: transparent; outline: none; color: var(--text-secondary); }
-  .task-detail-area .desc-row textarea { width: 100%; border: 1px solid var(--separator); border-radius: 6px; padding: 8px; font-size: 13px; font-family: inherit; resize: vertical; outline: none; min-height: 60px; background: var(--card); color: var(--text); }
-  .task-detail-actions { display: flex; gap: 8px; margin-top: 4px; }
-  .task-detail-actions button { padding: 8px 14px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .inbox-task-item select { font-size: 11px; border: 1px solid var(--separator); border-radius: 4px; background: var(--card); color: var(--text-secondary); outline: none; max-width: 60px; }
+  .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+  .detail-title { font-weight: 600; font-size: 14px; color: var(--text); }
+  .detail-date { font-size: 12px; color: var(--text-secondary); }
+  .task-detail-area { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .task-detail-area .title-row input { width: 100%; border: none; border-bottom: 1px solid var(--separator); font-size: 14px; font-weight: 600; background: transparent; outline: none; padding-bottom: 4px; color: var(--text); }
+  .task-detail-area .time-row input { width: 100%; border: none; font-size: 12px; background: transparent; outline: none; color: var(--text-secondary); }
+  .task-detail-area .desc-row textarea { width: 100%; border: 1px solid var(--separator); border-radius: 6px; padding: 8px; font-size: 12px; font-family: inherit; resize: vertical; outline: none; min-height: 60px; background: var(--card); color: var(--text); }
+  .task-detail-actions { display: flex; gap: 6px; margin-top: 4px; }
+  .task-detail-actions button { padding: 8px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
   .task-detail-actions .delete-btn { background: #FDE8E8; color: var(--danger); }
   .task-detail-actions .save-btn { background: var(--accent); color: #fff; flex: 1; }
-
-  /* 3. 日常反思（底部，占满剩余空间） */
-  .note-card { flex: 1; display: flex; flex-direction: column; min-height: 150px; }
-  .note-box { display: flex; flex-direction: column; flex: 1; }
-  .note-box h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-secondary); font-weight: 600; }
-  .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 12px; font-size: 14px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: #FDFCF9; color: var(--text); }
+  .no-selection-tip { color: var(--text-tertiary); font-size: 12px; padding: 8px 0; text-align: center; }
+  .note-box { display: flex; flex-direction: column; min-height: 100px; }
+  .note-box h4 { margin: 0 0 6px 0; font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+  .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: var(--bg); color: var(--text); }
   .note-box textarea:focus { border-color: var(--accent); background: var(--card); }
+  .right-footer { background: var(--card); border-radius: var(--radius-card); padding: 10px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .right-footer button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .right-footer button:active { background: var(--accent); color: #fff; }
+  .right-footer .week-display { font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; padding: 4px 12px; border-radius: 6px; background: var(--accent-soft); }
+  .right-footer .week-display:active { background: #FDE8D8; }
 
   /* 日历弹窗 */
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
   .calendar-cell { border: 1px solid var(--separator); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
+  .calendar-cell:active { background: var(--accent-soft); }
   .calendar-cell.active { border-color: var(--accent); background: var(--accent-soft); }
-  .calendar-cell .cal-date { font-weight: 700; font-size: 16px; color: var(--text); }
+  .calendar-cell .cal-date { font-weight: 700; font-size: 15px; color: var(--text); }
   .calendar-cell .cal-day { font-size: 11px; color: var(--text-secondary); }
   .calendar-cell .cal-badges { display: flex; justify-content: center; gap: 4px; margin-top: 4px; font-size: 10px; }
   .calendar-cell .badge { padding: 1px 3px; border-radius: 4px; }
   .badge.task { background: #E8F0FE; color: #1A73E8; }
   .badge.note { background: #FCE8E6; color: #C5221F; }
 
-  /* 视图 2：习惯打卡 */
+  /* 同步面板 */
+  .sync-status { font-size: 12px; color: var(--text-secondary); text-align: center; margin-bottom: 10px; }
+  .sync-btn-row { display: flex; gap: 8px; }
+  .sync-btn-row button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .sync-btn-row .upload-btn { background: var(--accent); color: #fff; }
+  .sync-btn-row .download-btn { background: #F4F0E8; color: var(--text); }
+  .sync-config-row { margin-bottom: 12px; }
+  .sync-config-row label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .sync-config-row input { width: 100%; padding: 10px 12px; border: 1px solid var(--separator); border-radius: 8px; font-size: 13px; outline: none; background: #FDFCF9; color: var(--text); }
+
+  /* ================= 视图 2：习惯打卡（重做） ================= */
   #view-habits { flex-direction: column; gap: 0; }
   .habits-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 12px 4px; }
   .habits-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
   .add-habit-btn { background: var(--accent); color: #fff; border: none; border-radius: var(--radius-btn); padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600; }
   .habit-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
-  .habit-card { background: var(--card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); }
-  .habit-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .habit-name { font-weight: 600; font-size: 15px; }
+  .habit-card { background: var(--card); border-radius: var(--radius-card); padding: 14px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 10px; }
+  
+  .habit-top { display: flex; justify-content: space-between; align-items: center; }
+  .habit-name { font-weight: 600; font-size: 16px; }
   .habit-streak { font-size: 12px; color: var(--accent); background: #FEF3E2; padding: 3px 8px; border-radius: 10px; font-weight: 500; }
-  .heatmap-grid { display: grid; grid-template-rows: repeat(4, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 2px; overflow-x: auto; padding-bottom: 6px; }
-  .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; background: #F0ECE3; cursor: pointer; transition: 0.15s; }
+  
+  /* 竖版热力图 */
+  .heatmap-container { overflow-x: auto; padding-bottom: 6px; }
+  .heatmap-grid { display: grid; grid-template-rows: repeat(7, 12px); grid-auto-flow: column; grid-auto-columns: 12px; gap: 2px; }
+  .heatmap-cell { width: 12px; height: 12px; border-radius: 3px; background: var(--habit-bg); cursor: pointer; transition: 0.15s; }
   .heatmap-cell.done { background: var(--success); }
-  .habit-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
+  .heatmap-cell.future { background: transparent; cursor: default; }
+  
+  /* 打卡按钮 */
+  .habit-footer { display: flex; justify-content: space-between; align-items: center; }
   .habit-actions button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 12px; }
+  .checkin-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .checkin-btn.checked { background: var(--habit-bg); color: var(--text-secondary); }
+  .checkin-btn:active { transform: scale(0.96); }
 
-  /* 视图 3：总结书 */
+  /* ================= 视图 3、4（保持不变） ================= */
   #view-book { flex-direction: column; gap: 8px; }
   .book-toolbar { display: flex; gap: 6px; justify-content: center; }
   .book-toolbar button { background: #F4F0E8; color: var(--text-secondary); border: none; border-radius: 16px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
@@ -137,7 +151,6 @@
   .book-nav { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
   .book-nav button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
-  /* 视图 4：清单 */
   #view-lists { flex-direction: column; gap: 8px; overflow-y: auto; padding: 8px; }
   .lists-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 8px 4px; }
   .lists-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
@@ -155,38 +168,36 @@
   .list-item.done .chk-square { background: var(--success); border-color: var(--success); }
   .list-item.done .chk-square::after { content: ''; width: 3px; height: 6px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
   .list-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
-
   .backup-area { display: flex; gap: 8px; justify-content: center; padding: 8px 0 20px 0; }
   .backup-btn { background: #F4F0E8; color: var(--text-secondary); border: 1px solid var(--separator); border-radius: 8px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
 
   /* ================= 手机端专属精准适配 ================= */
   @media (max-width: 768px) {
-    #view-plan { padding: 4px; gap: 4px; }
+    .view { padding: 4px; gap: 4px; }
+    #view-plan { flex-direction: row; }
     .left-page { width: 33.33%; flex: none; }
-    .right-page { flex: 1; }
-    .day-head { padding: 12px 4px 6px 8px; }
+    .day-head { padding: 10px 4px 6px 6px; }
     .dnum { font-size: 24px; font-weight: 800; }
-    .dname { font-size: 14px; font-weight: 600; } 
+    .dname { font-size: 13px; font-weight: 600; } 
     .task-item { gap: 4px; padding: 4px 2px; }
     .task-item .ttl { font-size: 12px; line-height: 1.3; }
     .task-item .chk { width: 14px; height: 14px; margin-top: 2px; }
-    
-    /* 右侧区域在手机上的紧凑排版 */
-    .right-page { gap: 6px; }
-    .inbox-section { padding: 10px; }
-    .inbox-title { font-size: 12px; }
-    .inbox-input-row input { padding: 6px 8px; font-size: 12px; }
+    .right-page { flex: 1; gap: 6px; }
     .right-card { padding: 10px; gap: 6px; }
-    .detail-title { font-size: 14px; }
-    .task-detail-area { padding: 8px; gap: 6px; }
-    .task-detail-area .title-row input { font-size: 13px; }
-    .task-detail-area .desc-row textarea { font-size: 12px; min-height: 40px; }
-    .note-card { min-height: 120px; }
-    .note-box textarea { font-size: 13px; }
-    
     .book-container { flex-direction: column; }
     .book-left, .book-right { flex: 1; min-height: 0; }
     .list-grid { grid-template-columns: 1fr; }
+    .right-footer { padding: 8px; }
+    .right-footer button { padding: 6px 8px; font-size: 12px; }
+    .right-footer .week-display { font-size: 12px; padding: 4px 6px; }
+    .tabs { max-width: 250px; }
+    .tab { font-size: 12px; padding: 4px 0; }
+    .sync-btn-header { padding: 4px 8px; font-size: 11px; }
+    .header-bottom { font-size: 12px; }
+    
+    .heatmap-grid { grid-template-rows: repeat(7, 10px); grid-auto-columns: 10px; gap: 1px; }
+    .heatmap-cell { width: 10px; height: 10px; }
+    .checkin-btn { padding: 6px 12px; font-size: 12px; }
   }
 
   /* 弹窗 */
@@ -216,32 +227,27 @@
     </div>
     <button class="sync-btn-header" onclick="openSyncModal()">⚙️ 同步</button>
   </div>
-  <div class="header-bottom">
-    <div class="wkn" id="week-num"></div>
-    <div class="range" id="week-range"></div>
-  </div>
+  <div class="header-bottom" id="header-bottom-display">第 38 周</div>
 </header>
 
 <!-- 视图 1：周计划 -->
 <div class="view active" id="view-plan">
-  <!-- 左侧：日期 + 任务 -->
   <div class="left-page" id="left-page">
     <div id="days-container"></div>
   </div>
 
-  <!-- 右侧：待办 + 详情 + 反思 -->
   <div class="right-page" id="right-page">
-    <!-- 1. 临时待办 -->
-    <div class="inbox-section">
-      <div class="inbox-title">📥 临时待办 <span id="inbox-count" style="font-weight: normal; color: var(--text-secondary);">0</span></div>
-      <div class="inbox-input-row">
-        <input type="text" id="inbox-input" placeholder="想到什么先扔这..." onkeydown="if(event.key==='Enter') addInboxTask(this)">
-        <button onclick="addInboxTask(this.previousElementSibling)">+</button>
+    <div class="right-card">
+      <div class="inbox-section">
+        <div class="inbox-title">📥 临时待办 <span id="inbox-count" style="font-weight: normal; color: var(--text-secondary);">0</span></div>
+        <div class="inbox-input-row">
+          <input type="text" id="inbox-input" placeholder="想到什么先扔到这里吧..." onkeydown="if(event.key==='Enter') addInboxTask(this)">
+          <button onclick="addInboxTask(this.previousElementSibling)">+</button>
+        </div>
+        <div id="inbox-list" style="margin-top: 4px;"></div>
       </div>
-      <div class="inbox-list" id="inbox-list"></div>
     </div>
 
-    <!-- 2. 今日计划详情 -->
     <div class="right-card" id="right-detail-card">
       <div class="detail-header">
         <span class="detail-title" id="right-detail-title">今日详情</span>
@@ -251,22 +257,27 @@
         <div class="task-detail-area">
           <div class="title-row"><input type="text" id="detail-edit-title" placeholder="任务名称"></div>
           <div class="time-row"><input type="datetime-local" id="detail-edit-time"></div>
-          <div class="desc-row"><textarea id="detail-edit-desc" placeholder="详细描述 / 子计划（每行一个）"></textarea></div>
+          <div class="desc-row"><textarea id="detail-edit-desc" placeholder="详细描述 / 子计划"></textarea></div>
         </div>
         <div class="task-detail-actions">
           <button class="delete-btn" onclick="deleteSelectedTask()">删除</button>
           <button class="save-btn" onclick="saveSelectedTask()">保存修改</button>
         </div>
       </div>
-      <div id="task-no-selection" style="color: var(--text-tertiary); font-size: 13px; padding: 4px 0;">点击左侧任务查看详情</div>
+      <div id="task-no-selection" class="no-selection-tip">点击左侧任务查看详情</div>
     </div>
     
-    <!-- 3. 日常反思 -->
-    <div class="right-card note-card">
+    <div class="right-card">
       <div class="note-box">
         <h4>📝 日常反思 / 复盘</h4>
         <textarea id="daily-note" placeholder="今天完成了什么？有什么感想？"></textarea>
       </div>
+    </div>
+
+    <div class="right-footer">
+      <button onclick="changeWeek(-1)">‹ 上一周</button>
+      <div class="week-display" onclick="openCalendarModal()" id="footer-week-display">第 38 周</div>
+      <button onclick="changeWeek(1)">下一周 ›</button>
     </div>
   </div>
 </div>
@@ -316,52 +327,14 @@
 </div>
 
 <!-- 弹窗 -->
-<div id="calendar-modal" class="modal-overlay">
-  <div class="modal-content">
-    <h3>选择日期</h3>
-    <div id="calendar-container"></div>
-    <div class="modal-btns" style="margin-top: 16px; justify-content: center;">
-      <button class="cancel" onclick="closeCalendarModal()">关闭</button>
-    </div>
-  </div>
-</div>
+<div id="calendar-modal" class="modal-overlay"><div class="modal-content"><h3>选择日期</h3><div id="calendar-container"></div><div class="modal-btns" style="margin-top: 16px;"><button class="cancel" onclick="closeCalendarModal()">关闭</button></div></div></div>
 <div id="list-modal" class="modal-overlay"><div class="modal-content"><h3>新建清单</h3><input type="text" id="list-name" placeholder="清单名称"><div style="text-align: center;"><label class="file-upload-label">📁 上传 TXT / CSV 文件<input type="file" id="list-file-input" accept=".txt,.csv" style="display:none;" onchange="handleFileUpload(this)"></label></div><p style="font-size:12px; color:var(--text-tertiary); text-align:center; margin:0 0 10px 0;">或直接粘贴（每行一个）</p><textarea id="list-batch-items" placeholder="例如：&#10;肖申克的救赎"></textarea><div class="modal-btns"><button class="cancel" onclick="closeListModal()">取消</button><button class="save" onclick="saveNewList()">创建</button></div></div></div>
-
-<!-- 同步设置弹窗 -->
-<div id="sync-modal" class="modal-overlay">
-  <div class="modal-content">
-    <h3>☁️ 云同步设置</h3>
-    <div class="sync-status" id="sync-status">正在加载配置...</div>
-    <div class="sync-config-row">
-      <label>Gitee 用户名（如 vickyllovo）</label>
-      <input type="text" id="sync-user" placeholder="你的 Gitee 用户名">
-    </div>
-    <div class="sync-config-row">
-      <label>Gitee 仓库名（如 vicky-planner-data）</label>
-      <input type="text" id="sync-repo" placeholder="你的私有仓库名">
-    </div>
-    <div class="sync-config-row">
-      <label>私人令牌（Token）</label>
-      <input type="password" id="sync-token" placeholder="粘贴你在 Gitee 生成的私人令牌">
-    </div>
-    <div class="sync-btn-row" style="margin-bottom: 12px;">
-      <button class="save-btn" onclick="saveSyncConfig()">保存配置</button>
-    </div>
-    <div class="sync-btn-row">
-      <button class="upload-btn" onclick="uploadToCloud()">⬆ 上传到云端</button>
-      <button class="download-btn" onclick="downloadFromCloud()">⬇ 从云端下载</button>
-    </div>
-    <div class="modal-btns" style="margin-top: 12px; justify-content: center;">
-      <button class="cancel" onclick="closeSyncModal()">关闭</button>
-    </div>
-  </div>
-</div>
+<div id="sync-modal" class="modal-overlay"><div class="modal-content"><h3>☁️ 云同步设置</h3><div class="sync-status" id="sync-status">正在加载配置...</div><div class="sync-config-row"><label>Gitee 用户名</label><input type="text" id="sync-user" placeholder="你的 Gitee 用户名"></div><div class="sync-config-row"><label>Gitee 仓库名</label><input type="text" id="sync-repo" placeholder="你的私有仓库名"></div><div class="sync-config-row"><label>私人令牌（Token）</label><input type="password" id="sync-token" placeholder="粘贴你在 Gitee 生成的私人令牌"></div><div class="sync-btn-row" style="margin-bottom: 12px;"><button class="save-btn" onclick="saveSyncConfig()">保存配置</button></div><div class="sync-btn-row"><button class="upload-btn" onclick="uploadToCloud()">⬆ 上传到云端</button><button class="download-btn" onclick="downloadFromCloud()">⬇ 从云端下载</button></div><div class="modal-btns" style="margin-top: 12px; justify-content: center;"><button class="cancel" onclick="closeSyncModal()">关闭</button></div></div></div>
 
 <script>
 // ================= 本地数据存储 =================
 const STORAGE_KEY = 'weekly-plan-book-v5'; 
 const SYNC_KEY = 'vicky-planner-sync-config';
-
 let db = { tasks: [], notes: {}, habits: [], summaries: {}, lists: [] };
 let currentMonday = getMonday(new Date());
 let currentWeekKey = getWeekKey(currentMonday);
@@ -389,31 +362,16 @@ function loadLocal() {
 }
 function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
 
-// ================= 云同步逻辑 =================
+// ================= 云同步 =================
 function getSyncConfig() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || { user: '', repo: '', token: '' }; } catch(e) { return { user: '', repo: '', token: '' }; } }
 function saveSyncConfigToStorage(cfg) { localStorage.setItem(SYNC_KEY, JSON.stringify(cfg)); }
-function openSyncModal() {
-  const cfg = getSyncConfig();
-  document.getElementById('sync-user').value = cfg.user || '';
-  document.getElementById('sync-repo').value = cfg.repo || '';
-  document.getElementById('sync-token').value = cfg.token || '';
-  document.getElementById('sync-status').textContent = cfg.user ? '配置已保存，可上传/下载' : '尚未配置，请填写 Gitee 信息';
-  document.getElementById('sync-modal').classList.add('show');
-}
+function openSyncModal() { const cfg = getSyncConfig(); document.getElementById('sync-user').value = cfg.user || ''; document.getElementById('sync-repo').value = cfg.repo || ''; document.getElementById('sync-token').value = cfg.token || ''; document.getElementById('sync-status').textContent = cfg.user ? '配置已保存，可上传/下载' : '尚未配置，请填写 Gitee 信息'; document.getElementById('sync-modal').classList.add('show'); }
 function closeSyncModal() { document.getElementById('sync-modal').classList.remove('show'); }
-function saveSyncConfig() {
-  const cfg = { user: document.getElementById('sync-user').value.trim(), repo: document.getElementById('sync-repo').value.trim(), token: document.getElementById('sync-token').value.trim() };
-  if (!cfg.user || !cfg.repo || !cfg.token) { alert('请完整填写用户名、仓库名和令牌！'); return; }
-  saveSyncConfigToStorage(cfg);
-  document.getElementById('sync-status').textContent = '配置已保存！可以上传或下载了。';
-  alert('配置保存成功！');
-}
-
+function saveSyncConfig() { const cfg = { user: document.getElementById('sync-user').value.trim(), repo: document.getElementById('sync-repo').value.trim(), token: document.getElementById('sync-token').value.trim() }; if (!cfg.user || !cfg.repo || !cfg.token) { alert('请完整填写用户名、仓库名和令牌！'); return; } saveSyncConfigToStorage(cfg); document.getElementById('sync-status').textContent = '配置已保存！可以上传或下载了。'; alert('配置保存成功！'); }
 async function uploadToCloud() {
   const cfg = getSyncConfig();
   if (!cfg.user || !cfg.repo || !cfg.token) { alert('请先在设置中填写 Gitee 信息'); return; }
-  const statusEl = document.getElementById('sync-status');
-  statusEl.textContent = '正在上传...';
+  const statusEl = document.getElementById('sync-status'); statusEl.textContent = '正在上传...';
   try {
     let sha = null;
     const getUrl = `https://gitee.com/api/v5/repos/${cfg.user}/${cfg.repo}/contents/vicky-planner-data.json?access_token=${cfg.token}&ref=master`;
@@ -428,12 +386,10 @@ async function uploadToCloud() {
     else { const err = await putRes.json(); statusEl.textContent = '上传失败：' + (err.message || '未知错误'); alert('上传失败，请检查配置或网络。'); }
   } catch (err) { statusEl.textContent = '网络错误：' + err.message; alert('上传失败，网络错误。'); }
 }
-
 async function downloadFromCloud() {
   const cfg = getSyncConfig();
   if (!cfg.user || !cfg.repo || !cfg.token) { alert('请先在设置中填写 Gitee 信息'); return; }
-  const statusEl = document.getElementById('sync-status');
-  statusEl.textContent = '正在下载...';
+  const statusEl = document.getElementById('sync-status'); statusEl.textContent = '正在下载...';
   try {
     const getUrl = `https://gitee.com/api/v5/repos/${cfg.user}/${cfg.repo}/contents/vicky-planner-data.json?access_token=${cfg.token}&ref=master`;
     const res = await fetch(getUrl);
@@ -442,31 +398,16 @@ async function downloadFromCloud() {
     const contentStr = decodeURIComponent(escape(atob(data.content)));
     const cloudDb = JSON.parse(contentStr);
     if (!confirm('从云端下载将覆盖当前本地所有数据，确定吗？')) { statusEl.textContent = '已取消下载。'; return; }
-    db = cloudDb; saveLocal(); renderAll(); renderHabits(); renderBook(); renderLists();
+    db = cloudDb;
+    if (!db.tasks) db.tasks = []; if (!db.notes) db.notes = {}; if (!db.habits) db.habits = []; if (!db.summaries) db.summaries = {}; if (!db.lists) db.lists = [];
+    saveLocal(); renderAll(); renderHabits(); renderBook(); renderLists();
     statusEl.textContent = '下载成功！本地数据已更新。'; alert('下载成功！本地数据已更新。');
   } catch (err) { statusEl.textContent = '网络错误：' + err.message; alert('下载失败，网络错误。'); }
 }
 
-// ================= 备份与恢复（本地文件） =================
-function exportData() {
-  const dataStr = JSON.stringify(db, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `vicky-planner-备份-${formatDate(new Date())}.json`; a.click(); URL.revokeObjectURL(url);
-}
-function importData(event) {
-  const file = event.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const imported = JSON.parse(e.target.result);
-      if (!confirm('导入将覆盖当前所有数据，确定吗？')) return;
-      db = imported; saveLocal(); renderAll(); renderHabits(); renderBook(); renderLists();
-      alert('数据导入成功！');
-    } catch(err) { alert('文件格式错误，导入失败。'); }
-  };
-  reader.readAsText(file); event.target.value = '';
-}
+// ================= 备份与恢复 =================
+function exportData() { const dataStr = JSON.stringify(db, null, 2); const blob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `vicky-planner-备份-${formatDate(new Date())}.json`; a.click(); URL.revokeObjectURL(url); }
+function importData(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const imported = JSON.parse(e.target.result); if (!confirm('导入将覆盖当前所有数据，确定吗？')) return; db = imported; saveLocal(); renderAll(); renderHabits(); renderBook(); renderLists(); alert('数据导入成功！'); } catch(err) { alert('文件格式错误，导入失败。'); } }; reader.readAsText(file); event.target.value = ''; }
 
 // ================= 数据操作 =================
 function addInboxTask(inputEl) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: null, day: null, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
@@ -474,20 +415,15 @@ function moveToDay(taskId, day) { const t = db.tasks.find(x => x.id === taskId);
 function toggleTask(id) { const t = db.tasks.find(x => x.id === id); if (!t) return; t.done = !t.done; saveLocal(); renderAll(); }
 function deleteTask(id) { if (!confirm('确定要删除吗？')) return; db.tasks = db.tasks.filter(x => x.id !== id); if (selectedTaskId === id) selectedTaskId = null; saveLocal(); renderAll(); }
 function deleteSelectedTask() { if (selectedTaskId) deleteTask(selectedTaskId); }
-function saveSelectedTask() {
-  const t = db.tasks.find(x => x.id === selectedTaskId); if (!t) return;
-  t.title = document.getElementById('detail-edit-title').value.trim() || t.title;
-  t.dueDate = document.getElementById('detail-edit-time').value;
-  t.details = document.getElementById('detail-edit-desc').value;
-  saveLocal(); renderAll(); alert('任务详情已保存！');
-}
+function saveSelectedTask() { const t = db.tasks.find(x => x.id === selectedTaskId); if (!t) return; t.title = document.getElementById('detail-edit-title').value.trim() || t.title; t.dueDate = document.getElementById('detail-edit-time').value; t.details = document.getElementById('detail-edit-desc').value; saveLocal(); renderAll(); alert('任务详情已保存！'); }
 function addTask(inputEl, day) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: currentWeekKey, day, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
-function addTaskFromInput(inputEl) { addTask(inputEl, selectedDay); }
 
-function addHabit() { const name = prompt('输入新习惯的名称（例如：戒奶茶、背单词）：'); if (!name || !name.trim()) return; db.habits.push({ id: 'habit-' + Date.now(), name: name.trim(), records: {} }); saveLocal(); renderHabits(); }
+// 习惯操作
+function addHabit() { const name = prompt('输入新习惯的名称：'); if (!name || !name.trim()) return; db.habits.push({ id: 'habit-' + Date.now(), name: name.trim(), records: {} }); saveLocal(); renderHabits(); }
 function toggleHabitRecord(habitId, dateStr) { const h = db.habits.find(x => x.id === habitId); if (!h) return; if (h.records[dateStr]) delete h.records[dateStr]; else h.records[dateStr] = true; saveLocal(); renderHabits(); }
 function deleteHabit(habitId) { if (!confirm('确定要删除这个习惯吗？')) return; db.habits = db.habits.filter(x => x.id !== habitId); saveLocal(); renderHabits(); }
 
+// 清单操作
 function openListModal() { document.getElementById('list-name').value = ''; document.getElementById('list-batch-items').value = ''; document.getElementById('list-file-input').value = ''; document.getElementById('list-modal').classList.add('show'); }
 function closeListModal() { document.getElementById('list-modal').classList.remove('show'); }
 function handleFileUpload(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('list-batch-items').value = e.target.result; }; reader.readAsText(file); input.value = ''; }
@@ -500,222 +436,163 @@ function deleteListItem(listId, itemId) { if (!confirm('删除这个项目吗？
 // ================= 渲染：周计划 =================
 function renderAll() {
   const end = new Date(currentMonday); end.setDate(end.getDate() + 6);
-  document.getElementById('week-num').textContent = `第 ${currentWeekKey.split('-W')[1]} 周`;
-  document.getElementById('week-range').textContent = `${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 – ${end.getMonth()+1}月${end.getDate()}日`;
+  const weekNum = currentWeekKey.split('-W')[1];
+  document.getElementById('header-bottom-display').textContent = `第 ${weekNum} 周 (${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 - ${end.getMonth()+1}月${end.getDate()}日)`;
+  document.getElementById('footer-week-display').textContent = `第 ${weekNum} 周`;
 
-  // 渲染待办（在右侧上方）
   const inboxTasks = db.tasks.filter(t => t.week_key === null);
   document.getElementById('inbox-count').textContent = inboxTasks.length;
   const inboxList = document.getElementById('inbox-list'); inboxList.innerHTML = '';
-  if (inboxTasks.length === 0) { inboxList.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);text-align:center;padding:4px 0;">暂无待办</div>'; }
+  if (inboxTasks.length === 0) { inboxList.innerHTML = '<div style="font-size:11px;color:var(--text-tertiary);text-align:center;padding:4px 0;">暂无待办</div>'; }
   else {
     inboxTasks.forEach(t => {
       const el = document.createElement('div'); el.className = 'inbox-task-item';
-      el.innerHTML = `
-        <button class="chk" style="width:14px;height:14px;" onclick="toggleTask('${t.id}')"></button>
-        <span class="ttl" onclick="selectedTaskId='${t.id}'; renderAll();" style="cursor:pointer; ${t.done?'text-decoration:line-through;color:var(--text-tertiary);':''}">${esc(t.title)}</span>
-        <select onchange="if(this.value!==''){ moveToDay('${t.id}', this.value); }">
-          <option value="">移动</option>
-          <option value="0">周一</option><option value="1">周二</option><option value="2">周三</option>
-          <option value="3">周四</option><option value="4">周五</option><option value="5">周六</option><option value="6">周日</option>
-        </select>
-      `;
+      el.innerHTML = `<button class="chk" style="width:12px;height:12px;" onclick="toggleTask('${t.id}')"></button><span class="ttl" onclick="selectedTaskId='${t.id}'; renderAll();" style="cursor:pointer; ${t.done?'text-decoration:line-through;color:var(--text-tertiary);':''}">${esc(t.title)}</span><select onchange="if(this.value!==''){ moveToDay('${t.id}', this.value); }"><option value="">移动</option><option value="0">周一</option><option value="1">周二</option><option value="2">周三</option><option value="3">周四</option><option value="4">周五</option><option value="5">周六</option><option value="6">周日</option></select>`;
       inboxList.appendChild(el);
     });
   }
 
-  // 渲染左侧日期
   const daysContainer = document.getElementById('days-container');
   daysContainer.innerHTML = '';
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
-  
   for (let d = 0; d < 7; d++) {
     const date = getDateForDay(d);
     const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
-    
-    const group = document.createElement('div');
-    group.className = 'day-group';
-    
-    const head = document.createElement('div');
-    head.className = 'day-head' + (selectedDay === d ? ' active' : '');
+    const group = document.createElement('div'); group.className = 'day-group';
+    const head = document.createElement('div'); head.className = 'day-head' + (selectedDay === d ? ' active' : '');
     head.innerHTML = `<span class="dnum">${date.getDate()}</span><span class="dname">${dayNames[d]}</span>`;
     head.onclick = () => { selectedDay = d; selectedTaskId = null; renderAll(); };
     group.appendChild(head);
-    
-    const taskList = document.createElement('div');
-    taskList.className = 'task-list';
-    if (dayTasks.length === 0) {
-      taskList.innerHTML = '<div style="color:var(--text-tertiary); font-size:11px; padding:2px 6px;">无任务</div>';
-    } else {
+    const taskList = document.createElement('div'); taskList.className = 'task-list';
+    if (dayTasks.length === 0) { taskList.innerHTML = '<div style="color:var(--text-tertiary); font-size:11px; padding:2px 6px;">无任务</div>'; }
+    else {
       dayTasks.forEach(t => {
         const item = document.createElement('div');
         item.className = 'task-item' + (t.done ? ' done' : '') + (selectedTaskId === t.id ? ' active' : '');
-        item.innerHTML = `
-          <button class="chk" onclick="event.stopPropagation(); toggleTask('${t.id}')"></button>
-          <span class="ttl">${esc(t.title)}</span>
-        `;
+        item.innerHTML = `<button class="chk" onclick="event.stopPropagation(); toggleTask('${t.id}')"></button><span class="ttl">${esc(t.title)}</span>`;
         item.onclick = (e) => { e.stopPropagation(); selectedTaskId = t.id; selectedDay = d; renderAll(); };
         taskList.appendChild(item);
       });
     }
-    group.appendChild(taskList);
-    daysContainer.appendChild(group);
+    group.appendChild(taskList); daysContainer.appendChild(group);
   }
 
-  // 渲染右侧任务详情
   const detailTitle = document.getElementById('right-detail-title');
   const detailDate = document.getElementById('right-detail-date');
   const taskDetailContent = document.getElementById('task-detail-content');
   const noSelection = document.getElementById('task-no-selection');
-  
   const selectedDate = getDateForDay(selectedDay);
   detailDate.textContent = `${selectedDate.getMonth()+1}月${selectedDate.getDate()}日`;
-  
   if (selectedTaskId) {
     const t = db.tasks.find(x => x.id === selectedTaskId);
     if (t) {
-      detailTitle.textContent = '任务详情';
-      taskDetailContent.style.display = 'block';
-      noSelection.style.display = 'none';
-      document.getElementById('detail-edit-title').value = t.title || '';
-      document.getElementById('detail-edit-time').value = t.dueDate || '';
-      document.getElementById('detail-edit-desc').value = t.details || '';
-    } else {
-      selectedTaskId = null;
-      detailTitle.textContent = '任务详情';
-      taskDetailContent.style.display = 'none';
-      noSelection.style.display = 'block';
-    }
-  } else {
-    detailTitle.textContent = '今日详情';
-    taskDetailContent.style.display = 'none';
-    noSelection.style.display = 'block';
-  }
-  
-  // 渲染右侧日常反思
+      detailTitle.textContent = '任务详情'; taskDetailContent.style.display = 'block'; noSelection.style.display = 'none';
+      document.getElementById('detail-edit-title').value = t.title || ''; document.getElementById('detail-edit-time').value = t.dueDate || ''; document.getElementById('detail-edit-desc').value = t.details || '';
+    } else { selectedTaskId = null; detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
+  } else { detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
   const noteKey = `${currentWeekKey}-${selectedDay}`;
-  const textarea = document.getElementById('daily-note'); 
-  textarea.value = db.notes[noteKey] || '';
+  const textarea = document.getElementById('daily-note'); textarea.value = db.notes[noteKey] || '';
   textarea.oninput = (e) => { db.notes[noteKey] = e.target.value; saveLocal(); };
 }
 
-// ================= 翻周与日历弹窗 =================
-function changeWeek(offset) {
-  currentMonday.setDate(currentMonday.getDate() + (offset * 7));
-  currentWeekKey = getWeekKey(currentMonday);
-  selectedDay = 0; selectedTaskId = null;
-  renderAll();
-}
-
+// ================= 翻周与日历 =================
+function changeWeek(offset) { currentMonday.setDate(currentMonday.getDate() + (offset * 7)); currentWeekKey = getWeekKey(currentMonday); selectedDay = 0; selectedTaskId = null; renderAll(); }
 function openCalendarModal() {
-  const container = document.getElementById('calendar-container');
-  container.innerHTML = '';
-  const dayNames = ['一','二','三','四','五','六','日'];
-  const grid = document.createElement('div');
-  grid.className = 'calendar-grid';
-  
+  const container = document.getElementById('calendar-container'); container.innerHTML = '';
+  const dayNames = ['一','二','三','四','五','六','日']; const grid = document.createElement('div'); grid.className = 'calendar-grid';
   for (let d = 0; d < 7; d++) {
-    const date = getDateForDay(d);
-    const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
-    const hasTask = dayTasks.length > 0;
-    const hasNote = db.notes[`${currentWeekKey}-${d}`] && db.notes[`${currentWeekKey}-${d}`].trim() !== '';
-    
-    const cell = document.createElement('div');
-    cell.className = 'calendar-cell' + (selectedDay === d ? ' active' : '');
-    cell.innerHTML = `
-      <div class="cal-date">${date.getDate()}</div>
-      <div class="cal-day">周${dayNames[d]}</div>
-      <div class="cal-badges">
-        ${hasTask ? `<span class="badge task">任务</span>` : ''}
-        ${hasNote ? `<span class="badge note">日记</span>` : ''}
-      </div>
-    `;
+    const date = getDateForDay(d); const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
+    const hasTask = dayTasks.length > 0; const hasNote = db.notes[`${currentWeekKey}-${d}`] && db.notes[`${currentWeekKey}-${d}`].trim() !== '';
+    const cell = document.createElement('div'); cell.className = 'calendar-cell' + (selectedDay === d ? ' active' : '');
+    cell.innerHTML = `<div class="cal-date">${date.getDate()}</div><div class="cal-day">周${dayNames[d]}</div><div class="cal-badges">${hasTask ? `<span class="badge task">任务</span>` : ''}${hasNote ? `<span class="badge note">日记</span>` : ''}</div>`;
     cell.onclick = () => { selectedDay = d; selectedTaskId = null; closeCalendarModal(); renderAll(); };
     grid.appendChild(cell);
   }
-  container.appendChild(grid);
-  document.getElementById('calendar-modal').classList.add('show');
+  container.appendChild(grid); document.getElementById('calendar-modal').classList.add('show');
 }
-
 function closeCalendarModal() { document.getElementById('calendar-modal').classList.remove('show'); }
 
 // ================= 渲染：习惯 =================
 function renderHabits() {
   const list = document.getElementById('habit-list'); list.innerHTML = '';
   if (!db.habits.length) { list.innerHTML = '<div style="text-align:center;color:var(--text-secondary);margin-top:40px;">还没有习惯，点击右上角新建一个吧！</div>'; return; }
+  
   const today = new Date();
+  const todayStr = formatDate(today);
+  const currentMonday = getMonday(today);
+
   db.habits.forEach(h => {
     const card = document.createElement('div'); card.className = 'habit-card';
+    
+    // 计算连续打卡天数
     let streak = 0; let d = new Date(today);
     while (true) { const ds = formatDate(d); if (h.records[ds]) { streak++; d.setDate(d.getDate() - 1); } else break; }
+    
+    // 生成竖版热力图（过去 17 周，按列排布）
     let heatmapHtml = '';
-    for (let i = 119; i >= 0; i--) {
-      const dt = new Date(today); dt.setDate(dt.getDate() - i); const ds = formatDate(dt);
-      const isDone = h.records[ds] ? 'done' : '';
-      heatmapHtml += `<div class="heatmap-cell ${isDone}" onclick="toggleHabitRecord('${h.id}', '${ds}')" title="${ds}"></div>`;
+    for (let w = 16; w >= 0; w--) {
+      const weekStart = new Date(currentMonday);
+      weekStart.setDate(weekStart.getDate() - (w * 7));
+      for (let d = 0; d < 7; d++) {
+        const dt = new Date(weekStart); dt.setDate(dt.getDate() + d);
+        const ds = formatDate(dt);
+        if (dt > today) {
+          heatmapHtml += `<div class="heatmap-cell future"></div>`;
+        } else {
+          const isDone = h.records[ds] ? 'done' : '';
+          heatmapHtml += `<div class="heatmap-cell ${isDone}" onclick="toggleHabitRecord('${h.id}', '${ds}')" title="${ds}"></div>`;
+        }
+      }
     }
+    
+    // 今日打卡状态
+    const isCheckedToday = h.records[todayStr] ? true : false;
+    const btnClass = isCheckedToday ? 'checkin-btn checked' : 'checkin-btn';
+    const btnText = isCheckedToday ? '✅ 已打卡' : '⭕ 今日打卡';
+
     card.innerHTML = `
-      <div class="habit-top"><span class="habit-name">${esc(h.name)}</span><span class="habit-streak">连续 ${streak} 天</span></div>
-      <div class="heatmap-grid">${heatmapHtml}</div>
-      <div class="habit-actions"><span>可横向滑动查看</span><button onclick="deleteHabit('${h.id}')">删除习惯</button></div>
+      <div class="habit-top">
+        <span class="habit-name">${esc(h.name)}</span>
+        <span class="habit-streak">连续 ${streak} 天</span>
+      </div>
+      <div class="heatmap-container">
+        <div class="heatmap-grid">${heatmapHtml}</div>
+      </div>
+      <div class="habit-footer">
+        <button class="checkin-btn ${isCheckedToday ? 'checked' : ''}" onclick="toggleHabitRecord('${h.id}', '${todayStr}')">${btnText}</button>
+        <div class="habit-actions"><button onclick="deleteHabit('${h.id}')">删除习惯</button></div>
+      </div>
     `;
     list.appendChild(card);
   });
 }
 
-// ================= 渲染：总结书 =================
+// ================= 渲染：总结、清单 =================
 function switchBookPeriod(period) { bookPeriod = period; document.querySelectorAll('.book-toolbar button').forEach(b => b.classList.toggle('active', b.dataset.period === period)); bookDate = new Date(); renderBook(); }
 function getPeriodKey() { if (bookPeriod === 'week') return getWeekKey(getMonday(bookDate)); else if (bookPeriod === 'month') return bookDate.getFullYear() + '-' + String(bookDate.getMonth() + 1).padStart(2, '0'); else return String(bookDate.getFullYear()); }
 function getPeriodLabel() { if (bookPeriod === 'week') return `第 ${getWeekKey(getMonday(bookDate)).split('-W')[1]} 周`; else if (bookPeriod === 'month') return `${bookDate.getFullYear()}年 ${bookDate.getMonth() + 1}月`; else return `${bookDate.getFullYear()}年`; }
-function getPeriodRange() {
-  let start, end;
-  if (bookPeriod === 'week') { start = getMonday(bookDate); end = new Date(start); end.setDate(end.getDate() + 6); }
-  else if (bookPeriod === 'month') { start = new Date(bookDate.getFullYear(), bookDate.getMonth(), 1); end = new Date(bookDate.getFullYear(), bookDate.getMonth() + 1, 0); }
-  else { start = new Date(bookDate.getFullYear(), 0, 1); end = new Date(bookDate.getFullYear(), 11, 31); }
-  return { start, end };
-}
+function getPeriodRange() { let start, end; if (bookPeriod === 'week') { start = getMonday(bookDate); end = new Date(start); end.setDate(end.getDate() + 6); } else if (bookPeriod === 'month') { start = new Date(bookDate.getFullYear(), bookDate.getMonth(), 1); end = new Date(bookDate.getFullYear(), bookDate.getMonth() + 1, 0); } else { start = new Date(bookDate.getFullYear(), 0, 1); end = new Date(bookDate.getFullYear(), 11, 31); } return { start, end }; }
 function renderBook() {
   document.getElementById('book-period-label').textContent = getPeriodLabel();
   const { start, end } = getPeriodRange();
   const leftContent = document.getElementById('book-left-content'); leftContent.innerHTML = ''; let hasContent = false;
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
-  
-  let weekKeysInRange = new Set();
-  let curr = new Date(start);
+  let weekKeysInRange = new Set(); let curr = new Date(start);
   while (curr <= end) { weekKeysInRange.add(getWeekKey(getMonday(curr))); curr.setDate(curr.getDate() + 7); }
-  
   const completedTasks = db.tasks.filter(t => t.done && t.week_key && weekKeysInRange.has(t.week_key));
   let completedTasksHtml = '';
-  if (completedTasks.length > 0) {
-    completedTasksHtml += `<div class="book-section-title">✅ 已完成的任务 (${completedTasks.length})</div><div class="book-task-list">`;
-    completedTasks.forEach(t => { completedTasksHtml += `<div class="book-task-item"><span class="done-icon">✓</span> <span>${esc(t.title)}</span></div>`; });
-    completedTasksHtml += `</div>`; hasContent = true;
-  }
-
-  let dailyNotesHtml = '';
-  curr = new Date(start);
-  while (curr <= end) {
-    const weekKey = getWeekKey(getMonday(curr)); const dayIndex = (curr.getDay() + 6) % 7;
-    const noteText = db.notes[`${weekKey}-${dayIndex}`];
-    if (noteText && noteText.trim()) { 
-      hasContent = true; 
-      dailyNotesHtml += `<div class="book-item"><div class="book-item-header"><span class="book-item-date">${curr.getMonth()+1}月${curr.getDate()}日</span><span class="book-item-meta">${dayNames[dayIndex]}</span></div><div class="book-item-text">${esc(noteText)}</div></div>`; 
-    }
-    curr.setDate(curr.getDate() + 1);
-  }
+  if (completedTasks.length > 0) { completedTasksHtml += `<div class="book-section-title">✅ 已完成的任务 (${completedTasks.length})</div><div class="book-task-list">`; completedTasks.forEach(t => { completedTasksHtml += `<div class="book-task-item"><span class="done-icon">✓</span> <span>${esc(t.title)}</span></div>`; }); completedTasksHtml += `</div>`; hasContent = true; }
+  let dailyNotesHtml = ''; curr = new Date(start);
+  while (curr <= end) { const weekKey = getWeekKey(getMonday(curr)); const dayIndex = (curr.getDay() + 6) % 7; const noteText = db.notes[`${weekKey}-${dayIndex}`]; if (noteText && noteText.trim()) { hasContent = true; dailyNotesHtml += `<div class="book-item"><div class="book-item-header"><span class="book-item-date">${curr.getMonth()+1}月${curr.getDate()}日</span><span class="book-item-meta">${dayNames[dayIndex]}</span></div><div class="book-item-text">${esc(noteText)}</div></div>`; } curr.setDate(curr.getDate() + 1); }
   if (dailyNotesHtml) { dailyNotesHtml = `<div class="book-section-title">📝 每日反思</div>` + dailyNotesHtml; }
   leftContent.innerHTML = completedTasksHtml + dailyNotesHtml;
   if (!hasContent) leftContent.innerHTML = '<div style="text-align:center;color:var(--text-tertiary);margin-top:40px;">这段时间还没有任何记录哦～</div>';
-  
   document.getElementById('book-left-header').querySelector('h3').textContent = getPeriodLabel() + ' 回顾';
   document.getElementById('book-left-header').querySelector('p').textContent = `收集了 ${start.getMonth()+1}月${start.getDate()}日 至 ${end.getMonth()+1}月${end.getDate()}日 的任务与反思`;
-  
   const summaryKey = `${bookPeriod}-${getPeriodKey()}`;
   const textarea = document.getElementById('book-summary-input'); textarea.value = db.summaries[summaryKey] || '';
   textarea.oninput = (e) => { db.summaries[summaryKey] = e.target.value; saveLocal(); };
 }
-
-// ================= 渲染：清单 =================
 function renderLists() {
   const grid = document.getElementById('list-grid'); grid.innerHTML = '';
   if (!db.lists.length) { grid.innerHTML = '<div style="text-align:center;color:var(--text-secondary);margin-top:40px;">还没有清单，点击右上角新建一个吧！</div>'; return; }
@@ -724,19 +601,8 @@ function renderLists() {
     const percent = total === 0 ? 0 : Math.round((done / total) * 100);
     const card = document.createElement('div'); card.className = 'list-card';
     let itemsHtml = '';
-    list.items.forEach(item => {
-      itemsHtml += `<div class="list-item ${item.done ? 'done' : ''}">
-        <button class="chk-square" onclick="toggleListItem('${list.id}', '${item.id}')"></button>
-        <span class="ttl" onclick="toggleListItem('${list.id}', '${item.id}')" style="cursor:pointer;">${esc(item.text)}</span>
-        <button style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:14px;" onclick="deleteListItem('${list.id}', '${item.id}')">×</button>
-      </div>`;
-    });
-    card.innerHTML = `
-      <div class="list-card-header"><span class="list-card-title">${esc(list.name)}</span><div class="list-card-actions"><button onclick="deleteList('${list.id}')" title="删除清单">🗑</button></div></div>
-      <div class="list-progress"><div class="progress-bar"><div class="progress-fill" style="width: ${percent}%"></div></div><span>${done}/${total}</span></div>
-      <div class="list-items">${itemsHtml || '<div style="color:var(--text-tertiary);font-size:13px;padding:4px 0;">暂无项目</div>'}</div>
-      <div class="add-task-row" style="margin-top:4px;"><input type="text" placeholder="添加项目..." onkeydown="if(event.key==='Enter') addListItem('${list.id}', this)"><button onclick="addListItem('${list.id}', this.previousElementSibling)">+</button></div>
-    `;
+    list.items.forEach(item => { itemsHtml += `<div class="list-item ${item.done ? 'done' : ''}"><button class="chk-square" onclick="toggleListItem('${list.id}', '${item.id}')"></button><span class="ttl" onclick="toggleListItem('${list.id}', '${item.id}')" style="cursor:pointer;">${esc(item.text)}</span><button style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:14px;" onclick="deleteListItem('${list.id}', '${item.id}')">×</button></div>`; });
+    card.innerHTML = `<div class="list-card-header"><span class="list-card-title">${esc(list.name)}</span><div class="list-card-actions"><button onclick="deleteList('${list.id}')" title="删除清单">🗑</button></div></div><div class="list-progress"><div class="progress-bar"><div class="progress-fill" style="width: ${percent}%"></div></div><span>${done}/${total}</span></div><div class="list-items">${itemsHtml || '<div style="color:var(--text-tertiary);font-size:13px;padding:4px 0;">暂无项目</div>'}</div><div class="add-task-row" style="margin-top:4px;"><input type="text" placeholder="添加项目..." onkeydown="if(event.key==='Enter') addListItem('${list.id}', this)"><button onclick="addListItem('${list.id}', this.previousElementSibling)">+</button></div>`;
     grid.appendChild(card);
   });
 }
@@ -752,8 +618,8 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     const view = tab.dataset.view;
     document.getElementById('view-' + view).classList.add('active');
-    if (view === 'plan') { document.getElementById('header-bottom').style.display = 'flex'; renderAll(); }
-    else { document.getElementById('header-bottom').style.display = 'none'; if(view === 'habits') renderHabits(); else if(view === 'book') renderBook(); else if(view === 'lists') renderLists(); }
+    if (view === 'plan') { document.getElementById('header-bottom-display').style.display = 'block'; renderAll(); }
+    else { document.getElementById('header-bottom-display').style.display = 'none'; if(view === 'habits') renderHabits(); else if(view === 'book') renderBook(); else if(view === 'lists') renderLists(); }
   });
 });
 

@@ -7,14 +7,14 @@
 <style>
   :root {
     --bg: #FDFBF7; --card: #FFFDFA; --text: #3A322B; --text-secondary: #8C8279; --text-tertiary: #C2B8A3;
-    --accent: #D97736; --accent-soft: #FDF3E8; --danger: #D9534F; --success: #E6A23C;
+    --accent: #D97736; --accent-soft: #FDF3E8; --danger: #D9534F; --success: #5C9A71;
     --habit-bg: #F4F0E8;
     --separator: #EFE9DF; --radius-card: 10px; --radius-btn: 8px; --shadow-card: 0 1px 6px rgba(160, 130, 90, 0.04);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; font: 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); overflow: hidden; -webkit-font-smoothing: antialiased; }
   
-  /* ================= 顶部导航 ================= */
+  /* 顶部导航 */
   header { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: var(--card); border-bottom: 1px solid var(--separator); z-index: 10; flex-wrap: wrap; }
   .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
   .tabs { display: flex; background: #F4F0E8; border-radius: var(--radius-btn); padding: 3px; flex: 1; max-width: 300px; }
@@ -35,16 +35,12 @@
   .day-head.active { background: var(--accent-soft); border-left: 3px solid var(--accent); }
   .dnum { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
   .dname { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
-  
-  /* 任务项排版优化 */
   .task-list { padding: 0 2px 8px 2px; display: flex; flex-direction: column; }
   .task-item { display: flex; align-items: flex-start; gap: 4px; padding: 4px 4px; border-radius: 6px; cursor: pointer; }
   .task-item.active { background: var(--accent-soft); }
   .task-item .chk { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--text-tertiary); background: var(--card); flex: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
   .task-item.done .chk { background: var(--accent); border-color: var(--accent); }
   .task-item.done .chk::after { content: ''; width: 3px; height: 6px; border: 2px solid #fff; border-top: 0; border-left: 0; transform: rotate(45deg) translate(-1px, -1px); }
-  
-  /* 任务内容容器与详情预览 */
   .task-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; user-select: none; font-weight: 500; }
   .task-preview { font-size: 10px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
@@ -58,11 +54,9 @@
   .inbox-input-row { display: flex; gap: 4px; }
   .inbox-input-row input { flex: 1; border: 1px solid var(--separator); border-radius: 6px; padding: 6px 8px; font-size: 12px; outline: none; background: var(--bg); color: var(--text); min-width: 0; }
   .inbox-input-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 10px; font-size: 14px; cursor: pointer; }
-  
-  /* 临时待办任务项样式 */
   .inbox-task-item { display: flex; align-items: flex-start; gap: 6px; padding: 6px 0; border-bottom: 1px solid var(--separator); font-size: 12px; }
   .inbox-task-item:last-child { border-bottom: none; }
-  .inbox-task-item .chk { margin-top: 2px; } /* 调整打勾按钮对齐 */
+  .inbox-task-item .chk { margin-top: 2px; }
   .inbox-task-item .task-content { flex: 1; min-width: 0; }
   .inbox-task-item .ttl { font-size: 12px; word-break: break-word; line-height: 1.4; font-weight: 500; }
   .inbox-task-item .task-preview { font-size: 10px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -90,7 +84,7 @@
   .right-footer .week-display { font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; padding: 4px 12px; border-radius: 6px; background: var(--accent-soft); }
   .right-footer .week-display:active { background: #FDE8D8; }
 
-  /* 日历弹窗 */
+  /* 日历弹窗（计划界面） */
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
   .calendar-cell { border: 1px solid var(--separator); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
   .calendar-cell:active { background: var(--accent-soft); }
@@ -102,17 +96,44 @@
   .badge.task { background: #E8F0FE; color: #1A73E8; }
   .badge.note { background: #FCE8E6; color: #C5221F; }
 
-  /* 同步面板 */
-  .sync-status { font-size: 12px; color: var(--text-secondary); text-align: center; margin-bottom: 10px; }
-  .sync-btn-row { display: flex; gap: 8px; }
-  .sync-btn-row button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .sync-btn-row .upload-btn { background: var(--accent); color: #fff; }
-  .sync-btn-row .download-btn { background: #F4F0E8; color: var(--text); }
-  .sync-config-row { margin-bottom: 12px; }
-  .sync-config-row label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
-  .sync-config-row input { width: 100%; padding: 10px 12px; border: 1px solid var(--separator); border-radius: 8px; font-size: 13px; outline: none; background: #FDFCF9; color: var(--text); }
+  /* ================= 视图 3：总结书（大改：日历视图） ================= */
+  #view-book { flex-direction: column; gap: 8px; }
+  .book-toolbar { display: flex; gap: 6px; justify-content: center; }
+  .book-toolbar button { background: #F4F0E8; color: var(--text-secondary); border: none; border-radius: 16px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .book-toolbar button.active { background: var(--accent); color: #fff; }
+  
+  /* 日历主容器 */
+  .calendar-view-container { flex: 1; display: flex; gap: 8px; overflow: hidden; }
+  .calendar-left { flex: 6; display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); overflow: hidden; }
+  .calendar-right { flex: 4; display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+  
+  .calendar-header-bar { padding: 10px 12px; border-bottom: 1px solid var(--separator); background: #FDFCF9; display: flex; justify-content: space-between; align-items: center; }
+  .calendar-header-bar h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .calendar-header-bar p { margin: 0; font-size: 12px; color: var(--text-secondary); }
+  
+  /* 月历网格 */
+  .month-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--bg); border-bottom: 1px solid var(--separator); text-align: center; padding: 6px 0; font-size: 11px; color: var(--text-secondary); font-weight: 600; }
+  .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); flex: 1; overflow-y: auto; background: var(--card); }
+  .month-day-cell { border-right: 1px solid var(--separator); border-bottom: 1px solid var(--separator); padding: 4px; display: flex; flex-direction: column; gap: 2px; min-height: 80px; position: relative; }
+  .month-day-cell:nth-child(7n) { border-right: none; }
+  .month-day-cell.other-month { background: #FAFAFA; opacity: 0.5; }
+  .month-day-cell.today { background: var(--accent-soft); }
+  .month-day-num { font-size: 11px; font-weight: 600; color: var(--text); text-align: right; margin-bottom: 2px; }
+  .month-day-cell.today .month-day-num { color: var(--accent); font-weight: 800; }
+  
+  /* 日历里的任务块 */
+  .calendar-task { font-size: 10px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+  .calendar-task.done { background: #F0F0F0; color: var(--text-tertiary); text-decoration: line-through; }
+  .calendar-task.pending { background: var(--accent-soft); color: var(--accent); font-weight: 500; border-left: 2px solid var(--accent); }
+  .more-tasks { font-size: 9px; color: var(--text-tertiary); text-align: center; margin-top: 1px; }
+  
+  /* 右侧总结区 */
+  .calendar-right .book-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; }
+  .book-summary-textarea { flex: 1; width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; color: var(--text); }
+  .book-nav { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+  .book-nav button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
-  /* ================= 视图 2：习惯打卡 ================= */
+  /* ================= 视图 2、4 ================= */
   #view-habits { flex-direction: column; gap: 0; }
   .habits-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 12px 4px; }
   .habits-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
@@ -122,45 +143,16 @@
   .habit-top { display: flex; justify-content: space-between; align-items: center; }
   .habit-name { font-weight: 600; font-size: 16px; }
   .habit-streak { font-size: 12px; color: var(--accent); background: #FEF3E2; padding: 3px 8px; border-radius: 10px; font-weight: 500; }
-  
-  /* 竖版热力图（仅展示，不可点击） */
   .heatmap-container { overflow-x: auto; padding-bottom: 6px; }
   .heatmap-grid { display: grid; grid-template-rows: repeat(7, 12px); grid-auto-flow: column; grid-auto-columns: 12px; gap: 2px; }
   .heatmap-cell { width: 12px; height: 12px; border-radius: 3px; background: var(--habit-bg); transition: 0.15s; }
   .heatmap-cell.done { background: var(--success); }
   .heatmap-cell.future { background: transparent; }
-  
   .habit-footer { display: flex; justify-content: space-between; align-items: center; }
   .habit-actions button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 12px; }
   .checkin-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
   .checkin-btn.checked { background: var(--habit-bg); color: var(--text-secondary); }
   .checkin-btn:active { transform: scale(0.96); }
-
-  /* ================= 视图 3、4 ================= */
-  #view-book { flex-direction: column; gap: 8px; }
-  .book-toolbar { display: flex; gap: 6px; justify-content: center; }
-  .book-toolbar button { background: #F4F0E8; color: var(--text-secondary); border: none; border-radius: 16px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
-  .book-toolbar button.active { background: var(--accent); color: #fff; }
-  .book-container { flex: 1; display: flex; gap: 8px; overflow: hidden; }
-  .book-left, .book-right { flex: 1; display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
-  .book-page-header { padding: 12px; border-bottom: 1px solid var(--separator); background: #FDFCF9; }
-  .book-page-header h3 { margin: 0; font-size: 15px; font-weight: 600; }
-  .book-page-header p { margin: 2px 0 0 0; font-size: 12px; color: var(--text-secondary); }
-  .book-content { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-  .book-section-title { font-size: 13px; font-weight: 600; color: var(--text); margin: 4px 0 6px 0; padding-bottom: 4px; border-bottom: 1px solid var(--separator); display: flex; align-items: center; gap: 4px; }
-  .book-task-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
-  .book-task-item { font-size: 12px; color: var(--text); display: flex; gap: 4px; align-items: baseline; }
-  .book-task-item .done-icon { color: var(--success); font-weight: bold; }
-  .book-item { padding-bottom: 10px; border-bottom: 1px dashed var(--separator); }
-  .book-item:last-child { border-bottom: none; }
-  .book-item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-  .book-item-date { font-weight: 600; font-size: 13px; color: var(--accent); }
-  .book-item-meta { font-size: 11px; color: var(--text-secondary); }
-  .book-item-text { font-size: 13px; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
-  .book-right .book-content { background: #FDFCF9; }
-  .book-summary-textarea { flex: 1; width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; color: var(--text); }
-  .book-nav { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-  .book-nav button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
   #view-lists { flex-direction: column; gap: 8px; overflow-y: auto; padding: 8px; }
   .lists-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 8px 4px; }
@@ -182,6 +174,16 @@
   .backup-area { display: flex; gap: 8px; justify-content: center; padding: 8px 0 20px 0; }
   .backup-btn { background: #F4F0E8; color: var(--text-secondary); border: 1px solid var(--separator); border-radius: 8px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
 
+  /* 同步面板 */
+  .sync-status { font-size: 12px; color: var(--text-secondary); text-align: center; margin-bottom: 10px; }
+  .sync-btn-row { display: flex; gap: 8px; }
+  .sync-btn-row button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .sync-btn-row .upload-btn { background: var(--accent); color: #fff; }
+  .sync-btn-row .download-btn { background: #F4F0E8; color: var(--text); }
+  .sync-config-row { margin-bottom: 12px; }
+  .sync-config-row label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .sync-config-row input { width: 100%; padding: 10px 12px; border: 1px solid var(--separator); border-radius: 8px; font-size: 13px; outline: none; background: #FDFCF9; color: var(--text); }
+
   /* ================= 手机端适配 ================= */
   @media (max-width: 768px) {
     .view { padding: 4px; gap: 4px; }
@@ -197,6 +199,18 @@
     
     .right-page { flex: 1; gap: 6px; }
     .right-card { padding: 10px; gap: 6px; }
+    
+    /* 总结日历视图手机端变竖向 */
+    .calendar-view-container { flex-direction: column; }
+    .calendar-left { flex: 2; min-height: 0; }
+    .calendar-right { flex: 1; min-height: 100px; }
+    
+    /* 单元格缩小 */
+    .month-day-cell { min-height: 60px; padding: 2px; }
+    .month-day-num { font-size: 10px; }
+    .calendar-task { font-size: 9px; padding: 1px 3px; }
+    .more-tasks { font-size: 8px; }
+
     .book-container { flex-direction: column; }
     .book-left, .book-right { flex: 1; min-height: 0; }
     .list-grid { grid-template-columns: 1fr; }
@@ -301,26 +315,37 @@
   <div class="habit-list" id="habit-list"></div>
 </div>
 
-<!-- 视图 3：总结书 -->
+<!-- 视图 3：总结书（日历视图） -->
 <div class="view" id="view-book">
   <div class="book-toolbar">
-    <button class="active" data-period="week" onclick="switchBookPeriod('week')">周总结</button>
-    <button data-period="month" onclick="switchBookPeriod('month')">月总结</button>
+    <button class="active" data-period="month" onclick="switchBookPeriod('month')">月总结</button>
+    <button data-period="week" onclick="switchBookPeriod('week')">周总结</button>
     <button data-period="year" onclick="switchBookPeriod('year')">年总结</button>
   </div>
-  <div class="book-container">
-    <div class="book-left">
-      <div class="book-page-header" id="book-left-header"><h3>正在加载...</h3><p></p></div>
-      <div class="book-content" id="book-left-content"></div>
+  
+  <div class="calendar-view-container">
+    <!-- 左侧：日历 -->
+    <div class="calendar-left">
+      <div class="calendar-header-bar">
+        <h3 id="book-period-label">2026年 9月</h3>
+        <p id="book-period-sub">任务日历</p>
+      </div>
+      <div class="month-grid-header">
+        <div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
+      </div>
+      <div class="month-grid" id="month-grid"></div>
     </div>
-    <div class="book-right">
+    
+    <!-- 右侧：总结心得 -->
+    <div class="calendar-right">
       <div class="book-page-header" id="book-right-header"><h3>总结与心得</h3><p>写在这里的内容会自动保存</p></div>
       <div class="book-content"><textarea class="book-summary-textarea" id="book-summary-input" placeholder="这个阶段有什么收获？哪里可以做得更好？"></textarea></div>
     </div>
   </div>
+  
   <div class="book-nav">
     <button id="book-prev">‹ 上一页</button>
-    <span id="book-period-label">第 38 周</span>
+    <span id="book-period-label-bottom">第 38 周</span>
     <button id="book-next">下一页 ›</button>
   </div>
 </div>
@@ -353,7 +378,7 @@ let currentMonday = getMonday(new Date());
 let currentWeekKey = getWeekKey(currentMonday);
 let selectedDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
 let selectedTaskId = null;
-let bookPeriod = 'week';
+let bookPeriod = 'month'; // 默认改为月视图
 let bookDate = new Date();
 
 function getMonday(d) { const date = new Date(d); date.setHours(0,0,0,0); const day = date.getDay(); const diff = date.getDate() - day + (day === 0 ? -6 : 1); return new Date(date.setDate(diff)); }
@@ -431,12 +456,10 @@ function deleteSelectedTask() { if (selectedTaskId) deleteTask(selectedTaskId); 
 function saveSelectedTask() { const t = db.tasks.find(x => x.id === selectedTaskId); if (!t) return; t.title = document.getElementById('detail-edit-title').value.trim() || t.title; t.dueDate = document.getElementById('detail-edit-time').value; t.details = document.getElementById('detail-edit-desc').value; saveLocal(); renderAll(); alert('任务详情已保存！'); }
 function addTask(inputEl, day) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: currentWeekKey, day, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
 
-// 习惯操作
 function addHabit() { const name = prompt('输入新习惯的名称（例如：戒奶茶、背单词）：'); if (!name || !name.trim()) return; db.habits.push({ id: 'habit-' + Date.now(), name: name.trim(), records: {} }); saveLocal(); renderHabits(); }
 function toggleHabitRecord(habitId, dateStr) { const h = db.habits.find(x => x.id === habitId); if (!h) return; if (h.records[dateStr]) delete h.records[dateStr]; else h.records[dateStr] = true; saveLocal(); renderHabits(); }
 function deleteHabit(habitId) { if (!confirm('确定要删除这个习惯吗？')) return; db.habits = db.habits.filter(x => x.id !== habitId); saveLocal(); renderHabits(); }
 
-// 清单操作
 function openListModal() { document.getElementById('list-name').value = ''; document.getElementById('list-batch-items').value = ''; document.getElementById('list-file-input').value = ''; document.getElementById('list-modal').classList.add('show'); }
 function closeListModal() { document.getElementById('list-modal').classList.remove('show'); }
 function handleFileUpload(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('list-batch-items').value = e.target.result; }; reader.readAsText(file); input.value = ''; }
@@ -453,7 +476,6 @@ function renderAll() {
   document.getElementById('header-bottom-display').textContent = `第 ${weekNum} 周 (${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 - ${end.getMonth()+1}月${end.getDate()}日)`;
   document.getElementById('footer-week-display').textContent = `第 ${weekNum} 周`;
 
-  // 临时待办区（增加详情预览）
   const inboxTasks = db.tasks.filter(t => t.week_key === null);
   document.getElementById('inbox-count').textContent = inboxTasks.length;
   const inboxList = document.getElementById('inbox-list'); inboxList.innerHTML = '';
@@ -461,35 +483,17 @@ function renderAll() {
   else {
     inboxTasks.forEach(t => {
       const el = document.createElement('div'); el.className = 'inbox-task-item';
-      
-      // 【新增逻辑】临时待办的详情预览
       let previewHtml = '';
-      if (t.details && t.details.trim()) {
-        const cleanDetail = t.details.replace(/\n/g, ' ').trim();
-        previewHtml = `<div class="task-preview">${esc(cleanDetail)}</div>`;
-      }
-      
-      el.innerHTML = `
-        <button class="chk" style="width:12px;height:12px;" onclick="toggleTask('${t.id}')"></button>
-        <div class="task-content" onclick="selectedTaskId='${t.id}'; renderAll();" style="cursor:pointer; ${t.done?'text-decoration:line-through;color:var(--text-tertiary);':''}">
-          <span class="ttl">${esc(t.title)}</span>
-          ${previewHtml}
-        </div>
-        <select onchange="if(this.value!==''){ moveToDay('${t.id}', this.value); }">
-          <option value="">移动</option><option value="0">周一</option><option value="1">周二</option><option value="2">周三</option>
-          <option value="3">周四</option><option value="4">周五</option><option value="5">周六</option><option value="6">周日</option>
-        </select>
-      `;
+      if (t.details && t.details.trim()) { const cleanDetail = t.details.replace(/\n/g, ' ').trim(); previewHtml = `<div class="task-preview">${esc(cleanDetail)}</div>`; }
+      el.innerHTML = `<button class="chk" style="width:12px;height:12px;" onclick="toggleTask('${t.id}')"></button><div class="task-content" onclick="selectedTaskId='${t.id}'; renderAll();" style="cursor:pointer; ${t.done?'text-decoration:line-through;color:var(--text-tertiary);':''}"><span class="ttl">${esc(t.title)}</span>${previewHtml}</div><select onchange="if(this.value!==''){ moveToDay('${t.id}', this.value); }"><option value="">移动</option><option value="0">周一</option><option value="1">周二</option><option value="2">周三</option><option value="3">周四</option><option value="4">周五</option><option value="5">周六</option><option value="6">周日</option></select>`;
       inboxList.appendChild(el);
     });
   }
 
-  const daysContainer = document.getElementById('days-container');
-  daysContainer.innerHTML = '';
+  const daysContainer = document.getElementById('days-container'); daysContainer.innerHTML = '';
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
   for (let d = 0; d < 7; d++) {
-    const date = getDateForDay(d);
-    const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
+    const date = getDateForDay(d); const dayTasks = db.tasks.filter(t => t.week_key === currentWeekKey && t.day === d);
     const group = document.createElement('div'); group.className = 'day-group';
     const head = document.createElement('div'); head.className = 'day-head' + (selectedDay === d ? ' active' : '');
     head.innerHTML = `<span class="dnum">${date.getDate()}</span><span class="dname">${dayNames[d]}</span>`;
@@ -499,22 +503,10 @@ function renderAll() {
     if (dayTasks.length === 0) { taskList.innerHTML = '<div style="color:var(--text-tertiary); font-size:11px; padding:2px 6px;">无任务</div>'; }
     else {
       dayTasks.forEach(t => {
-        const item = document.createElement('div');
-        item.className = 'task-item' + (t.done ? ' done' : '') + (selectedTaskId === t.id ? ' active' : '');
-        
+        const item = document.createElement('div'); item.className = 'task-item' + (t.done ? ' done' : '') + (selectedTaskId === t.id ? ' active' : '');
         let previewHtml = '';
-        if (t.details && t.details.trim()) {
-          const cleanDetail = t.details.replace(/\n/g, ' ').trim();
-          previewHtml = `<div class="task-preview">${esc(cleanDetail)}</div>`;
-        }
-
-        item.innerHTML = `
-          <button class="chk" onclick="event.stopPropagation(); toggleTask('${t.id}')"></button>
-          <div class="task-content">
-            <span class="ttl">${esc(t.title)}</span>
-            ${previewHtml}
-          </div>
-        `;
+        if (t.details && t.details.trim()) { const cleanDetail = t.details.replace(/\n/g, ' ').trim(); previewHtml = `<div class="task-preview">${esc(cleanDetail)}</div>`; }
+        item.innerHTML = `<button class="chk" onclick="event.stopPropagation(); toggleTask('${t.id}')"></button><div class="task-content"><span class="ttl">${esc(t.title)}</span>${previewHtml}</div>`;
         item.onclick = (e) => { e.stopPropagation(); selectedTaskId = t.id; selectedDay = d; renderAll(); };
         taskList.appendChild(item);
       });
@@ -522,18 +514,13 @@ function renderAll() {
     group.appendChild(taskList); daysContainer.appendChild(group);
   }
 
-  const detailTitle = document.getElementById('right-detail-title');
-  const detailDate = document.getElementById('right-detail-date');
-  const taskDetailContent = document.getElementById('task-detail-content');
-  const noSelection = document.getElementById('task-no-selection');
-  const selectedDate = getDateForDay(selectedDay);
-  detailDate.textContent = `${selectedDate.getMonth()+1}月${selectedDate.getDate()}日`;
+  const detailTitle = document.getElementById('right-detail-title'); const detailDate = document.getElementById('right-detail-date');
+  const taskDetailContent = document.getElementById('task-detail-content'); const noSelection = document.getElementById('task-no-selection');
+  const selectedDate = getDateForDay(selectedDay); detailDate.textContent = `${selectedDate.getMonth()+1}月${selectedDate.getDate()}日`;
   if (selectedTaskId) {
     const t = db.tasks.find(x => x.id === selectedTaskId);
-    if (t) {
-      detailTitle.textContent = '任务详情'; taskDetailContent.style.display = 'block'; noSelection.style.display = 'none';
-      document.getElementById('detail-edit-title').value = t.title || ''; document.getElementById('detail-edit-time').value = t.dueDate || ''; document.getElementById('detail-edit-desc').value = t.details || '';
-    } else { selectedTaskId = null; detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
+    if (t) { detailTitle.textContent = '任务详情'; taskDetailContent.style.display = 'block'; noSelection.style.display = 'none'; document.getElementById('detail-edit-title').value = t.title || ''; document.getElementById('detail-edit-time').value = t.dueDate || ''; document.getElementById('detail-edit-desc').value = t.details || ''; }
+    else { selectedTaskId = null; detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
   } else { detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
   const noteKey = `${currentWeekKey}-${selectedDay}`;
   const textarea = document.getElementById('daily-note'); textarea.value = db.notes[noteKey] || '';
@@ -561,79 +548,105 @@ function closeCalendarModal() { document.getElementById('calendar-modal').classL
 function renderHabits() {
   const list = document.getElementById('habit-list'); list.innerHTML = '';
   if (!db.habits.length) { list.innerHTML = '<div style="text-align:center;color:var(--text-secondary);margin-top:40px;">还没有习惯，点击右上角新建一个吧！</div>'; return; }
-  
-  const today = new Date();
-  const todayStr = formatDate(today);
-  const currentMonday = getMonday(today);
-
+  const today = new Date(); const todayStr = formatDate(today); const currentMonday = getMonday(today);
   db.habits.forEach(h => {
     const card = document.createElement('div'); card.className = 'habit-card';
-    
     let streak = 0; let d = new Date(today);
     while (true) { const ds = formatDate(d); if (h.records[ds]) { streak++; d.setDate(d.getDate() - 1); } else break; }
-    
     let heatmapHtml = '';
     for (let w = 16; w >= 0; w--) {
-      const weekStart = new Date(currentMonday);
-      weekStart.setDate(weekStart.getDate() - (w * 7));
+      const weekStart = new Date(currentMonday); weekStart.setDate(weekStart.getDate() - (w * 7));
       for (let d = 0; d < 7; d++) {
-        const dt = new Date(weekStart); dt.setDate(dt.getDate() + d);
-        const ds = formatDate(dt);
-        if (dt > today) {
-          heatmapHtml += `<div class="heatmap-cell future"></div>`;
-        } else {
-          const isDone = h.records[ds] ? 'done' : '';
-          heatmapHtml += `<div class="heatmap-cell ${isDone}" title="${ds}"></div>`;
-        }
+        const dt = new Date(weekStart); dt.setDate(dt.getDate() + d); const ds = formatDate(dt);
+        if (dt > today) { heatmapHtml += `<div class="heatmap-cell future"></div>`; }
+        else { const isDone = h.records[ds] ? 'done' : ''; heatmapHtml += `<div class="heatmap-cell ${isDone}" title="${ds}"></div>`; }
       }
     }
-    
     const isCheckedToday = h.records[todayStr] ? true : false;
     const btnText = isCheckedToday ? '✅ 已打卡' : '⭕ 今日打卡';
-
-    card.innerHTML = `
-      <div class="habit-top">
-        <span class="habit-name">${esc(h.name)}</span>
-        <span class="habit-streak">连续 ${streak} 天</span>
-      </div>
-      <div class="heatmap-container">
-        <div class="heatmap-grid">${heatmapHtml}</div>
-      </div>
-      <div class="habit-footer">
-        <button class="checkin-btn ${isCheckedToday ? 'checked' : ''}" onclick="toggleHabitRecord('${h.id}', '${todayStr}')">${btnText}</button>
-        <div class="habit-actions"><button onclick="deleteHabit('${h.id}')">删除习惯</button></div>
-      </div>
-    `;
+    card.innerHTML = `<div class="habit-top"><span class="habit-name">${esc(h.name)}</span><span class="habit-streak">连续 ${streak} 天</span></div><div class="heatmap-container"><div class="heatmap-grid">${heatmapHtml}</div></div><div class="habit-footer"><button class="checkin-btn ${isCheckedToday ? 'checked' : ''}" onclick="toggleHabitRecord('${h.id}', '${todayStr}')">${btnText}</button><div class="habit-actions"><button onclick="deleteHabit('${h.id}')">删除习惯</button></div></div>`;
     list.appendChild(card);
   });
 }
 
-// ================= 渲染：总结、清单 =================
+// ================= 渲染：总结日历（大改） =================
 function switchBookPeriod(period) { bookPeriod = period; document.querySelectorAll('.book-toolbar button').forEach(b => b.classList.toggle('active', b.dataset.period === period)); bookDate = new Date(); renderBook(); }
 function getPeriodKey() { if (bookPeriod === 'week') return getWeekKey(getMonday(bookDate)); else if (bookPeriod === 'month') return bookDate.getFullYear() + '-' + String(bookDate.getMonth() + 1).padStart(2, '0'); else return String(bookDate.getFullYear()); }
 function getPeriodLabel() { if (bookPeriod === 'week') return `第 ${getWeekKey(getMonday(bookDate)).split('-W')[1]} 周`; else if (bookPeriod === 'month') return `${bookDate.getFullYear()}年 ${bookDate.getMonth() + 1}月`; else return `${bookDate.getFullYear()}年`; }
 function getPeriodRange() { let start, end; if (bookPeriod === 'week') { start = getMonday(bookDate); end = new Date(start); end.setDate(end.getDate() + 6); } else if (bookPeriod === 'month') { start = new Date(bookDate.getFullYear(), bookDate.getMonth(), 1); end = new Date(bookDate.getFullYear(), bookDate.getMonth() + 1, 0); } else { start = new Date(bookDate.getFullYear(), 0, 1); end = new Date(bookDate.getFullYear(), 11, 31); } return { start, end }; }
+
 function renderBook() {
-  document.getElementById('book-period-label').textContent = getPeriodLabel();
+  const label = getPeriodLabel();
+  document.getElementById('book-period-label').textContent = label;
+  document.getElementById('book-period-label-bottom').textContent = label;
+  document.getElementById('book-period-sub').textContent = bookPeriod === 'month' ? '任务日历' : (bookPeriod === 'week' ? '本周任务' : '年度总览');
+  
   const { start, end } = getPeriodRange();
-  const leftContent = document.getElementById('book-left-content'); leftContent.innerHTML = ''; let hasContent = false;
-  const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
-  let weekKeysInRange = new Set(); let curr = new Date(start);
-  while (curr <= end) { weekKeysInRange.add(getWeekKey(getMonday(curr))); curr.setDate(curr.getDate() + 7); }
-  const completedTasks = db.tasks.filter(t => t.done && t.week_key && weekKeysInRange.has(t.week_key));
-  let completedTasksHtml = '';
-  if (completedTasks.length > 0) { completedTasksHtml += `<div class="book-section-title">✅ 已完成的任务 (${completedTasks.length})</div><div class="book-task-list">`; completedTasks.forEach(t => { completedTasksHtml += `<div class="book-task-item"><span class="done-icon">✓</span> <span>${esc(t.title)}</span></div>`; }); completedTasksHtml += `</div>`; hasContent = true; }
-  let dailyNotesHtml = ''; curr = new Date(start);
-  while (curr <= end) { const weekKey = getWeekKey(getMonday(curr)); const dayIndex = (curr.getDay() + 6) % 7; const noteText = db.notes[`${weekKey}-${dayIndex}`]; if (noteText && noteText.trim()) { hasContent = true; dailyNotesHtml += `<div class="book-item"><div class="book-item-header"><span class="book-item-date">${curr.getMonth()+1}月${curr.getDate()}日</span><span class="book-item-meta">${dayNames[dayIndex]}</span></div><div class="book-item-text">${esc(noteText)}</div></div>`; } curr.setDate(curr.getDate() + 1); }
-  if (dailyNotesHtml) { dailyNotesHtml = `<div class="book-section-title">📝 每日反思</div>` + dailyNotesHtml; }
-  leftContent.innerHTML = completedTasksHtml + dailyNotesHtml;
-  if (!hasContent) leftContent.innerHTML = '<div style="text-align:center;color:var(--text-tertiary);margin-top:40px;">这段时间还没有任何记录哦～</div>';
-  document.getElementById('book-left-header').querySelector('h3').textContent = getPeriodLabel() + ' 回顾';
-  document.getElementById('book-left-header').querySelector('p').textContent = `收集了 ${start.getMonth()+1}月${start.getDate()}日 至 ${end.getMonth()+1}月${end.getDate()}日 的任务与反思`;
+  const grid = document.getElementById('month-grid'); grid.innerHTML = '';
+  
+  if (bookPeriod === 'year') {
+    // 年视图：展示 12 个月的小卡片
+    for (let m = 0; m < 12; m++) {
+      const monthStart = new Date(bookDate.getFullYear(), m, 1);
+      const monthEnd = new Date(bookDate.getFullYear(), m + 1, 0);
+      const monthTasks = db.tasks.filter(t => {
+        if (!t.week_key) return false;
+        const [y, w] = t.week_key.split('-W');
+        const wDate = getMonday(new Date(y, 0, 1 + (w - 1) * 7));
+        const taskDate = new Date(wDate); taskDate.setDate(taskDate.getDate() + t.day);
+        return taskDate >= monthStart && taskDate <= monthEnd;
+      });
+      const doneCount = monthTasks.filter(t => t.done).length;
+      const cell = document.createElement('div');
+      cell.className = 'month-day-cell'; cell.style.minHeight = 'auto'; cell.style.padding = '10px';
+      cell.innerHTML = `<div class="month-day-num" style="text-align:left;font-size:14px;margin-bottom:6px;">${m+1}月</div><div style="font-size:12px;color:var(--text-secondary);">任务: ${doneCount}/${monthTasks.length}</div>`;
+      grid.appendChild(cell);
+    }
+  } else {
+    // 周/月视图：真正的日历
+    const year = bookDate.getFullYear(); const month = bookDate.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const startDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; // 周一为 0
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    let dayCounter = 1 - startDayOfWeek;
+    const totalCells = Math.ceil((startDayOfWeek + daysInMonth) / 7) * 7;
+    
+    for (let i = 0; i < totalCells; i++) {
+      const cellDate = new Date(year, month, dayCounter);
+      const isOtherMonth = cellDate.getMonth() !== month;
+      const isToday = formatDate(cellDate) === formatDate(new Date());
+      
+      const cell = document.createElement('div');
+      cell.className = 'month-day-cell' + (isOtherMonth ? ' other-month' : '') + (isToday ? ' today' : '');
+      
+      // 获取当天任务
+      const dateStr = formatDate(cellDate);
+      const weekKey = getWeekKey(getMonday(cellDate));
+      const dayIdx = (cellDate.getDay() + 6) % 7;
+      const dayTasks = db.tasks.filter(t => t.week_key === weekKey && t.day === dayIdx);
+      
+      let tasksHtml = '';
+      const maxShow = bookPeriod === 'week' ? 10 : 3;
+      dayTasks.slice(0, maxShow).forEach(t => {
+        const cls = t.done ? 'calendar-task done' : 'calendar-task pending';
+        tasksHtml += `<div class="${cls}">${esc(t.title)}</div>`;
+      });
+      if (dayTasks.length > maxShow) { tasksHtml += `<div class="more-tasks">还有 ${dayTasks.length - maxShow} 项</div>`; }
+      
+      cell.innerHTML = `<div class="month-day-num">${cellDate.getDate()}</div>${tasksHtml}`;
+      grid.appendChild(cell);
+      
+      dayCounter++;
+    }
+  }
+  
   const summaryKey = `${bookPeriod}-${getPeriodKey()}`;
   const textarea = document.getElementById('book-summary-input'); textarea.value = db.summaries[summaryKey] || '';
   textarea.oninput = (e) => { db.summaries[summaryKey] = e.target.value; saveLocal(); };
 }
+
+// ================= 渲染：清单 =================
 function renderLists() {
   const grid = document.getElementById('list-grid'); grid.innerHTML = '';
   if (!db.lists.length) { grid.innerHTML = '<div style="text-align:center;color:var(--text-secondary);margin-top:40px;">还没有清单，点击右上角新建一个吧！</div>'; return; }

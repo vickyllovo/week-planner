@@ -47,9 +47,11 @@
   .task-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
   .task-item.done .task-preview { text-decoration: line-through; opacity: 0.5; }
 
+  /* 右页：四个卡片 */
   .right-page { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
   .right-card { background: var(--card); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 6px; }
-  .inbox-section { border-bottom: 1px solid var(--separator); padding-bottom: 8px; }
+  
+  /* 卡片1：临时待办 */
   .inbox-title { font-size: 12px; font-weight: 600; color: var(--accent); display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .inbox-input-row { display: flex; gap: 4px; }
   .inbox-input-row input { flex: 1; border: 1px solid var(--separator); border-radius: 6px; padding: 6px 8px; font-size: 12px; outline: none; background: var(--bg); color: var(--text); min-width: 0; }
@@ -62,6 +64,18 @@
   .inbox-task-item .task-preview { font-size: 10px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .inbox-task-item select { font-size: 11px; border: 1px solid var(--separator); border-radius: 4px; background: var(--card); color: var(--text-secondary); outline: none; max-width: 60px; margin-top: 2px; }
 
+  /* 卡片2：新建计划（新增） */
+  .new-task-card .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .new-task-form { display: flex; flex-direction: column; gap: 8px; }
+  .new-task-form input, .new-task-form textarea { width: 100%; border: 1px solid var(--separator); border-radius: 6px; padding: 8px 10px; font-size: 12px; font-family: inherit; outline: none; background: var(--bg); color: var(--text); }
+  .new-task-form textarea { resize: vertical; min-height: 50px; }
+  .new-task-form input:focus, .new-task-form textarea:focus { border-color: var(--accent); background: var(--card); }
+  .new-task-form .form-row { display: flex; gap: 6px; align-items: center; }
+  .new-task-form .form-row input[type="datetime-local"] { flex: 1; }
+  .new-task-form .add-btn { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .new-task-form .add-btn:active { opacity: 0.8; }
+
+  /* 卡片3：今日详情 */
   .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
   .detail-title { font-weight: 600; font-size: 14px; color: var(--text); }
   .detail-date { font-size: 12px; color: var(--text-secondary); }
@@ -74,10 +88,14 @@
   .task-detail-actions .delete-btn { background: #FDE8E8; color: var(--danger); }
   .task-detail-actions .save-btn { background: var(--accent); color: #fff; flex: 1; }
   .no-selection-tip { color: var(--text-tertiary); font-size: 12px; padding: 8px 0; text-align: center; }
+
+  /* 卡片4：日常反思 */
   .note-box { display: flex; flex-direction: column; min-height: 100px; }
   .note-box h4 { margin: 0 0 6px 0; font-size: 12px; color: var(--text-secondary); font-weight: 600; }
   .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: var(--bg); color: var(--text); }
   .note-box textarea:focus { border-color: var(--accent); background: var(--card); }
+
+  /* 底部翻周栏 */
   .right-footer { background: var(--card); border-radius: var(--radius-card); padding: 10px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
   .right-footer button { background: #F4F0E8; color: var(--accent); border: none; border-radius: var(--radius-btn); padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
   .right-footer button:active { background: var(--accent); color: #fff; }
@@ -285,17 +303,31 @@
   </div>
 
   <div class="right-page" id="right-page">
+    
+    <!-- 卡片1：临时代办 -->
     <div class="right-card">
-      <div class="inbox-section">
-        <div class="inbox-title">📥 临时待办 <span id="inbox-count" style="font-weight: normal; color: var(--text-secondary);">0</span></div>
-        <div class="inbox-input-row">
-          <input type="text" id="inbox-input" placeholder="想到什么先扔这..." onkeydown="if(event.key==='Enter') addInboxTask(this)">
-          <button onclick="addInboxTask(this.previousElementSibling)">+</button>
+      <div class="inbox-title">📥 临时代办 <span id="inbox-count" style="font-weight: normal; color: var(--text-secondary);">0</span></div>
+      <div class="inbox-input-row">
+        <input type="text" id="inbox-input" placeholder="想到什么先扔这..." onkeydown="if(event.key==='Enter') addInboxTask(this)">
+        <button onclick="addInboxTask(this.previousElementSibling)">+</button>
+      </div>
+      <div id="inbox-list" style="margin-top: 4px;"></div>
+    </div>
+
+    <!-- 卡片2：新建计划（新增） -->
+    <div class="right-card new-task-card">
+      <div class="card-title">➕ 新建计划</div>
+      <div class="new-task-form">
+        <input type="text" id="new-task-title" placeholder="任务名称...">
+        <div class="form-row">
+          <input type="datetime-local" id="new-task-time">
         </div>
-        <div id="inbox-list" style="margin-top: 4px;"></div>
+        <textarea id="new-task-details" placeholder="详细描述 / 子计划（每行一个）"></textarea>
+        <button class="add-btn" onclick="createTaskFromForm()">添加到当前日期</button>
       </div>
     </div>
 
+    <!-- 卡片3：今日详情 -->
     <div class="right-card" id="right-detail-card">
       <div class="detail-header">
         <span class="detail-title" id="right-detail-title">今日详情</span>
@@ -315,6 +347,7 @@
       <div id="task-no-selection" class="no-selection-tip">点击左侧任务查看详情</div>
     </div>
     
+    <!-- 卡片4：日常反思 -->
     <div class="right-card">
       <div class="note-box">
         <h4>📝 日常反思 / 复盘</h4>
@@ -322,6 +355,7 @@
       </div>
     </div>
 
+    <!-- 底部翻周栏 -->
     <div class="right-footer">
       <button onclick="changeWeek(-1)">‹ 上一周</button>
       <div class="week-display" onclick="openCalendarModal()" id="footer-week-display">第 38 周</div>
@@ -345,7 +379,6 @@
   </div>
   
   <div class="calendar-view-container">
-    <!-- 左侧：日历 / 周卡片 / 年卡片 -->
     <div class="calendar-left">
       <div class="calendar-header-bar">
         <h3 id="book-period-label">2026年 9月</h3>
@@ -357,7 +390,6 @@
       <div class="month-grid" id="month-grid"></div>
     </div>
     
-    <!-- 右侧：总结心得 -->
     <div class="calendar-right">
       <div class="book-page-header" id="book-right-header"><h3>总结与心得</h3><p>写在这里的内容会自动保存</p></div>
       <div class="book-content"><textarea class="book-summary-textarea" id="book-summary-input" placeholder="这个阶段有什么收获？哪里可以做得更好？"></textarea></div>
@@ -477,6 +509,28 @@ function deleteSelectedTask() { if (selectedTaskId) deleteTask(selectedTaskId); 
 function saveSelectedTask() { const t = db.tasks.find(x => x.id === selectedTaskId); if (!t) return; t.title = document.getElementById('detail-edit-title').value.trim() || t.title; t.dueDate = document.getElementById('detail-edit-time').value; t.details = document.getElementById('detail-edit-desc').value; saveLocal(); renderAll(); alert('任务详情已保存！'); }
 function addTask(inputEl, day) { const title = inputEl.value.trim(); if (!title) return; db.tasks.push({ id: 'task-' + Date.now() + Math.random().toString(36).slice(2), week_key: currentWeekKey, day, title, done: false, dueDate: '', details: '' }); inputEl.value = ''; saveLocal(); renderAll(); }
 
+// 【新增】从新建表单创建任务
+function createTaskFromForm() {
+  const titleEl = document.getElementById('new-task-title');
+  const timeEl = document.getElementById('new-task-time');
+  const detailsEl = document.getElementById('new-task-details');
+  const title = titleEl.value.trim();
+  if (!title) { alert('请输入任务名称'); return; }
+  db.tasks.push({
+    id: 'task-' + Date.now() + Math.random().toString(36).slice(2),
+    week_key: currentWeekKey,
+    day: selectedDay,
+    title: title,
+    done: false,
+    dueDate: timeEl.value,
+    details: detailsEl.value
+  });
+  // 清空表单
+  titleEl.value = ''; timeEl.value = ''; detailsEl.value = '';
+  saveLocal(); renderAll();
+  alert('已添加到当前日期！');
+}
+
 function addHabit() { const name = prompt('输入新习惯的名称（例如：戒奶茶、背单词）：'); if (!name || !name.trim()) return; db.habits.push({ id: 'habit-' + Date.now(), name: name.trim(), records: {} }); saveLocal(); renderHabits(); }
 function toggleHabitRecord(habitId, dateStr) { const h = db.habits.find(x => x.id === habitId); if (!h) return; if (h.records[dateStr]) delete h.records[dateStr]; else h.records[dateStr] = true; saveLocal(); renderHabits(); }
 function deleteHabit(habitId) { if (!confirm('确定要删除这个习惯吗？')) return; db.habits = db.habits.filter(x => x.id !== habitId); saveLocal(); renderHabits(); }
@@ -497,6 +551,7 @@ function renderAll() {
   document.getElementById('header-bottom-display').textContent = `第 ${weekNum} 周 (${currentMonday.getMonth()+1}月${currentMonday.getDate()}日 - ${end.getMonth()+1}月${end.getDate()}日)`;
   document.getElementById('footer-week-display').textContent = `第 ${weekNum} 周`;
 
+  // 临时待办
   const inboxTasks = db.tasks.filter(t => t.week_key === null);
   document.getElementById('inbox-count').textContent = inboxTasks.length;
   const inboxList = document.getElementById('inbox-list'); inboxList.innerHTML = '';
@@ -511,6 +566,7 @@ function renderAll() {
     });
   }
 
+  // 左侧日期列表
   const daysContainer = document.getElementById('days-container'); daysContainer.innerHTML = '';
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
   for (let d = 0; d < 7; d++) {
@@ -535,6 +591,7 @@ function renderAll() {
     group.appendChild(taskList); daysContainer.appendChild(group);
   }
 
+  // 右侧今日详情
   const detailTitle = document.getElementById('right-detail-title'); const detailDate = document.getElementById('right-detail-date');
   const taskDetailContent = document.getElementById('task-detail-content'); const noSelection = document.getElementById('task-no-selection');
   const selectedDate = getDateForDay(selectedDay); detailDate.textContent = `${selectedDate.getMonth()+1}月${selectedDate.getDate()}日`;
@@ -543,6 +600,8 @@ function renderAll() {
     if (t) { detailTitle.textContent = '任务详情'; taskDetailContent.style.display = 'block'; noSelection.style.display = 'none'; document.getElementById('detail-edit-title').value = t.title || ''; document.getElementById('detail-edit-time').value = t.dueDate || ''; document.getElementById('detail-edit-desc').value = t.details || ''; }
     else { selectedTaskId = null; detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
   } else { detailTitle.textContent = '今日详情'; taskDetailContent.style.display = 'none'; noSelection.style.display = 'block'; }
+  
+  // 右侧日常反思
   const noteKey = `${currentWeekKey}-${selectedDay}`;
   const textarea = document.getElementById('daily-note'); textarea.value = db.notes[noteKey] || '';
   textarea.oninput = (e) => { db.notes[noteKey] = e.target.value; saveLocal(); };
@@ -621,7 +680,6 @@ function renderBook() {
       grid.appendChild(card);
     }
   } else if (bookPeriod === 'year') {
-    // 【修改核心】年视图独立样式
     document.getElementById('month-grid-header').style.display = 'none';
     grid.className = 'year-grid';
     for (let m = 0; m < 12; m++) {
@@ -634,7 +692,6 @@ function renderBook() {
       grid.appendChild(card);
     }
   } else {
-    // 月视图
     document.getElementById('month-grid-header').style.display = 'grid';
     grid.className = 'month-grid';
     const year = bookDate.getFullYear(); const month = bookDate.getMonth();

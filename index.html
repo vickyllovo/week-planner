@@ -64,7 +64,7 @@
   .inbox-task-item .task-preview { font-size: 10px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .inbox-task-item select { font-size: 11px; border: 1px solid var(--separator); border-radius: 4px; background: var(--card); color: var(--text-secondary); outline: none; max-width: 60px; margin-top: 2px; }
 
-  /* 卡片2：新建计划（新增） */
+  /* 卡片2：新建计划 */
   .new-task-card .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .new-task-form { display: flex; flex-direction: column; gap: 8px; }
   .new-task-form input, .new-task-form textarea { width: 100%; border: 1px solid var(--separator); border-radius: 6px; padding: 8px 10px; font-size: 12px; font-family: inherit; outline: none; background: var(--bg); color: var(--text); }
@@ -157,7 +157,7 @@
   .week-task-item.done .ttl { color: var(--text-tertiary); text-decoration: line-through; }
   .week-task-empty { font-size: 12px; color: var(--text-tertiary); font-style: italic; }
 
-  /* 年视图专属：12个月份卡片网格 */
+  /* 年视图专属 */
   .year-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px; height: 100%; overflow-y: auto; }
   .year-month-card { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
   .year-month-card:active { background: var(--accent-soft); border-color: var(--accent); }
@@ -314,7 +314,7 @@
       <div id="inbox-list" style="margin-top: 4px;"></div>
     </div>
 
-    <!-- 卡片2：新建计划（新增） -->
+    <!-- 卡片2：新建计划 -->
     <div class="right-card new-task-card">
       <div class="card-title">➕ 新建计划</div>
       <div class="new-task-form">
@@ -540,7 +540,37 @@ function closeListModal() { document.getElementById('list-modal').classList.remo
 function handleFileUpload(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('list-batch-items').value = e.target.result; }; reader.readAsText(file); input.value = ''; }
 function saveNewList() { const name = document.getElementById('list-name').value.trim(); if (!name) { alert('请输入清单名称'); return; } const batchText = document.getElementById('list-batch-items').value.trim(); const items = batchText ? batchText.split('\n').map(t => t.trim()).filter(t => t).map(text => ({ id: 'item-' + Date.now() + Math.random().toString(36).slice(2), text, done: false })) : []; db.lists.push({ id: 'list-' + Date.now(), name, items }); saveLocal(); closeListModal(); renderLists(); }
 function deleteList(id) { if (!confirm('确定要删除这个清单吗？')) return; db.lists = db.lists.filter(x => x.id !== id); saveLocal(); renderLists(); }
-function toggleListItem(listId, itemId) { const list = db.lists.find(x => x.id === listId); if (!list) return; const item = list.items.find(x => x.id === itemId); if (!item) return; item.done = !item.done; saveLocal(); renderLists(); }
+
+// 【修改核心】清单打钩只更新局部 DOM，不重新渲染
+function toggleListItem(listId, itemId, btnEl) {
+  const list = db.lists.find(x => x.id === listId);
+  if (!list) return;
+  const item = list.items.find(x => x.id === itemId);
+  if (!item) return;
+  item.done = !item.done;
+  saveLocal();
+
+  // 只更新当前项和进度条，不触发全局重绘，防止滚动条跳回顶部
+  if (btnEl) {
+    const listItemEl = btnEl.closest('.list-item');
+    if (listItemEl) {
+      listItemEl.classList.toggle('done', item.done);
+    }
+
+    // 更新进度条
+    const total = list.items.length;
+    const doneCount = list.items.filter(i => i.done).length;
+    const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+    const card = btnEl.closest('.list-card');
+    if (card) {
+      const progressFill = card.querySelector('.progress-fill');
+      const progressText = card.querySelector('.list-progress span:last-child');
+      if (progressFill) progressFill.style.width = percent + '%';
+      if (progressText) progressText.textContent = `${doneCount}/${total}`;
+    }
+  }
+}
+
 function addListItem(listId, inputEl) { const text = inputEl.value.trim(); if (!text) return; const list = db.lists.find(x => x.id === listId); if (!list) return; list.items.push({ id: 'item-' + Date.now() + Math.random().toString(36).slice(2), text, done: false }); inputEl.value = ''; saveLocal(); renderLists(); }
 function deleteListItem(listId, itemId) { if (!confirm('删除这个项目吗？')) return; const list = db.lists.find(x => x.id === listId); if (!list) return; list.items = list.items.filter(x => x.id !== itemId); saveLocal(); renderLists(); }
 
@@ -730,7 +760,10 @@ function renderLists() {
     const percent = total === 0 ? 0 : Math.round((done / total) * 100);
     const card = document.createElement('div'); card.className = 'list-card';
     let itemsHtml = '';
-    list.items.forEach(item => { itemsHtml += `<div class="list-item ${item.done ? 'done' : ''}"><button class="chk-square" onclick="toggleListItem('${list.id}', '${item.id}')"></button><span class="ttl" onclick="toggleListItem('${list.id}', '${item.id}')" style="cursor:pointer;">${esc(item.text)}</span><button style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:14px;" onclick="deleteListItem('${list.id}', '${item.id}')">×</button></div>`; });
+    list.items.forEach(item => { 
+      // 【修改核心】传入 this 以便在 toggleListItem 中直接操作 DOM
+      itemsHtml += `<div class="list-item ${item.done ? 'done' : ''}"><button class="chk-square" onclick="toggleListItem('${list.id}', '${item.id}', this)"></button><span class="ttl" onclick="toggleListItem('${list.id}', '${item.id}', this)" style="cursor:pointer;">${esc(item.text)}</span><button style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:14px;" onclick="deleteListItem('${list.id}', '${item.id}')">×</button></div>`; 
+    });
     card.innerHTML = `<div class="list-card-header"><span class="list-card-title">${esc(list.name)}</span><div class="list-card-actions"><button onclick="deleteList('${list.id}')" title="删除清单">🗑</button></div></div><div class="list-progress"><div class="progress-bar"><div class="progress-fill" style="width: ${percent}%"></div></div><span>${done}/${total}</span></div><div class="list-items">${itemsHtml || '<div style="color:var(--text-tertiary);font-size:13px;padding:4px 0;">暂无项目</div>'}</div><div class="add-task-row" style="margin-top:4px;"><input type="text" placeholder="添加项目..." onkeydown="if(event.key==='Enter') addListItem('${list.id}', this)"><button onclick="addListItem('${list.id}', this.previousElementSibling)">+</button></div>`;
     grid.appendChild(card);
   });

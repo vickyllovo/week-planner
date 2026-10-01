@@ -699,11 +699,11 @@ header {
   justify-content: space-between;
   align-items: center;
   flex: none;
-  min-height: 18px;
+  min-height: 30px;
 }
 
 .month-day-number {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text);
 }
@@ -714,16 +714,17 @@ header {
 
 .month-day-photos {
   display: flex;
-  gap: 2px;
+  gap: 3px;
   align-items: center;
 }
 
+/* 放大后的照片缩略图（桌面端） */
 .month-day-photo {
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   object-fit: cover;
-  border-radius: 3px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 5px;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 .month-day-tasks {
@@ -839,12 +840,13 @@ header {
   gap: 2px;
 }
 
+/* 放大后的周视图照片缩略图（桌面端） */
 .day-photo-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
   object-fit: cover;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 .day-tasks {
@@ -1550,13 +1552,19 @@ header {
     border-radius: 4px;
   }
 
-  .month-day-number {
-    font-size: 10px;
+  .month-day-header {
+    min-height: 24px;
   }
 
+  .month-day-number {
+    font-size: 11px;
+  }
+
+  /* 放大后的照片缩略图（手机端） */
   .month-day-photo {
-    width: 13px;
-    height: 13px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
   }
 
   .month-task {
@@ -1586,9 +1594,11 @@ header {
     padding: 1px 2px;
   }
 
+  /* 放大后的周视图照片缩略图（手机端） */
   .day-photo-thumb {
-    width: 12px;
-    height: 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
   }
 
   .list-grid {
@@ -1916,7 +1926,6 @@ header {
     </div>
 
 
-    <!-- 月总结会在这里生成真正的整月日历 -->
     <div
       class="month-calendar"
       id="month-calendar"
@@ -2331,7 +2340,7 @@ header {
         <input
           type="range"
           id="crop-zoom"
-          min="0.5"
+          min="0.1"
           max="3"
           step="0.01"
           value="1"
@@ -3653,12 +3662,6 @@ function saveDayNote() {
   const text =
     textarea.value.trim();
 
-  /*
-   * 这里不再通过弹窗标题猜年份。
-   * 月历可以翻到 2025、2026、2027，
-   * 所以直接使用打开日期详情时保存的真实日期。
-   */
-
   const dateObj =
     window._currentDetailDate
       ? new Date(
@@ -4119,11 +4122,6 @@ function renderDayPhotos(dateObj) {
 
 function openDayDetailModal(dateObj) {
 
-  /*
-   * 保存真正的日期对象。
-   * 这样翻到上一年/下一年以后，
-   * 心得和照片仍然会保存到正确年份。
-   */
   window._currentDetailDate =
     new Date(dateObj);
 
@@ -4933,12 +4931,6 @@ function renderHabits() {
 }
 
 
-/* =========================================================
-   📖 总结
-   这里就是这次真正修改的核心
-   ========================================================= */
-
-
 /* ================= 总结周期切换 ================= */
 
 function switchBookPeriod(period) {
@@ -4967,8 +4959,6 @@ function switchBookPeriod(period) {
 }
 
 
-/* ================= 总结 Key ================= */
-
 function getPeriodKey() {
 
   if (bookPeriod === 'week') {
@@ -4996,8 +4986,6 @@ function getPeriodKey() {
   );
 }
 
-
-/* ================= 总结标题 ================= */
 
 function getPeriodLabel() {
 
@@ -5028,8 +5016,6 @@ function getPeriodLabel() {
   );
 }
 
-
-/* ================= 总结日期范围 ================= */
 
 function getPeriodRange() {
 
@@ -5118,13 +5104,6 @@ function renderMonthCalendar() {
       1
     );
 
-  /*
-   * JavaScript:
-   * 周日 = 0
-   *
-   * 我们的日历:
-   * 周一 = 0
-   */
   const firstWeekday =
     (firstDay.getDay() + 6) % 7;
 
@@ -5142,8 +5121,6 @@ function renderMonthCalendar() {
       0
     ).getDate();
 
-
-  /* 星期 */
 
   const weekdaysEl =
     document.createElement(
@@ -5188,8 +5165,6 @@ function renderMonthCalendar() {
   );
 
 
-  /* 日期 */
-
   const grid =
     document.createElement(
       'div'
@@ -5199,10 +5174,6 @@ function renderMonthCalendar() {
     'month-days-grid';
 
 
-  /*
-   * 固定 42 格。
-   * 所以每个月的高度完全一样。
-   */
   for (
     let i = 0;
     i < 42;
@@ -5214,8 +5185,6 @@ function renderMonthCalendar() {
     let isOtherMonth =
       false;
 
-
-    /* 上个月 */
 
     if (i < firstWeekday) {
 
@@ -5236,9 +5205,6 @@ function renderMonthCalendar() {
 
     }
 
-
-    /* 当前月 */
-
     else if (
       i <
       firstWeekday +
@@ -5258,9 +5224,6 @@ function renderMonthCalendar() {
         );
 
     }
-
-
-    /* 下个月 */
 
     else {
 
@@ -5320,8 +5283,6 @@ function renderMonthCalendar() {
       );
 
 
-    /* 日期头 */
-
     const header =
       document.createElement(
         'div'
@@ -5346,8 +5307,6 @@ function renderMonthCalendar() {
       number
     );
 
-
-    /* 照片 */
 
     const photos =
       db.photos[noteKey] || [];
@@ -5375,10 +5334,6 @@ function renderMonthCalendar() {
         'month-day-photos';
 
 
-      /*
-       * 月历里只显示一张小图，
-       * 点击日期仍然能在详情里看到全部照片。
-       */
       const img =
         document.createElement(
           'img'
@@ -5405,8 +5360,6 @@ function renderMonthCalendar() {
     );
 
 
-    /* 任务 */
-
     const tasksEl =
       document.createElement(
         'div'
@@ -5424,10 +5377,6 @@ function renderMonthCalendar() {
       );
 
 
-    /*
-     * 每天最多显示 4 个任务。
-     * 超出的显示 +N 个任务。
-     */
     const visibleTasks =
       dayTasks.slice(0, 4);
 
@@ -5486,8 +5435,6 @@ function renderMonthCalendar() {
       tasksEl
     );
 
-
-    /* 点击日期 */
 
     cell.onclick = () => {
 
@@ -5777,9 +5724,6 @@ function renderYearSummary() {
     );
 
 
-    /*
-     * 统计该月份真实日期范围内的任务。
-     */
     const monthStart =
       new Date(
         year,
@@ -5807,15 +5751,6 @@ function renderYearSummary() {
             return false;
           }
 
-          const monday =
-            getMonday(
-              monthStart
-            );
-
-          /*
-           * 只要该周的某一天属于当前月份，
-           * 就用实际日期进一步检查。
-           */
           const firstMonday =
             getMonday(
               new Date(
@@ -5989,8 +5924,6 @@ function renderBook() {
     renderYearSummary();
   }
 
-
-  /* 当前周期总结 */
 
   const summaryKey =
     `${bookPeriod}-${getPeriodKey()}`;
@@ -6228,24 +6161,11 @@ function renderLists() {
    ========================================================= */
 
 
-/* ===== 总结翻页 ===== */
-
 document
   .getElementById('book-prev')
   .addEventListener(
     'click',
     () => {
-
-      /*
-       * 月总结：
-       * 上个月
-       *
-       * 周总结：
-       * 上一周
-       *
-       * 年总结：
-       * 上一年
-       */
 
       if (
         bookPeriod === 'month'
@@ -6328,8 +6248,6 @@ document
     }
   );
 
-
-/* ===== 顶部 Tab ===== */
 
 document
   .querySelectorAll('.tab')
@@ -6433,8 +6351,6 @@ document
     }
   );
 
-
-/* ===== 点击弹窗外部关闭 ===== */
 
 document
   .getElementById(

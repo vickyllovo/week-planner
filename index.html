@@ -135,13 +135,13 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .month-day-cell:active{background:var(--accent-soft)}
 .month-day-cell.other-month{opacity:0.35;background:#F8F6F1}
 .month-day-cell.today{background:var(--accent-soft);border-color:var(--accent)}
-.month-day-header{display:flex;justify-content:space-between;align-items:center;flex:none;min-height:30px}
+.month-day-header{display:flex;justify-content:space-between;align-items:center;flex:none;min-height:27px}
 .month-day-number{font-size:13px;font-weight:700;color:var(--text)}
 .month-day-cell.today .month-day-number{color:var(--accent)}
 .month-day-photos{display:flex;gap:3px;align-items:center}
 .month-day-photo{
-  width:36px;
-  height:36px;
+  width:32px;
+  height:32px;
   object-fit:cover;
   border-radius:6px;
   border:1px solid rgba(0,0,0,0.06);
@@ -310,13 +310,13 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
   .month-weekday{padding:3px 0;font-size:9px}
   .month-days-grid{gap:1px}
   .month-day-cell{padding:2px;border-radius:4px}
-  .month-day-header{min-height:30px}
+  .month-day-header{min-height:27px}
   .month-day-number{font-size:11px}
 
-  /* 手机上也把照片标签稍微放大 */
+  /* 手机上照片标签稍微缩小，让当天计划多一点空间 */
   .month-day-photo{
-    width:30px;
-    height:30px;
+    width:27px;
+    height:27px;
     border-radius:5px;
   }
 

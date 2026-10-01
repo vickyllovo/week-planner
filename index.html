@@ -1194,7 +1194,7 @@ function renderPhotoHistory() {
   });
 }
 
-/* ============ 日期详情弹窗（顺序：心得 → 任务 → 照片 → 历史） ============ */
+/* ============ 日期详情弹窗 ============ */
 function openDayDetailModal(dateObj) {
   window._currentDetailDate = new Date(dateObj);
   const weekKey = getWeekKey(getMonday(dateObj));
@@ -1204,12 +1204,10 @@ function openDayDetailModal(dateObj) {
   document.getElementById('day-detail-title').textContent =
     `${dateObj.getFullYear()}年 ${dateObj.getMonth() + 1}月${dateObj.getDate()}日 详情`;
 
-  /* 1. 今日心得（只读） */
   const noteText = db.notes[noteKey] || '';
   document.getElementById('day-detail-note-display').textContent =
     noteText.trim() ? noteText : '暂无心得';
 
-  /* 2. 任务完成情况 */
   const dayTasks = db.tasks.filter(t => t.week_key === weekKey && t.day === dayIdx);
   const tasksEl = document.getElementById('day-detail-tasks');
   if (dayTasks.length === 0) {
@@ -1220,12 +1218,8 @@ function openDayDetailModal(dateObj) {
     ).join('');
   }
 
-  /* 3. 照片标签 */
   renderDayPhotos(dateObj);
-
-  /* 4. 历史标签 */
   renderPhotoHistory();
-
   document.getElementById('day-detail-modal').classList.add('show');
 }
 function closeDayDetailModal() {
@@ -1242,14 +1236,13 @@ function closePeriodDetailModal() {
   document.getElementById('period-detail-modal').classList.remove('show');
 }
 
-/* 周详情弹窗：本周心得 + 每天完成情况 */
+/* 周详情弹窗 */
 function openWeekDetailModal() {
   const weekStart = getMonday(bookDate);
   const weekKey = getWeekKey(weekStart);
   const weekNum = weekKey.split('-W')[1];
   const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
   let html = '';
-  /* 本周心得 */
   const weekNote = db.summaries['week-' + weekKey] || '';
   html += `<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:6px;">📝 本周心得</div>`;
   html += `<div class="detail-note">${weekNote.trim() ? esc(weekNote) : '暂无心得'}</div>`;
@@ -1273,55 +1266,57 @@ function openWeekDetailModal() {
   openPeriodDetailModal(`第 ${weekNum} 周 总结`, html);
 }
 
-/* 月详情弹窗：本月心得 + 每周完成情况 */
+/* 月详情弹窗（新版：本月心得 + 每周每日完成情况） */
 function openMonthDetailModal() {
   const year = bookDate.getFullYear();
   const month = bookDate.getMonth();
   const monthKey = year + '-' + String(month + 1).padStart(2, '0');
   const monthNote = db.summaries['month-' + monthKey] || '';
+  const dayNames = ['周一','周二','周三','周四','周五','周六','周日'];
+
   let html = '';
   html += `<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:6px;">📝 本月心得</div>`;
   html += `<div class="detail-note">${monthNote.trim() ? esc(monthNote) : '暂无心得'}</div>`;
-  html += `<div style="font-size:13px;font-weight:600;color:var(--accent);margin:12px 0 6px;">✅ 每周任务完成情况</div>`;
-  /* 找该月所有周 */
+  html += `<div style="font-size:13px;font-weight:600;color:var(--accent);margin:12px 0 6px;">✅ 任务完成情况</div>`;
+
   const monthStart = new Date(year, month, 1);
   const monthEnd = new Date(year, month + 1, 0);
+
   const weekKeys = [];
-  const curr = getMonday(monthStart);
+  let curr = getMonday(monthStart);
   while (curr <= monthEnd) {
     const wk = getWeekKey(curr);
     if (!weekKeys.includes(wk)) weekKeys.push(wk);
     curr.setDate(curr.getDate() + 7);
   }
+
   weekKeys.forEach(wk => {
-    const weekStart = getMonday(new Date(wk.split('-W')[0], 0, 1 + (parseInt(wk.split('-W')[1]) - 1) * 7));
-    /* 更准确：用当前周的周一 */
-    let wStart = null;
-    for (let d = 0; d < 7; d++) {
-      const c = new Date(monthStart);
-      c.setDate(c.getDate() + d);
-      if (getWeekKey(getMonday(c)) === wk) { wStart = getMonday(c); break; }
-    }
-    if (!wStart) {
-      /* 兜底 */
-      const y = parseInt(wk.split('-W')[0]);
-      const w = parseInt(wk.split('-W')[1]);
-      const ys = new Date(y, 0, 1);
-      const firstMon = getMonday(ys);
-      wStart = new Date(firstMon);
-      wStart.setDate(wStart.getDate() + (w - 1) * 7);
-    }
-    const weekEnd = new Date(wStart); weekEnd.setDate(weekEnd.getDate() + 6);
-    const allTasks = db.tasks.filter(t => t.week_key === wk);
-    const doneCount = allTasks.filter(t => t.done).length;
+    const wNum = wk.split('-W')[1];
+    const y = parseInt(wk.split('-W')[0]);
+    const ys = new Date(y, 0, 1);
+    let wStart = getMonday(ys);
+    wStart.setDate(wStart.getDate() + (parseInt(wNum) - 1) * 7);
+    const wEnd = new Date(wStart);
+    wEnd.setDate(wEnd.getDate() + 6);
+
     html += `<div class="detail-day-block">`;
-    html += `<div class="detail-day-header">第 ${wk.split('-W')[1]} 周（${wStart.getMonth()+1}/${wStart.getDate()} - ${weekEnd.getMonth()+1}/${weekEnd.getDate()}）：${doneCount}/${allTasks.length}</div>`;
-    html += `</div>`;
+    html += `<div class="detail-day-header">第 ${wNum} 周（${wStart.getMonth()+1}/${wStart.getDate()} - ${wEnd.getMonth()+1}/${wEnd.getDate()}）</div>`;
+    html += `<div class="detail-task-list">`;
+    for (let d = 0; d < 7; d++) {
+      const cellDate = new Date(wStart);
+      cellDate.setDate(cellDate.getDate() + d);
+      if (cellDate.getMonth() !== month) continue;
+      const dayTasks = db.tasks.filter(t => t.week_key === wk && t.day === d);
+      const doneCount = dayTasks.filter(t => t.done).length;
+      html += `<div class="detail-task"><span class="marker">·</span><span>${dayNames[d]} ${cellDate.getMonth()+1}/${cellDate.getDate()}：${doneCount}/${dayTasks.length}</span></div>`;
+    }
+    html += `</div></div>`;
   });
+
   openPeriodDetailModal(`${year}年${month + 1}月 总结`, html);
 }
 
-/* 年详情弹窗：全年心得 + 每月完成情况 */
+/* 年详情弹窗 */
 function openYearDetailModal() {
   const year = bookDate.getFullYear();
   const yearNote = db.summaries['year-' + year] || '';
@@ -1574,7 +1569,6 @@ function getPeriodLabel() {
   return `${bookDate.getFullYear()}年`;
 }
 
-/* ===== 日总结 ===== */
 function renderDaySummary() {
   const container = document.getElementById('month-calendar');
   container.innerHTML = '';
@@ -1667,7 +1661,6 @@ function renderDaySummary() {
   container.appendChild(inner);
 }
 
-/* ===== 周总结 ===== */
 function renderWeekSummary() {
   const container = document.getElementById('month-calendar');
   container.innerHTML = '';
@@ -1737,7 +1730,6 @@ function renderWeekSummary() {
   container.appendChild(view);
 }
 
-/* ===== 月总结 ===== */
 function renderMonthSummary() {
   const container = document.getElementById('month-calendar');
   container.innerHTML = '';
@@ -1750,7 +1742,6 @@ function renderMonthSummary() {
   const monthStart = new Date(year, month, 1);
   const monthEnd = new Date(year, month + 1, 0);
 
-  /* 找出该月的所有周 */
   const weekKeys = [];
   let curr = getMonday(monthStart);
   while (curr <= monthEnd) {
@@ -1763,7 +1754,6 @@ function renderMonthSummary() {
 
   weekKeys.forEach(wk => {
     const wNum = wk.split('-W')[1];
-    /* 找该周的周一 */
     const y = parseInt(wk.split('-W')[0]);
     const ys = new Date(y, 0, 1);
     let wStart = getMonday(ys);
@@ -1804,7 +1794,6 @@ function renderMonthSummary() {
   container.appendChild(view);
 }
 
-/* ===== 年总结 ===== */
 function renderYearSummary() {
   const container = document.getElementById('month-calendar');
   container.innerHTML = '';
@@ -1860,40 +1849,54 @@ function renderYearSummary() {
   container.appendChild(view);
 }
 
-/* ===== 总结主渲染 ===== */
+/* 总结主渲染 */
 function renderBook() {
-  /* 标题 */
-  document.getElementById('book-period-label').textContent = getPeriodLabel();
-  document.getElementById('book-period-label-bottom').textContent = getPeriodLabel();
-  const sub = document.getElementById('book-period-sub');
+  const labelEl = document.getElementById('book-period-label');
+  const baseLabel = getPeriodLabel();
+
+  labelEl.onclick = null;
+  labelEl.style.cursor = 'default';
+  labelEl.style.color = '';
 
   if (bookPeriod === 'day') {
-    sub.textContent = '日历 · 点击日期查看详情';
+    labelEl.textContent = baseLabel;
+    document.getElementById('book-period-sub').textContent = '日历 · 点击日期查看详情';
     renderDaySummary();
     document.getElementById('book-bottom-title').textContent = '今日心得';
     const tKey = todayKey();
     document.getElementById('book-summary-input').value = db.notes[tKey] || '';
-  } else if (bookPeriod === 'week') {
-    sub.textContent = '点击上方"第xx周"查看该周总结';
+  }
+  else if (bookPeriod === 'week') {
+    labelEl.textContent = baseLabel;
+    document.getElementById('book-period-sub').textContent = '点击上方"第xx周"查看该周总结';
     renderWeekSummary();
     const wk = getWeekKey(getMonday(bookDate));
     document.getElementById('book-bottom-title').textContent = `第 ${wk.split('-W')[1]} 周心得`;
     document.getElementById('book-summary-input').value = db.summaries['week-' + wk] || '';
-  } else if (bookPeriod === 'month') {
-    sub.textContent = '本月每周任务完成情况';
+  }
+  else if (bookPeriod === 'month') {
+    labelEl.textContent = baseLabel + ' ▸';
+    labelEl.style.cursor = 'pointer';
+    labelEl.style.color = 'var(--accent)';
+    labelEl.onclick = () => openMonthDetailModal();
+
+    document.getElementById('book-period-sub').textContent = '点击上方标题查看本月心得与任务完成情况';
     renderMonthSummary();
     const mk = bookDate.getFullYear() + '-' + String(bookDate.getMonth() + 1).padStart(2, '0');
     document.getElementById('book-bottom-title').textContent = `${bookDate.getFullYear()}年${bookDate.getMonth() + 1}月心得`;
     document.getElementById('book-summary-input').value = db.summaries['month-' + mk] || '';
-  } else {
-    sub.textContent = '点击"202x年"查看全年总结';
+  }
+  else {
+    labelEl.textContent = baseLabel;
+    document.getElementById('book-period-sub').textContent = '点击"202x年"查看全年总结';
     renderYearSummary();
     document.getElementById('book-bottom-title').textContent = `${bookDate.getFullYear()}年心得`;
     document.getElementById('book-summary-input').value = db.summaries['year-' + bookDate.getFullYear()] || '';
   }
+
+  document.getElementById('book-period-label-bottom').textContent = baseLabel;
 }
 
-/* 底部编辑器 - 完成按钮 */
 function saveBookSummary() {
   const textarea = document.getElementById('book-summary-input');
   const text = textarea.value;

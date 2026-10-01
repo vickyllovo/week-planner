@@ -89,7 +89,6 @@
   .note-box textarea { flex: 1; width: 100%; border: 1px solid var(--separator); border-radius: 8px; padding: 10px; font-size: 13px; font-family: inherit; resize: none; outline: none; line-height: 1.6; background: var(--bg); color: var(--text); }
   .note-box textarea:focus { border-color: var(--accent); background: var(--card); }
 
-  /* 自定义标签区域 */
   .tag-section { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border-top: 1px dashed var(--separator); padding-top: 10px; }
   .tag-section .section-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
   .tag-input-row { display: flex; gap: 6px; }
@@ -113,7 +112,6 @@
   .right-footer .week-display { font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; padding: 4px 12px; border-radius: 6px; background: var(--accent-soft); }
   .right-footer .week-display:active { background: #FDE8D8; }
 
-  /* 日历弹窗 */
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
   .calendar-cell { border: 1px solid var(--separator); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--card); }
   .calendar-cell.active { border-color: var(--accent); background: var(--accent-soft); }
@@ -140,15 +138,25 @@
   
   .month-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--bg); border-bottom: 1px solid var(--separator); text-align: center; padding: 6px 0; font-size: 11px; color: var(--text-secondary); font-weight: 600; }
   .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); flex: 1; overflow-y: auto; background: var(--card); }
-  .month-day-cell { border-right: 1px solid var(--separator); border-bottom: 1px solid var(--separator); padding: 2px; display: flex; flex-direction: column; height: 70px; overflow: hidden; position: relative; cursor: pointer; }
+  
+  /* 月历格子（核心修改：支持照片背景） */
+  .month-day-cell { 
+    border-right: 1px solid var(--separator); border-bottom: 1px solid var(--separator); 
+    padding: 2px; display: flex; flex-direction: column; 
+    height: 70px; overflow: hidden; position: relative; cursor: pointer; 
+    background-size: cover; background-position: center; /* 新增 */
+  }
   .month-day-cell:nth-child(7n) { border-right: none; }
   .month-day-cell.other-month { background: #FAFAFA; opacity: 0.5; }
   .month-day-cell.today { background: var(--accent-soft); }
   
+  /* 如果格子有照片背景，加半透明遮罩让文字可读 */
+  .month-day-cell.has-photo-bg::before { content: ''; position: absolute; inset: 0; background: rgba(255, 253, 250, 0.85); z-index: 1; }
+  .month-day-cell.has-photo-bg > * { position: relative; z-index: 2; }
+  
   .month-day-header { display: flex; justify-content: space-between; align-items: center; padding: 0 2px; margin-bottom: 1px; flex: none; }
   .note-indicator { font-size: 10px; color: var(--accent); display: none; }
   .month-day-cell.has-note .note-indicator { display: block; }
-  .month-day-cell.has-photo .note-indicator::after { content: '📸'; margin-left: 2px; }
   
   .month-day-num { font-size: 10px; font-weight: 600; color: var(--text); text-align: right; }
   .month-day-cell.today .month-day-num { color: var(--accent); font-weight: 800; }
@@ -158,6 +166,10 @@
   .calendar-task.done { background: #F0F0F0; color: var(--text-tertiary); text-decoration: line-through; }
   .calendar-task.pending { background: var(--accent-soft); color: var(--accent); font-weight: 500; border-left: 2px solid var(--accent); }
   
+  /* 多张照片的角标 */
+  .photo-count { position: absolute; bottom: 2px; right: 2px; background: var(--accent); color: #fff; font-size: 8px; padding: 0 4px; border-radius: 4px; z-index: 3; font-weight: 600; }
+
+  /* 周视图专属 */
   .week-grid { display: flex; flex-direction: column; gap: 8px; padding: 12px; height: 100%; overflow-y: auto; }
   .week-day-card { background: #FDFCF9; border: 1px solid var(--separator); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
   .week-day-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--separator); padding-bottom: 4px; margin-bottom: 2px; }
@@ -665,6 +677,7 @@ function handlePhotoUpload(event) {
       db.photos[noteKey].push(base64);
       saveLocal();
       renderPhotoPreview();
+      renderBook(); // 刷新月总结面板的背景图
       event.target.value = '';
     };
     img.src = e.target.result;
@@ -690,6 +703,7 @@ function deletePhoto(noteKey, index) {
   if (db.photos[noteKey].length === 0) delete db.photos[noteKey];
   saveLocal();
   renderPhotoPreview();
+  renderBook(); // 刷新月总结面板的背景图
   if (document.getElementById('day-detail-modal').classList.contains('show')) {
     const parts = noteKey.split('-');
     const weekKey = parts[0] + '-' + parts[1];
@@ -914,11 +928,20 @@ function renderBook() {
       const hasPhoto = db.photos[noteKey] && db.photos[noteKey].length > 0;
       
       if (hasNote || hasTag || hasPhoto) cell.classList.add('has-note');
-      if (hasPhoto) cell.classList.add('has-photo');
+      
+      // 核心：把照片作为格子背景
+      if (hasPhoto) {
+        cell.style.backgroundImage = `url(${db.photos[noteKey][0]})`;
+        cell.classList.add('has-photo-bg');
+      }
       
       const dayTasks = db.tasks.filter(t => t.week_key === weekKey && t.day === dayIdx);
       let tasksHtml = '';
       dayTasks.forEach(t => { const cls = t.done ? 'calendar-task done' : 'calendar-task pending'; tasksHtml += `<div class="${cls}">${esc(t.title)}</div>`; });
+      
+      // 多张照片角标
+      const photoCount = hasPhoto ? db.photos[noteKey].length : 0;
+      const photoBadge = photoCount > 1 ? `<div class="photo-count">+${photoCount - 1}</div>` : '';
       
       cell.innerHTML = `
         <div class="month-day-header">
@@ -926,6 +949,7 @@ function renderBook() {
           <span class="month-day-num">${cellDate.getDate()}</span>
         </div>
         <div class="task-scroll-list">${tasksHtml}</div>
+        ${photoBadge}
       `;
       
       cell.onclick = () => { openDayDetailModal(cellDate); };

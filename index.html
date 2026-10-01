@@ -629,8 +629,6 @@ header {
   color: var(--text-secondary);
 }
 
-/* ================= 月总结：真正的整月日历 ================= */
-
 .month-calendar {
   flex: 1;
   min-height: 0;
@@ -718,7 +716,6 @@ header {
   align-items: center;
 }
 
-/* 放大后的照片缩略图（桌面端） */
 .month-day-photo {
   width: 28px;
   height: 28px;
@@ -763,120 +760,6 @@ header {
   font-size: 8px;
   color: var(--text-secondary);
   text-align: center;
-}
-
-/* ================= 周总结兼容 ================= */
-
-.two-week-container {
-  flex: 1;
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  background: var(--card);
-}
-
-.week-block {
-  flex: 0 0 100%;
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  padding: 4px;
-}
-
-.week-header {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  padding: 4px 8px;
-  border-bottom: 1px solid var(--separator);
-  margin-bottom: 4px;
-}
-
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  flex: 1;
-}
-
-.day-cell {
-  border: 1px solid var(--separator);
-  border-radius: 6px;
-  padding: 4px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 80px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  background: var(--bg);
-}
-
-.day-cell.today {
-  background: var(--accent-soft);
-}
-
-.day-cell-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2px;
-}
-
-.day-num {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.day-cell.today .day-num {
-  color: var(--accent);
-}
-
-.day-photos {
-  display: flex;
-  gap: 2px;
-}
-
-/* 放大后的周视图照片缩略图（桌面端） */
-.day-photo-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  object-fit: cover;
-  border: 1px solid rgba(0,0,0,0.06);
-}
-
-.day-tasks {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.day-task {
-  font-size: 9px;
-  padding: 1px 2px;
-  border-radius: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.day-task.done {
-  background: #F0F0F0;
-  color: var(--text-tertiary);
-  text-decoration: line-through;
-}
-
-.day-task.pending {
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-weight: 500;
-  border-left: 1px solid var(--accent);
 }
 
 .book-summary-textarea {
@@ -1349,7 +1232,7 @@ header {
   color: var(--success);
 }
 
-/* ================= 日期照片 ================= */
+/* ================= 日期详情里的照片 & 历史 ================= */
 
 .day-detail-photos {
   display: flex;
@@ -1373,7 +1256,39 @@ header {
   object-fit: cover;
 }
 
-/* ================= 裁剪器 ================= */
+/* 照片历史记录横向滚动条 */
+.photo-history-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.photo-history-item {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--separator);
+  background: var(--bg);
+}
+
+.photo-history-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-history-empty {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding: 8px 0;
+}
+
+/* ================= 裁剪器（已放大 1.2 倍） ================= */
 
 .crop-container {
   display: flex;
@@ -1383,13 +1298,13 @@ header {
 }
 
 .crop-box {
-  width: 260px;
-  height: 260px;
+  width: 312px;
+  height: 312px;
   border: 2px dashed var(--accent);
   border-radius: 8px;
   overflow: hidden;
   position: relative;
-  background: #000;
+  background: #FFFFFF;
   touch-action: none;
 }
 
@@ -1400,6 +1315,8 @@ header {
   user-select: none;
   -webkit-user-drag: none;
   transform-origin: center center;
+  left: 50%;
+  top: 50%;
 }
 
 .crop-controls {
@@ -1560,7 +1477,6 @@ header {
     font-size: 11px;
   }
 
-  /* 放大后的照片缩略图（手机端） */
   .month-day-photo {
     width: 22px;
     height: 22px;
@@ -1574,31 +1490,6 @@ header {
 
   .month-more {
     font-size: 7px;
-  }
-
-  .two-week-container {
-    padding: 2px;
-  }
-
-  .day-cell {
-    min-height: 70px;
-    padding: 2px;
-  }
-
-  .day-num {
-    font-size: 10px;
-  }
-
-  .day-task {
-    font-size: 8px;
-    padding: 1px 2px;
-  }
-
-  /* 放大后的周视图照片缩略图（手机端） */
-  .day-photo-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
   }
 
   .list-grid {
@@ -1653,9 +1544,10 @@ header {
     font-size: 12px;
   }
 
+  /* 裁剪框手机端也放大 1.2 倍：220 → 264 */
   .crop-box {
-    width: 220px;
-    height: 220px;
+    width: 264px;
+    height: 264px;
   }
 
   .calendar-grid {
@@ -2244,23 +2136,24 @@ header {
         margin-bottom:6px;
       "
     >
-      📝 今日心得
+      📝 本月心得（在总结页编辑）
     </div>
 
-    <textarea
-      id="day-detail-note-input"
-      placeholder="写下今天发生了什么..."
-    ></textarea>
-
-    <div class="modal-btns">
-
-      <button
-        class="save"
-        onclick="saveDayNote()"
-      >
-        完成
-      </button>
-
+    <div
+      id="day-detail-note-display"
+      style="
+        min-height:60px;
+        padding:10px;
+        background:var(--bg);
+        border-radius:8px;
+        font-size:13px;
+        line-height:1.6;
+        white-space:pre-wrap;
+        color:var(--text);
+        margin-bottom:12px;
+      "
+    >
+      暂无心得
     </div>
 
 
@@ -2271,7 +2164,7 @@ header {
         margin:12px 0 6px;
       "
     >
-      🏷️ 自定义标签（照片）
+      🏷️ 本日照片标签
     </div>
 
     <div
@@ -2280,7 +2173,7 @@ header {
     ></div>
 
     <label class="file-upload-label">
-      📷 上传标签
+      📷 上传新标签
 
       <input
         type="file"
@@ -2289,6 +2182,24 @@ header {
         style="display:none;"
       >
     </label>
+
+
+    <div
+      style="
+        font-size:13px;
+        font-weight:600;
+        margin:12px 0 6px;
+      "
+    >
+      🕘 历史标签（点击直接复用）
+    </div>
+
+    <div
+      id="photo-history-list"
+      class="photo-history-scroll"
+    >
+      <div class="photo-history-empty">暂无历史照片</div>
+    </div>
 
 
     <div class="modal-btns">
@@ -2314,7 +2225,7 @@ header {
   id="crop-modal"
 >
 
-  <div class="modal-content">
+  <div class="modal-content" style="max-width: 360px;">
 
     <h3>裁剪照片（1:1）</h3>
 
@@ -2454,7 +2365,8 @@ let db = {
   summaries: {},
   lists: [],
   photos: {},
-  globalPhotos: []
+  globalPhotos: [],
+  photoHistory: []
 };
 
 let currentMonday = getMonday(new Date());
@@ -2571,6 +2483,7 @@ function loadLocal() {
     if (!db.lists) db.lists = [];
     if (!db.photos) db.photos = {};
     if (!db.globalPhotos) db.globalPhotos = [];
+    if (!db.photoHistory) db.photoHistory = [];
 
   } catch (e) {
 
@@ -2581,7 +2494,8 @@ function loadLocal() {
       summaries: {},
       lists: [],
       photos: {},
-      globalPhotos: []
+      globalPhotos: [],
+      photoHistory: []
     };
 
   }
@@ -2908,6 +2822,7 @@ async function downloadFromCloud() {
     if (!db.lists) db.lists = [];
     if (!db.photos) db.photos = {};
     if (!db.globalPhotos) db.globalPhotos = [];
+    if (!db.photoHistory) db.photoHistory = [];
 
     saveLocal();
 
@@ -2999,6 +2914,7 @@ function importData(event) {
       if (!db.lists) db.lists = [];
       if (!db.photos) db.photos = {};
       if (!db.globalPhotos) db.globalPhotos = [];
+      if (!db.photoHistory) db.photoHistory = [];
 
       saveLocal();
 
@@ -3650,53 +3566,16 @@ function deleteListItem(
 }
 
 
-/* ================= 心得 / 照片 ================= */
-
-function saveDayNote() {
-
-  const textarea =
-    document.getElementById(
-      'day-detail-note-input'
-    );
-
-  const text =
-    textarea.value.trim();
-
-  const dateObj =
-    window._currentDetailDate
-      ? new Date(
-          window._currentDetailDate
-        )
-      : new Date();
-
-  const weekKey =
-    getWeekKey(
-      getMonday(dateObj)
-    );
-
-  const dayIdx =
-    (dateObj.getDay() + 6) % 7;
-
-  const noteKey =
-    `${weekKey}-${dayIdx}`;
-
-  db.notes[noteKey] = text;
-
-  saveLocal();
-
-  renderBook();
-
-  alert(
-    '心得已保存！'
-  );
-}
-
+/* ================= 照片处理 ================= */
 
 let currentCropFile = null;
 
 let cropTranslateX = 0;
 let cropTranslateY = 0;
 let cropScale = 1;
+
+/* 基准缩放：让图片初始就填满裁剪框 */
+let cropBaseScale = 1;
 
 
 function handleDayPhotoUpload(event) {
@@ -3714,26 +3593,51 @@ function handleDayPhotoUpload(event) {
   reader.onload = e => {
 
     const img =
-      document.getElementById(
-        'crop-image'
-      );
+      document.getElementById('crop-image');
 
-    img.src =
-      e.target.result;
+    img.onload = () => {
 
-    cropTranslateX = 0;
-    cropTranslateY = 0;
-    cropScale = 1;
+      const cropBox =
+        document.getElementById('crop-box');
 
-    document.getElementById(
-      'crop-zoom'
-    ).value = 1;
+      const boxSize =
+        cropBox.offsetWidth;
 
-    applyCropTransform();
+      const imgW = img.naturalWidth;
+      const imgH = img.naturalHeight;
 
-    document
-      .getElementById('crop-modal')
-      .classList.add('show');
+      /*
+       * 基准缩放：让图片至少填满裁剪框（cover）
+       */
+      cropBaseScale =
+        Math.max(
+          boxSize / imgW,
+          boxSize / imgH
+        );
+
+      cropScale = cropBaseScale;
+
+      /* 居中 */
+      cropTranslateX = 0;
+      cropTranslateY = 0;
+
+      /* 图片尺寸还原为原图尺寸，通过 transform 缩放 */
+      img.style.width = imgW + 'px';
+      img.style.height = imgH + 'px';
+
+      /* 滑块映射到「相对基准」的倍数，范围 0.1 ~ 3 */
+      document
+        .getElementById('crop-zoom')
+        .value = 1;
+
+      applyCropTransform();
+
+      document
+        .getElementById('crop-modal')
+        .classList.add('show');
+    };
+
+    img.src = e.target.result;
 
     event.target.value = '';
   };
@@ -3745,12 +3649,10 @@ function handleDayPhotoUpload(event) {
 function applyCropTransform() {
 
   const img =
-    document.getElementById(
-      'crop-image'
-    );
+    document.getElementById('crop-image');
 
   img.style.transform =
-    `translate(${cropTranslateX}px, ${cropTranslateY}px) scale(${cropScale})`;
+    `translate(calc(-50% + ${cropTranslateX}px), calc(-50% + ${cropTranslateY}px)) scale(${cropScale})`;
 }
 
 
@@ -3764,16 +3666,18 @@ function closeCropModal() {
 }
 
 
+/* 缩放滑块：显示的是「相对基准的倍数」 */
 document
   .getElementById('crop-zoom')
   .addEventListener(
     'input',
     e => {
 
+      const userScale =
+        parseFloat(e.target.value);
+
       cropScale =
-        parseFloat(
-          e.target.value
-        );
+        cropBaseScale * userScale;
 
       applyCropTransform();
 
@@ -3782,9 +3686,7 @@ document
 
 
 const cropBox =
-  document.getElementById(
-    'crop-box'
-  );
+  document.getElementById('crop-box');
 
 let isDragging = false;
 let startX;
@@ -3852,14 +3754,13 @@ function confirmCrop() {
   }
 
   const img =
-    document.getElementById(
-      'crop-image'
-    );
+    document.getElementById('crop-image');
+
+  const boxSize =
+    cropBox.offsetWidth; // 实际裁剪框尺寸：312 或 264
 
   const canvas =
-    document.createElement(
-      'canvas'
-    );
+    document.createElement('canvas');
 
   canvas.width = 200;
   canvas.height = 200;
@@ -3867,28 +3768,47 @@ function confirmCrop() {
   const ctx =
     canvas.getContext('2d');
 
+  /* 白色背景兜底，防止透明变黑 */
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, 200, 200);
+
   const naturalW =
     img.naturalWidth;
 
   const naturalH =
     img.naturalHeight;
 
-  const cropSize = 200;
-
+  /*
+   * 图片「显示尺寸」（相对于裁剪框）
+   */
   const displayW =
     naturalW * cropScale;
 
   const displayH =
     naturalH * cropScale;
 
+  /*
+   * 图片中心在裁剪框内的坐标
+   * （crop-box 居中 + 拖动位移）
+   */
+  const imgCenterX =
+    boxSize / 2 + cropTranslateX;
+
+  const imgCenterY =
+    boxSize / 2 + cropTranslateY;
+
+  /*
+   * 图片左上角在裁剪框内的坐标
+   */
   const imgLeft =
-    (cropSize - displayW) / 2 +
-    cropTranslateX;
+    imgCenterX - displayW / 2;
 
   const imgTop =
-    (cropSize - displayH) / 2 +
-    cropTranslateY;
+    imgCenterY - displayH / 2;
 
+  /*
+   * 裁剪框左上角对应到原图的坐标
+   */
   const sx =
     -imgLeft / cropScale;
 
@@ -3896,10 +3816,10 @@ function confirmCrop() {
     -imgTop / cropScale;
 
   const sw =
-    cropSize / cropScale;
+    boxSize / cropScale;
 
   const sh =
-    cropSize / cropScale;
+    boxSize / cropScale;
 
   ctx.drawImage(
     img,
@@ -3916,7 +3836,7 @@ function confirmCrop() {
   const base64 =
     canvas.toDataURL(
       'image/jpeg',
-      0.8
+      0.85
     );
 
   document.getElementById(
@@ -3981,9 +3901,7 @@ function applyTagScope(scope) {
       db.photos[noteKey] = [];
     }
 
-    db.photos[noteKey].push(
-      base64
-    );
+    db.photos[noteKey].push(base64);
 
   } else {
 
@@ -3991,18 +3909,28 @@ function applyTagScope(scope) {
       db.globalPhotos = [];
     }
 
-    db.globalPhotos.push(
-      base64
-    );
+    db.globalPhotos.push(base64);
+  }
+
+  /* 加入照片历史 */
+  if (!db.photoHistory) db.photoHistory = [];
+
+  /* 避免重复 */
+  if (!db.photoHistory.includes(base64)) {
+    db.photoHistory.unshift(base64);
+  }
+
+  /* 限制历史数量，避免 localStorage 溢出 */
+  if (db.photoHistory.length > 30) {
+    db.photoHistory =
+      db.photoHistory.slice(0, 30);
   }
 
   saveLocal();
 
   renderBook();
 
-  openDayDetailModal(
-    dateObj
-  );
+  openDayDetailModal(dateObj);
 
   closeTagActionModal();
 
@@ -4014,7 +3942,23 @@ function applyTagScope(scope) {
 }
 
 
-/* ================= 日期照片 ================= */
+/* ================= 复用历史照片 ================= */
+
+function reuseHistoryPhoto(base64) {
+
+  window._pendingTagImage = base64;
+
+  document.getElementById(
+    'tag-action-img'
+  ).src = base64;
+
+  document
+    .getElementById('tag-action-modal')
+    .classList.add('show');
+}
+
+
+/* ================= 日期照片渲染 ================= */
 
 function renderDayPhotos(dateObj) {
 
@@ -4056,9 +4000,7 @@ function renderDayPhotos(dateObj) {
       (p, index) => {
 
         const div =
-          document.createElement(
-            'div'
-          );
+          document.createElement('div');
 
         div.className =
           'photo-thumb';
@@ -4074,10 +4016,7 @@ function renderDayPhotos(dateObj) {
             )
           ) {
 
-            if (
-              index <
-              photos.length
-            ) {
+            if (index < photos.length) {
 
               db.photos[noteKey]
                 .splice(index, 1);
@@ -4086,9 +4025,7 @@ function renderDayPhotos(dateObj) {
                 db.photos[noteKey]
                   .length === 0
               ) {
-                delete db.photos[
-                  noteKey
-                ];
+                delete db.photos[noteKey];
               }
 
             } else {
@@ -4103,18 +4040,57 @@ function renderDayPhotos(dateObj) {
 
             renderBook();
 
-            openDayDetailModal(
-              dateObj
-            );
+            openDayDetailModal(dateObj);
           }
         };
 
-        container.appendChild(
-          div
-        );
+        container.appendChild(div);
       }
     );
   }
+}
+
+
+/* ================= 照片历史渲染 ================= */
+
+function renderPhotoHistory() {
+
+  const container =
+    document.getElementById(
+      'photo-history-list'
+    );
+
+  if (!container) return;
+
+  const history =
+    db.photoHistory || [];
+
+  container.innerHTML = '';
+
+  if (history.length === 0) {
+
+    container.innerHTML =
+      '<div class="photo-history-empty">暂无历史照片</div>';
+
+    return;
+  }
+
+  history.forEach(p => {
+
+    const item =
+      document.createElement('div');
+
+    item.className =
+      'photo-history-item';
+
+    item.innerHTML =
+      `<img src="${p}">`;
+
+    item.onclick = () =>
+      reuseHistoryPhoto(p);
+
+    container.appendChild(item);
+  });
 }
 
 
@@ -4146,9 +4122,9 @@ function openDayDetailModal(dateObj) {
       'day-detail-tasks'
     );
 
-  const noteInput =
+  const noteDisplay =
     document.getElementById(
-      'day-detail-note-input'
+      'day-detail-note-display'
     );
 
   titleEl.textContent =
@@ -4185,17 +4161,27 @@ function openDayDetailModal(dateObj) {
         .join('');
   }
 
-  noteInput.value =
-    db.notes[noteKey] || '';
+  /* 显示该日期所属「月」的总结 */
+  const monthKey =
+    'month-' +
+    dateObj.getFullYear() +
+    '-' +
+    String(dateObj.getMonth() + 1).padStart(2, '0');
 
-  renderDayPhotos(
-    dateObj
-  );
+  const monthSummary =
+    db.summaries[monthKey] || '';
+
+  noteDisplay.textContent =
+    monthSummary.trim()
+      ? monthSummary
+      : '暂无心得，请到总结页编辑';
+
+  renderDayPhotos(dateObj);
+
+  renderPhotoHistory();
 
   document
-    .getElementById(
-      'day-detail-modal'
-    )
+    .getElementById('day-detail-modal')
     .classList.add('show');
 }
 
@@ -4203,9 +4189,7 @@ function openDayDetailModal(dateObj) {
 function closeDayDetailModal() {
 
   document
-    .getElementById(
-      'day-detail-modal'
-    )
+    .getElementById('day-detail-modal')
     .classList.remove('show');
 }
 
@@ -4217,9 +4201,7 @@ function renderAll() {
   const end =
     new Date(currentMonday);
 
-  end.setDate(
-    end.getDate() + 6
-  );
+  end.setDate(end.getDate() + 6);
 
   const weekNum =
     currentWeekKey.split('-W')[1];
@@ -4245,9 +4227,7 @@ function renderAll() {
     inboxTasks.length;
 
   const inboxList =
-    document.getElementById(
-      'inbox-list'
-    );
+    document.getElementById('inbox-list');
 
   inboxList.innerHTML = '';
 
@@ -4258,85 +4238,75 @@ function renderAll() {
 
   } else {
 
-    inboxTasks.forEach(
-      t => {
+    inboxTasks.forEach(t => {
 
-        const el =
-          document.createElement(
-            'div'
-          );
+      const el =
+        document.createElement('div');
 
-        el.className =
-          'inbox-task-item';
+      el.className = 'inbox-task-item';
 
-        let previewHtml = '';
+      let previewHtml = '';
 
-        if (
-          t.details &&
-          t.details.trim()
-        ) {
+      if (t.details && t.details.trim()) {
 
-          const cleanDetail =
-            t.details
-              .replace(/\n/g, ' ')
-              .trim();
+        const cleanDetail =
+          t.details
+            .replace(/\n/g, ' ')
+            .trim();
 
-          previewHtml =
-            `<div class="task-preview">${esc(cleanDetail)}</div>`;
-        }
-
-        el.innerHTML = `
-          <button
-            class="chk"
-            style="width:12px;height:12px;"
-            onclick="toggleTask('${t.id}')"
-          ></button>
-
-          <div
-            class="task-content"
-            onclick="selectedTaskId='${t.id}'; renderAll();"
-            style="
-              cursor:pointer;
-              ${t.done
-                ? 'text-decoration:line-through;color:var(--text-tertiary);'
-                : ''}
-            "
-          >
-            <span class="ttl">
-              ${esc(t.title)}
-            </span>
-
-            ${previewHtml}
-          </div>
-
-          <select
-            onchange="
-              if(this.value!==''){
-                moveToDay('${t.id}', this.value);
-              }
-            "
-          >
-            <option value="">移动</option>
-            <option value="0">周一</option>
-            <option value="1">周二</option>
-            <option value="2">周三</option>
-            <option value="3">周四</option>
-            <option value="4">周五</option>
-            <option value="5">周六</option>
-            <option value="6">周日</option>
-          </select>
-        `;
-
-        inboxList.appendChild(el);
+        previewHtml =
+          `<div class="task-preview">${esc(cleanDetail)}</div>`;
       }
-    );
+
+      el.innerHTML = `
+        <button
+          class="chk"
+          style="width:12px;height:12px;"
+          onclick="toggleTask('${t.id}')"
+        ></button>
+
+        <div
+          class="task-content"
+          onclick="selectedTaskId='${t.id}'; renderAll();"
+          style="
+            cursor:pointer;
+            ${t.done
+              ? 'text-decoration:line-through;color:var(--text-tertiary);'
+              : ''}
+          "
+        >
+          <span class="ttl">
+            ${esc(t.title)}
+          </span>
+
+          ${previewHtml}
+        </div>
+
+        <select
+          onchange="
+            if(this.value!==''){
+              moveToDay('${t.id}', this.value);
+            }
+          "
+        >
+          <option value="">移动</option>
+          <option value="0">周一</option>
+          <option value="1">周二</option>
+          <option value="2">周三</option>
+          <option value="3">周四</option>
+          <option value="4">周五</option>
+          <option value="5">周六</option>
+          <option value="6">周日</option>
+        </select>
+      `;
+
+      inboxList.appendChild(el);
+    });
   }
 
 
   const daysContainer =
-    document.getElementById(
-      'days-container'
-    );
+    document.getElementById('days-container');
 
   daysContainer.innerHTML = '';
 
@@ -4363,25 +4333,16 @@ function renderAll() {
       );
 
     const group =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    group.className =
-      'day-group';
+    group.className = 'day-group';
 
     const head =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
     head.className =
       'day-head' +
-      (
-        selectedDay === d
-          ? ' active'
-          : ''
-      );
+      (selectedDay === d ? ' active' : '');
 
     head.innerHTML = `
       <span class="dnum">
@@ -4405,12 +4366,9 @@ function renderAll() {
 
 
     const taskList =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    taskList.className =
-      'task-list';
+    taskList.className = 'task-list';
 
     if (dayTasks.length === 0) {
 
@@ -4419,118 +4377,83 @@ function renderAll() {
 
     } else {
 
-      dayTasks.forEach(
-        t => {
+      dayTasks.forEach(t => {
 
-          const item =
-            document.createElement(
-              'div'
-            );
+        const item =
+          document.createElement('div');
 
-          item.className =
-            'task-item' +
-            (
-              t.done
-                ? ' done'
-                : ''
-            ) +
-            (
-              selectedTaskId === t.id
-                ? ' active'
-                : ''
-            );
+        item.className =
+          'task-item' +
+          (t.done ? ' done' : '') +
+          (selectedTaskId === t.id ? ' active' : '');
 
-          let previewHtml = '';
+        let previewHtml = '';
 
-          if (
-            t.details &&
-            t.details.trim()
-          ) {
+        if (t.details && t.details.trim()) {
 
-            const cleanDetail =
-              t.details
-                .replace(/\n/g, ' ')
-                .trim();
+          const cleanDetail =
+            t.details
+              .replace(/\n/g, ' ')
+              .trim();
 
-            previewHtml =
-              `<div class="task-preview">${esc(cleanDetail)}</div>`;
-          }
-
-          item.innerHTML = `
-            <button
-              class="chk"
-              onclick="
-                event.stopPropagation();
-                toggleTask('${t.id}')
-              "
-            ></button>
-
-            <div class="task-content">
-
-              <span class="ttl">
-                ${esc(t.title)}
-              </span>
-
-              ${previewHtml}
-
-            </div>
-          `;
-
-          item.onclick =
-            e => {
-
-              e.stopPropagation();
-
-              selectedTaskId =
-                t.id;
-
-              selectedDay =
-                d;
-
-              renderAll();
-            };
-
-          taskList.appendChild(
-            item
-          );
+          previewHtml =
+            `<div class="task-preview">${esc(cleanDetail)}</div>`;
         }
-      );
+
+        item.innerHTML = `
+          <button
+            class="chk"
+            onclick="
+              event.stopPropagation();
+              toggleTask('${t.id}')
+            "
+          ></button>
+
+          <div class="task-content">
+
+            <span class="ttl">
+              ${esc(t.title)}
+            </span>
+
+            ${previewHtml}
+
+          </div>
+        `;
+
+        item.onclick = e => {
+
+          e.stopPropagation();
+
+          selectedTaskId = t.id;
+          selectedDay = d;
+
+          renderAll();
+        };
+
+        taskList.appendChild(item);
+      });
     }
 
-    group.appendChild(
-      taskList
-    );
+    group.appendChild(taskList);
 
-    daysContainer.appendChild(
-      group
-    );
+    daysContainer.appendChild(group);
   }
 
 
   const detailTitle =
-    document.getElementById(
-      'right-detail-title'
-    );
+    document.getElementById('right-detail-title');
 
   const detailDate =
-    document.getElementById(
-      'right-detail-date'
-    );
+    document.getElementById('right-detail-date');
 
   const taskDetailContent =
-    document.getElementById(
-      'task-detail-content'
-    );
+    document.getElementById('task-detail-content');
 
   const noSelection =
-    document.getElementById(
-      'task-no-selection'
-    );
+    document.getElementById('task-no-selection');
 
   const selectedDate =
-    getDateForDay(
-      selectedDay
-    );
+    getDateForDay(selectedDay);
 
   detailDate.textContent =
     `${selectedDate.getMonth()+1}月${selectedDate.getDate()}日`;
@@ -4545,54 +4468,33 @@ function renderAll() {
 
     if (t) {
 
-      detailTitle.textContent =
-        '任务详情';
+      detailTitle.textContent = '任务详情';
+      taskDetailContent.style.display = 'block';
+      noSelection.style.display = 'none';
 
-      taskDetailContent.style.display =
-        'block';
-
-      noSelection.style.display =
-        'none';
-
-      document.getElementById(
-        'detail-edit-title'
-      ).value =
+      document.getElementById('detail-edit-title').value =
         t.title || '';
 
-      document.getElementById(
-        'detail-edit-time'
-      ).value =
+      document.getElementById('detail-edit-time').value =
         t.dueDate || '';
 
-      document.getElementById(
-        'detail-edit-desc'
-      ).value =
+      document.getElementById('detail-edit-desc').value =
         t.details || '';
 
     } else {
 
       selectedTaskId = null;
 
-      detailTitle.textContent =
-        '今日详情';
-
-      taskDetailContent.style.display =
-        'none';
-
-      noSelection.style.display =
-        'block';
+      detailTitle.textContent = '今日详情';
+      taskDetailContent.style.display = 'none';
+      noSelection.style.display = 'block';
     }
 
   } else {
 
-    detailTitle.textContent =
-      '今日详情';
-
-    taskDetailContent.style.display =
-      'none';
-
-    noSelection.style.display =
-      'block';
+    detailTitle.textContent = '今日详情';
+    taskDetailContent.style.display = 'none';
+    noSelection.style.display = 'block';
   }
 }
 
@@ -4607,9 +4509,7 @@ function changeWeek(offset) {
   );
 
   currentWeekKey =
-    getWeekKey(
-      currentMonday
-    );
+    getWeekKey(currentMonday);
 
   selectedDay = 0;
   selectedTaskId = null;
@@ -4623,29 +4523,18 @@ function changeWeek(offset) {
 function openCalendarModal() {
 
   const container =
-    document.getElementById(
-      'calendar-container'
-    );
+    document.getElementById('calendar-container');
 
   container.innerHTML = '';
 
   const dayNames = [
-    '一',
-    '二',
-    '三',
-    '四',
-    '五',
-    '六',
-    '日'
+    '一','二','三','四','五','六','日'
   ];
 
   const grid =
-    document.createElement(
-      'div'
-    );
+    document.createElement('div');
 
-  grid.className =
-    'calendar-grid';
+  grid.className = 'calendar-grid';
 
   for (let d = 0; d < 7; d++) {
 
@@ -4659,53 +4548,25 @@ function openCalendarModal() {
           t.day === d
       );
 
-    const hasTask =
-      dayTasks.length > 0;
+    const hasTask = dayTasks.length > 0;
 
     const hasNote =
-      db.notes[
-        `${currentWeekKey}-${d}`
-      ] &&
-      db.notes[
-        `${currentWeekKey}-${d}`
-      ].trim() !== '';
+      db.notes[`${currentWeekKey}-${d}`] &&
+      db.notes[`${currentWeekKey}-${d}`].trim() !== '';
 
     const cell =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
     cell.className =
       'calendar-cell' +
-      (
-        selectedDay === d
-          ? ' active'
-          : ''
-      );
+      (selectedDay === d ? ' active' : '');
 
     cell.innerHTML = `
-      <div class="cal-date">
-        ${date.getDate()}
-      </div>
-
-      <div class="cal-day">
-        周${dayNames[d]}
-      </div>
-
+      <div class="cal-date">${date.getDate()}</div>
+      <div class="cal-day">周${dayNames[d]}</div>
       <div class="cal-badges">
-
-        ${
-          hasTask
-            ? '<span class="badge task">任务</span>'
-            : ''
-        }
-
-        ${
-          hasNote
-            ? '<span class="badge note">日记</span>'
-            : ''
-        }
-
+        ${hasTask ? '<span class="badge task">任务</span>' : ''}
+        ${hasNote ? '<span class="badge note">日记</span>' : ''}
       </div>
     `;
 
@@ -4725,9 +4586,7 @@ function openCalendarModal() {
   container.appendChild(grid);
 
   document
-    .getElementById(
-      'calendar-modal'
-    )
+    .getElementById('calendar-modal')
     .classList.add('show');
 }
 
@@ -4735,9 +4594,7 @@ function openCalendarModal() {
 function closeCalendarModal() {
 
   document
-    .getElementById(
-      'calendar-modal'
-    )
+    .getElementById('calendar-modal')
     .classList.remove('show');
 }
 
@@ -4747,9 +4604,7 @@ function closeCalendarModal() {
 function renderHabits() {
 
   const list =
-    document.getElementById(
-      'habit-list'
-    );
+    document.getElementById('habit-list');
 
   list.innerHTML = '';
 
@@ -4761,199 +4616,124 @@ function renderHabits() {
     return;
   }
 
-  const today =
-    new Date();
+  const today = new Date();
+  const todayStr = formatDate(today);
+  const currentMondayHabit = getMonday(today);
 
-  const todayStr =
-    formatDate(today);
+  db.habits.forEach(h => {
 
-  const currentMondayHabit =
-    getMonday(today);
+    const card =
+      document.createElement('div');
 
-  db.habits.forEach(
-    h => {
+    card.className = 'habit-card';
 
-      const card =
-        document.createElement(
-          'div'
-        );
+    let streak = 0;
+    let d = new Date(today);
 
-      card.className =
-        'habit-card';
+    while (true) {
 
-      let streak = 0;
+      const ds = formatDate(d);
 
-      let d =
-        new Date(today);
+      if (h.records[ds]) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      } else {
+        break;
+      }
+    }
 
-      while (true) {
+    let heatmapHtml = '';
 
-        const ds =
-          formatDate(d);
+    for (let w = 16; w >= 0; w--) {
 
-        if (h.records[ds]) {
+      const weekStart =
+        new Date(currentMondayHabit);
 
-          streak++;
+      weekStart.setDate(
+        weekStart.getDate() - w * 7
+      );
 
-          d.setDate(
-            d.getDate() - 1
-          );
+      for (let d = 0; d < 7; d++) {
+
+        const dt =
+          new Date(weekStart);
+
+        dt.setDate(dt.getDate() + d);
+
+        const ds = formatDate(dt);
+
+        if (dt > today) {
+
+          heatmapHtml +=
+            `<div class="heatmap-cell future"></div>`;
 
         } else {
 
-          break;
+          const isDone =
+            h.records[ds] ? 'done' : '';
+
+          heatmapHtml +=
+            `<div class="heatmap-cell ${isDone}" title="${ds}"></div>`;
         }
       }
-
-
-      let heatmapHtml = '';
-
-      for (
-        let w = 16;
-        w >= 0;
-        w--
-      ) {
-
-        const weekStart =
-          new Date(
-            currentMondayHabit
-          );
-
-        weekStart.setDate(
-          weekStart.getDate() -
-          w * 7
-        );
-
-        for (
-          let d = 0;
-          d < 7;
-          d++
-        ) {
-
-          const dt =
-            new Date(weekStart);
-
-          dt.setDate(
-            dt.getDate() + d
-          );
-
-          const ds =
-            formatDate(dt);
-
-          if (dt > today) {
-
-            heatmapHtml +=
-              `<div class="heatmap-cell future"></div>`;
-
-          } else {
-
-            const isDone =
-              h.records[ds]
-                ? 'done'
-                : '';
-
-            heatmapHtml +=
-              `<div class="heatmap-cell ${isDone}" title="${ds}"></div>`;
-          }
-        }
-      }
-
-
-      const isCheckedToday =
-        h.records[todayStr]
-          ? true
-          : false;
-
-      const btnText =
-        isCheckedToday
-          ? '✅ 已打卡'
-          : '⭕ 今日打卡';
-
-
-      card.innerHTML = `
-
-        <div class="habit-top">
-
-          <span class="habit-name">
-            ${esc(h.name)}
-          </span>
-
-          <span class="habit-streak">
-            连续 ${streak} 天
-          </span>
-
-        </div>
-
-        <div class="heatmap-container">
-
-          <div class="heatmap-grid">
-            ${heatmapHtml}
-          </div>
-
-        </div>
-
-        <div class="habit-footer">
-
-          <button
-            class="checkin-btn ${
-              isCheckedToday
-                ? 'checked'
-                : ''
-            }"
-            onclick="
-              toggleHabitRecord(
-                '${h.id}',
-                '${todayStr}'
-              )
-            "
-          >
-            ${btnText}
-          </button>
-
-          <div class="habit-actions">
-
-            <button
-              onclick="
-                deleteHabit('${h.id}')
-              "
-            >
-              删除习惯
-            </button>
-
-          </div>
-
-        </div>
-      `;
-
-      list.appendChild(card);
     }
-  );
+
+    const isCheckedToday =
+      h.records[todayStr] ? true : false;
+
+    const btnText =
+      isCheckedToday ? '✅ 已打卡' : '⭕ 今日打卡';
+
+    card.innerHTML = `
+      <div class="habit-top">
+        <span class="habit-name">${esc(h.name)}</span>
+        <span class="habit-streak">连续 ${streak} 天</span>
+      </div>
+
+      <div class="heatmap-container">
+        <div class="heatmap-grid">
+          ${heatmapHtml}
+        </div>
+      </div>
+
+      <div class="habit-footer">
+        <button
+          class="checkin-btn ${isCheckedToday ? 'checked' : ''}"
+          onclick="toggleHabitRecord('${h.id}', '${todayStr}')"
+        >
+          ${btnText}
+        </button>
+
+        <div class="habit-actions">
+          <button onclick="deleteHabit('${h.id}')">
+            删除习惯
+          </button>
+        </div>
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
 }
 
 
-/* ================= 总结周期切换 ================= */
+/* ================= 总结 ================= */
 
 function switchBookPeriod(period) {
 
   bookPeriod = period;
 
   document
-    .querySelectorAll(
-      '.book-toolbar button'
-    )
-    .forEach(
-      b => {
+    .querySelectorAll('.book-toolbar button')
+    .forEach(b => {
 
-        b.classList.toggle(
-          'active',
-          b.dataset.period === period
-        );
+      b.classList.toggle(
+        'active',
+        b.dataset.period === period
+      );
+    });
 
-      }
-    );
-
-  bookDate =
-    new Date();
+  bookDate = new Date();
 
   renderBook();
 }
@@ -4962,58 +4742,40 @@ function switchBookPeriod(period) {
 function getPeriodKey() {
 
   if (bookPeriod === 'week') {
-
-    return getWeekKey(
-      getMonday(bookDate)
-    );
-
+    return getWeekKey(getMonday(bookDate));
   }
 
   if (bookPeriod === 'month') {
-
     return (
       bookDate.getFullYear() +
       '-' +
-      String(
-        bookDate.getMonth() + 1
-      ).padStart(2, '0')
+      String(bookDate.getMonth() + 1).padStart(2, '0')
     );
-
   }
 
-  return String(
-    bookDate.getFullYear()
-  );
+  return String(bookDate.getFullYear());
 }
 
 
 function getPeriodLabel() {
 
   if (bookPeriod === 'week') {
-
     return (
       `第 ${
-        getWeekKey(
-          getMonday(bookDate)
-        ).split('-W')[1]
+        getWeekKey(getMonday(bookDate)).split('-W')[1]
       } 周`
     );
-
   }
 
   if (bookPeriod === 'month') {
-
     return (
       `${bookDate.getFullYear()}年 ${
         bookDate.getMonth() + 1
       }月`
     );
-
   }
 
-  return (
-    `${bookDate.getFullYear()}年`
-  );
+  return `${bookDate.getFullYear()}年`;
 }
 
 
@@ -5024,350 +4786,178 @@ function getPeriodRange() {
 
   if (bookPeriod === 'week') {
 
-    start =
-      getMonday(bookDate);
+    start = getMonday(bookDate);
+    end = new Date(start);
+    end.setDate(end.getDate() + 6);
 
-    end =
-      new Date(start);
+  } else if (bookPeriod === 'month') {
 
-    end.setDate(
-      end.getDate() + 6
+    start = new Date(
+      bookDate.getFullYear(),
+      bookDate.getMonth(),
+      1
     );
 
+    end = new Date(
+      bookDate.getFullYear(),
+      bookDate.getMonth() + 1,
+      0
+    );
+
+  } else {
+
+    start = new Date(bookDate.getFullYear(), 0, 1);
+    end = new Date(bookDate.getFullYear(), 11, 31);
   }
 
-  else if (bookPeriod === 'month') {
-
-    start =
-      new Date(
-        bookDate.getFullYear(),
-        bookDate.getMonth(),
-        1
-      );
-
-    end =
-      new Date(
-        bookDate.getFullYear(),
-        bookDate.getMonth() + 1,
-        0
-      );
-
-  }
-
-  else {
-
-    start =
-      new Date(
-        bookDate.getFullYear(),
-        0,
-        1
-      );
-
-    end =
-      new Date(
-        bookDate.getFullYear(),
-        11,
-        31
-      );
-  }
-
-  return {
-    start,
-    end
-  };
+  return { start, end };
 }
 
 
-/* =========================================================
-   月总结：整月日历
-   ========================================================= */
+/* ================= 月总结 ================= */
 
 function renderMonthCalendar() {
 
   const container =
-    document.getElementById(
-      'month-calendar'
-    );
+    document.getElementById('month-calendar');
 
   container.innerHTML = '';
 
-  const year =
-    bookDate.getFullYear();
+  const year = bookDate.getFullYear();
+  const month = bookDate.getMonth();
 
-  const month =
-    bookDate.getMonth();
-
-  const firstDay =
-    new Date(
-      year,
-      month,
-      1
-    );
-
-  const firstWeekday =
-    (firstDay.getDay() + 6) % 7;
+  const firstDay = new Date(year, month, 1);
+  const firstWeekday = (firstDay.getDay() + 6) % 7;
 
   const daysInMonth =
-    new Date(
-      year,
-      month + 1,
-      0
-    ).getDate();
+    new Date(year, month + 1, 0).getDate();
 
   const prevMonthDays =
-    new Date(
-      year,
-      month,
-      0
-    ).getDate();
+    new Date(year, month, 0).getDate();
 
 
   const weekdaysEl =
-    document.createElement(
-      'div'
-    );
+    document.createElement('div');
 
-  weekdaysEl.className =
-    'month-weekdays';
+  weekdaysEl.className = 'month-weekdays';
 
-  const weekdays = [
-    '一',
-    '二',
-    '三',
-    '四',
-    '五',
-    '六',
-    '日'
-  ];
+  const weekdays =
+    ['一','二','三','四','五','六','日'];
 
-  weekdays.forEach(
-    name => {
+  weekdays.forEach(name => {
 
-      const el =
-        document.createElement(
-          'div'
-        );
+    const el =
+      document.createElement('div');
 
-      el.className =
-        'month-weekday';
+    el.className = 'month-weekday';
+    el.textContent = '周' + name;
 
-      el.textContent =
-        '周' + name;
+    weekdaysEl.appendChild(el);
+  });
 
-      weekdaysEl.appendChild(
-        el
-      );
-    }
-  );
-
-  container.appendChild(
-    weekdaysEl
-  );
+  container.appendChild(weekdaysEl);
 
 
   const grid =
-    document.createElement(
-      'div'
-    );
+    document.createElement('div');
 
-  grid.className =
-    'month-days-grid';
+  grid.className = 'month-days-grid';
 
 
-  for (
-    let i = 0;
-    i < 42;
-    i++
-  ) {
+  for (let i = 0; i < 42; i++) {
 
     let cellDate;
-
-    let isOtherMonth =
-      false;
-
+    let isOtherMonth = false;
 
     if (i < firstWeekday) {
 
       const day =
-        prevMonthDays -
-        firstWeekday +
-        i +
-        1;
+        prevMonthDays - firstWeekday + i + 1;
 
       cellDate =
-        new Date(
-          year,
-          month - 1,
-          day
-        );
+        new Date(year, month - 1, day);
 
       isOtherMonth = true;
 
-    }
+    } else if (i < firstWeekday + daysInMonth) {
 
-    else if (
-      i <
-      firstWeekday +
-      daysInMonth
-    ) {
-
-      const day =
-        i -
-        firstWeekday +
-        1;
+      const day = i - firstWeekday + 1;
 
       cellDate =
-        new Date(
-          year,
-          month,
-          day
-        );
+        new Date(year, month, day);
 
-    }
-
-    else {
+    } else {
 
       const day =
-        i -
-        firstWeekday -
-        daysInMonth +
-        1;
+        i - firstWeekday - daysInMonth + 1;
 
       cellDate =
-        new Date(
-          year,
-          month + 1,
-          day
-        );
+        new Date(year, month + 1, day);
 
       isOtherMonth = true;
     }
 
 
-    const dateStr =
-      formatDate(cellDate);
-
-    const weekKey =
-      getWeekKey(
-        getMonday(cellDate)
-      );
-
-    const dayIdx =
-      (cellDate.getDay() + 6) % 7;
-
-    const noteKey =
-      `${weekKey}-${dayIdx}`;
-
+    const dateStr = formatDate(cellDate);
+    const weekKey = getWeekKey(getMonday(cellDate));
+    const dayIdx = (cellDate.getDay() + 6) % 7;
+    const noteKey = `${weekKey}-${dayIdx}`;
 
     const isToday =
-      dateStr ===
-      formatDate(new Date());
-
+      dateStr === formatDate(new Date());
 
     const cell =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
     cell.className =
       'month-day-cell' +
-      (
-        isOtherMonth
-          ? ' other-month'
-          : ''
-      ) +
-      (
-        isToday
-          ? ' today'
-          : ''
-      );
+      (isOtherMonth ? ' other-month' : '') +
+      (isToday ? ' today' : '');
 
 
     const header =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    header.className =
-      'month-day-header';
+    header.className = 'month-day-header';
 
 
     const number =
-      document.createElement(
-        'span'
-      );
+      document.createElement('span');
 
-    number.className =
-      'month-day-number';
+    number.className = 'month-day-number';
+    number.textContent = cellDate.getDate();
 
-    number.textContent =
-      cellDate.getDate();
-
-    header.appendChild(
-      number
-    );
+    header.appendChild(number);
 
 
-    const photos =
-      db.photos[noteKey] || [];
+    const photos = db.photos[noteKey] || [];
+    const globalPhotos = db.globalPhotos || [];
+    const allPhotos = [...photos, ...globalPhotos];
 
-    const globalPhotos =
-      db.globalPhotos || [];
-
-    const allPhotos =
-      [
-        ...photos,
-        ...globalPhotos
-      ];
-
-
-    if (
-      allPhotos.length > 0
-    ) {
+    if (allPhotos.length > 0) {
 
       const photosEl =
-        document.createElement(
-          'div'
-        );
+        document.createElement('div');
 
-      photosEl.className =
-        'month-day-photos';
-
+      photosEl.className = 'month-day-photos';
 
       const img =
-        document.createElement(
-          'img'
-        );
+        document.createElement('img');
 
-      img.src =
-        allPhotos[0];
+      img.src = allPhotos[0];
+      img.className = 'month-day-photo';
 
-      img.className =
-        'month-day-photo';
-
-      photosEl.appendChild(
-        img
-      );
-
-      header.appendChild(
-        photosEl
-      );
+      photosEl.appendChild(img);
+      header.appendChild(photosEl);
     }
 
-
-    cell.appendChild(
-      header
-    );
+    cell.appendChild(header);
 
 
     const tasksEl =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    tasksEl.className =
-      'month-day-tasks';
-
+    tasksEl.className = 'month-day-tasks';
 
     const dayTasks =
       db.tasks.filter(
@@ -5376,83 +4966,44 @@ function renderMonthCalendar() {
           t.day === dayIdx
       );
 
+    const visibleTasks = dayTasks.slice(0, 4);
 
-    const visibleTasks =
-      dayTasks.slice(0, 4);
+    visibleTasks.forEach(task => {
 
+      const taskEl =
+        document.createElement('div');
 
-    visibleTasks.forEach(
-      task => {
+      taskEl.className =
+        'month-task ' +
+        (task.done ? 'done' : 'pending');
 
-        const taskEl =
-          document.createElement(
-            'div'
-          );
+      taskEl.textContent = task.title;
+      taskEl.title = task.title;
 
-        taskEl.className =
-          'month-task ' +
-          (
-            task.done
-              ? 'done'
-              : 'pending'
-          );
+      tasksEl.appendChild(taskEl);
+    });
 
-        taskEl.textContent =
-          task.title;
-
-        taskEl.title =
-          task.title;
-
-        tasksEl.appendChild(
-          taskEl
-        );
-      }
-    );
-
-
-    if (
-      dayTasks.length > 4
-    ) {
+    if (dayTasks.length > 4) {
 
       const more =
-        document.createElement(
-          'div'
-        );
+        document.createElement('div');
 
-      more.className =
-        'month-more';
-
+      more.className = 'month-more';
       more.textContent =
         `+${dayTasks.length - 4} 个任务`;
 
-      tasksEl.appendChild(
-        more
-      );
+      tasksEl.appendChild(more);
     }
 
+    cell.appendChild(tasksEl);
 
-    cell.appendChild(
-      tasksEl
-    );
+    cell.onclick = () =>
+      openDayDetailModal(cellDate);
 
-
-    cell.onclick = () => {
-
-      openDayDetailModal(
-        cellDate
-      );
-    };
-
-
-    grid.appendChild(
-      cell
-    );
+    grid.appendChild(cell);
   }
 
-
-  container.appendChild(
-    grid
-  );
+  container.appendChild(grid);
 }
 
 
@@ -5461,136 +5012,74 @@ function renderMonthCalendar() {
 function renderWeekSummary() {
 
   const container =
-    document.getElementById(
-      'month-calendar'
-    );
+    document.getElementById('month-calendar');
 
   container.innerHTML = '';
 
-  const weekStart =
-    getMonday(bookDate);
+  const weekStart = getMonday(bookDate);
+  const weekKey = getWeekKey(weekStart);
 
-  const weekKey =
-    getWeekKey(weekStart);
-
-  const weekdays = [
-    '一',
-    '二',
-    '三',
-    '四',
-    '五',
-    '六',
-    '日'
-  ];
-
+  const weekdays =
+    ['一','二','三','四','五','六','日'];
 
   const weekdaysEl =
-    document.createElement(
-      'div'
-    );
+    document.createElement('div');
 
-  weekdaysEl.className =
-    'month-weekdays';
+  weekdaysEl.className = 'month-weekdays';
 
+  weekdays.forEach(name => {
 
-  weekdays.forEach(
-    name => {
+    const el =
+      document.createElement('div');
 
-      const el =
-        document.createElement(
-          'div'
-        );
+    el.className = 'month-weekday';
+    el.textContent = '周' + name;
 
-      el.className =
-        'month-weekday';
+    weekdaysEl.appendChild(el);
+  });
 
-      el.textContent =
-        '周' + name;
-
-      weekdaysEl.appendChild(
-        el
-      );
-    }
-  );
-
-
-  container.appendChild(
-    weekdaysEl
-  );
+  container.appendChild(weekdaysEl);
 
 
   const grid =
-    document.createElement(
-      'div'
-    );
+    document.createElement('div');
 
-  grid.className =
-    'month-days-grid';
+  grid.className = 'month-days-grid';
 
 
-  for (
-    let d = 0;
-    d < 7;
-    d++
-  ) {
+  for (let d = 0; d < 7; d++) {
 
     const cellDate =
       new Date(weekStart);
 
-    cellDate.setDate(
-      cellDate.getDate() + d
-    );
+    cellDate.setDate(cellDate.getDate() + d);
 
-    const noteKey =
-      `${weekKey}-${d}`;
+    const noteKey = `${weekKey}-${d}`;
 
     const cell =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    cell.className =
-      'month-day-cell';
+    cell.className = 'month-day-cell';
 
-
-    if (
-      formatDate(cellDate) ===
-      formatDate(new Date())
-    ) {
-
-      cell.classList.add(
-        'today'
-      );
+    if (formatDate(cellDate) === formatDate(new Date())) {
+      cell.classList.add('today');
     }
 
-
     const header =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    header.className =
-      'month-day-header';
+    header.className = 'month-day-header';
 
-    header.innerHTML = `
-      <span class="month-day-number">
-        ${cellDate.getDate()}
-      </span>
-    `;
+    header.innerHTML =
+      `<span class="month-day-number">${cellDate.getDate()}</span>`;
 
-    cell.appendChild(
-      header
-    );
+    cell.appendChild(header);
 
 
     const tasksEl =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    tasksEl.className =
-      'month-day-tasks';
-
+    tasksEl.className = 'month-day-tasks';
 
     const tasks =
       db.tasks.filter(
@@ -5599,57 +5088,29 @@ function renderWeekSummary() {
           t.day === d
       );
 
+    tasks.slice(0, 6).forEach(task => {
 
-    tasks
-      .slice(0, 6)
-      .forEach(
-        task => {
+      const taskEl =
+        document.createElement('div');
 
-          const taskEl =
-            document.createElement(
-              'div'
-            );
+      taskEl.className =
+        'month-task ' +
+        (task.done ? 'done' : 'pending');
 
-          taskEl.className =
-            'month-task ' +
-            (
-              task.done
-                ? 'done'
-                : 'pending'
-            );
+      taskEl.textContent = task.title;
 
-          taskEl.textContent =
-            task.title;
+      tasksEl.appendChild(taskEl);
+    });
 
-          tasksEl.appendChild(
-            taskEl
-          );
-        }
-      );
+    cell.appendChild(tasksEl);
 
+    cell.onclick = () =>
+      openDayDetailModal(cellDate);
 
-    cell.appendChild(
-      tasksEl
-    );
-
-
-    cell.onclick = () => {
-
-      openDayDetailModal(
-        cellDate
-      );
-    };
-
-
-    grid.appendChild(
-      cell
-    );
+    grid.appendChild(cell);
   }
 
-
-  container.appendChild(
-    grid
-  );
+  container.appendChild(grid);
 }
 
 
@@ -5658,20 +5119,14 @@ function renderWeekSummary() {
 function renderYearSummary() {
 
   const container =
-    document.getElementById(
-      'month-calendar'
-    );
+    document.getElementById('month-calendar');
 
   container.innerHTML = '';
 
-  const year =
-    bookDate.getFullYear();
-
+  const year = bookDate.getFullYear();
 
   const grid =
-    document.createElement(
-      'div'
-    );
+    document.createElement('div');
 
   grid.style.cssText = `
     display:grid;
@@ -5682,17 +5137,10 @@ function renderYearSummary() {
     height:100%;
   `;
 
-
-  for (
-    let m = 0;
-    m < 12;
-    m++
-  ) {
+  for (let m = 0; m < 12; m++) {
 
     const monthCard =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
     monthCard.style.cssText = `
       border:1px solid var(--separator);
@@ -5703,11 +5151,8 @@ function renderYearSummary() {
       min-height:75px;
     `;
 
-
     const monthTitle =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
     monthTitle.style.cssText = `
       font-size:14px;
@@ -5715,100 +5160,61 @@ function renderYearSummary() {
       margin-bottom:6px;
     `;
 
-    monthTitle.textContent =
-      `${m + 1}月`;
+    monthTitle.textContent = `${m + 1}月`;
 
-
-    monthCard.appendChild(
-      monthTitle
-    );
+    monthCard.appendChild(monthTitle);
 
 
     const monthStart =
-      new Date(
-        year,
-        m,
-        1
-      );
+      new Date(year, m, 1);
 
     const monthEnd =
-      new Date(
-        year,
-        m + 1,
-        0
-      );
-
+      new Date(year, m + 1, 0);
 
     const monthTasks =
-      db.tasks.filter(
-        task => {
+      db.tasks.filter(task => {
 
-          if (
-            !task.week_key ||
+        if (!task.week_key ||
             task.day === null ||
-            task.day === undefined
-          ) {
-            return false;
-          }
-
-          const firstMonday =
-            getMonday(
-              new Date(
-                year,
-                m,
-                1
-              )
-            );
-
-          const lastMonday =
-            getMonday(
-              monthEnd
-            );
-
-          const current =
-            new Date(firstMonday);
-
-          while (
-            current <= lastMonday
-          ) {
-
-            const target =
-              new Date(current);
-
-            target.setDate(
-              target.getDate() +
-              Number(task.day)
-            );
-
-            if (
-              target >= monthStart &&
-              target <= monthEnd &&
-              getWeekKey(current) ===
-                task.week_key
-            ) {
-              return true;
-            }
-
-            current.setDate(
-              current.getDate() + 7
-            );
-          }
-
+            task.day === undefined) {
           return false;
         }
-      );
 
+        const firstMonday =
+          getMonday(new Date(year, m, 1));
+
+        const lastMonday =
+          getMonday(monthEnd);
+
+        const current =
+          new Date(firstMonday);
+
+        while (current <= lastMonday) {
+
+          const target =
+            new Date(current);
+
+          target.setDate(
+            target.getDate() + Number(task.day)
+          );
+
+          if (target >= monthStart &&
+              target <= monthEnd &&
+              getWeekKey(current) === task.week_key) {
+            return true;
+          }
+
+          current.setDate(current.getDate() + 7);
+        }
+
+        return false;
+      });
 
     const doneCount =
-      monthTasks.filter(
-        t => t.done
-      ).length;
-
+      monthTasks.filter(t => t.done).length;
 
     const info =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
     info.style.cssText = `
       font-size:10px;
@@ -5819,52 +5225,30 @@ function renderYearSummary() {
     info.textContent =
       `任务 ${monthTasks.length} · 完成 ${doneCount}`;
 
-
-    monthCard.appendChild(
-      info
-    );
-
+    monthCard.appendChild(info);
 
     monthCard.onclick = () => {
 
-      bookPeriod =
-        'month';
-
-      bookDate =
-        new Date(
-          year,
-          m,
-          1
-        );
+      bookPeriod = 'month';
+      bookDate = new Date(year, m, 1);
 
       document
-        .querySelectorAll(
-          '.book-toolbar button'
-        )
-        .forEach(
-          b => {
+        .querySelectorAll('.book-toolbar button')
+        .forEach(b => {
 
-            b.classList.toggle(
-              'active',
-              b.dataset.period ===
-                'month'
-            );
-          }
-        );
+          b.classList.toggle(
+            'active',
+            b.dataset.period === 'month'
+          );
+        });
 
       renderBook();
     };
 
-
-    grid.appendChild(
-      monthCard
-    );
+    grid.appendChild(monthCard);
   }
 
-
-  container.appendChild(
-    grid
-  );
+  container.appendChild(grid);
 }
 
 
@@ -5872,55 +5256,25 @@ function renderYearSummary() {
 
 function renderBook() {
 
-  const label =
-    getPeriodLabel();
+  const label = getPeriodLabel();
 
-
-  document.getElementById(
-    'book-period-label'
-  ).textContent =
+  document.getElementById('book-period-label').textContent =
     label;
 
-
-  document.getElementById(
-    'book-period-label-bottom'
-  ).textContent =
+  document.getElementById('book-period-label-bottom').textContent =
     label;
-
 
   const sub =
-    document.getElementById(
-      'book-period-sub'
-    );
+    document.getElementById('book-period-sub');
 
-
-  if (
-    bookPeriod === 'month'
-  ) {
-
-    sub.textContent =
-      '整月日历 · 点击日期查看详情';
-
+  if (bookPeriod === 'month') {
+    sub.textContent = '整月日历 · 点击日期查看详情';
     renderMonthCalendar();
-
-  }
-
-  else if (
-    bookPeriod === 'week'
-  ) {
-
-    sub.textContent =
-      '本周日历 · 点击日期查看详情';
-
+  } else if (bookPeriod === 'week') {
+    sub.textContent = '本周日历 · 点击日期查看详情';
     renderWeekSummary();
-
-  }
-
-  else {
-
-    sub.textContent =
-      '全年概览 · 点击月份进入月总结';
-
+  } else {
+    sub.textContent = '全年概览 · 点击月份进入月总结';
     renderYearSummary();
   }
 
@@ -5928,25 +5282,52 @@ function renderBook() {
   const summaryKey =
     `${bookPeriod}-${getPeriodKey()}`;
 
-
   const textarea =
-    document.getElementById(
-      'book-summary-input'
-    );
-
+    document.getElementById('book-summary-input');
 
   textarea.value =
     db.summaries[summaryKey] || '';
 
+  textarea.oninput = e => {
 
-  textarea.oninput =
-    e => {
+    db.summaries[summaryKey] = e.target.value;
 
-      db.summaries[summaryKey] =
-        e.target.value;
+    saveLocal();
 
-      saveLocal();
-    };
+    /*
+     * 如果日期详情弹窗开着，且当前日期属于正在编辑的月份
+     * 同步刷新日期详情里的心得展示
+     */
+    if (
+      document
+        .getElementById('day-detail-modal')
+        .classList.contains('show') &&
+      window._currentDetailDate
+    ) {
+
+      const d =
+        new Date(window._currentDetailDate);
+
+      const mk =
+        'month-' +
+        d.getFullYear() +
+        '-' +
+        String(d.getMonth() + 1).padStart(2, '0');
+
+      if (mk === summaryKey) {
+
+        const disp =
+          document.getElementById('day-detail-note-display');
+
+        if (disp) {
+          disp.textContent =
+            e.target.value.trim()
+              ? e.target.value
+              : '暂无心得，请到总结页编辑';
+        }
+      }
+    }
+  };
 }
 
 
@@ -5955,9 +5336,7 @@ function renderBook() {
 function renderLists() {
 
   const grid =
-    document.getElementById(
-      'list-grid'
-    );
+    document.getElementById('list-grid');
 
   grid.innerHTML = '';
 
@@ -5969,495 +5348,243 @@ function renderLists() {
     return;
   }
 
+  db.lists.forEach(list => {
 
-  db.lists.forEach(
-    list => {
+    const total = list.items.length;
+    const done =
+      list.items.filter(i => i.done).length;
 
-      const total =
-        list.items.length;
+    const percent =
+      total === 0
+        ? 0
+        : Math.round((done / total) * 100);
 
-      const done =
-        list.items.filter(
-          i => i.done
-        ).length;
+    const card =
+      document.createElement('div');
 
-      const percent =
-        total === 0
-          ? 0
-          : Math.round(
-              (done / total) * 100
-            );
+    card.className = 'list-card';
 
+    let itemsHtml = '';
 
-      const card =
-        document.createElement(
-          'div'
-        );
+    list.items.forEach(item => {
 
-      card.className =
-        'list-card';
+      itemsHtml += `
+        <div class="list-item ${item.done ? 'done' : ''}">
+          <button
+            class="chk-square"
+            onclick="toggleListItem('${list.id}', '${item.id}', this)"
+          ></button>
 
-
-      let itemsHtml = '';
-
-
-      list.items.forEach(
-        item => {
-
-          itemsHtml += `
-
-            <div
-              class="list-item ${
-                item.done
-                  ? 'done'
-                  : ''
-              }"
-            >
-
-              <button
-                class="chk-square"
-                onclick="
-                  toggleListItem(
-                    '${list.id}',
-                    '${item.id}',
-                    this
-                  )
-                "
-              ></button>
-
-              <span
-                class="ttl"
-                onclick="
-                  toggleListItem(
-                    '${list.id}',
-                    '${item.id}',
-                    this
-                  )
-                "
-                style="cursor:pointer;"
-              >
-                ${esc(item.text)}
-              </span>
-
-              <button
-                style="
-                  background:none;
-                  border:none;
-                  color:var(--text-tertiary);
-                  cursor:pointer;
-                  font-size:14px;
-                "
-                onclick="
-                  deleteListItem(
-                    '${list.id}',
-                    '${item.id}'
-                  )
-                "
-              >
-                ×
-              </button>
-
-            </div>
-          `;
-        }
-      );
-
-
-      card.innerHTML = `
-
-        <div class="list-card-header">
-
-          <span class="list-card-title">
-            ${esc(list.name)}
-          </span>
-
-          <div class="list-card-actions">
-
-            <button
-              onclick="
-                deleteList('${list.id}')
-              "
-              title="删除清单"
-            >
-              🗑
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <div class="list-progress">
-
-          <div class="progress-bar">
-
-            <div
-              class="progress-fill"
-              style="width:${percent}%"
-            ></div>
-
-          </div>
-
-          <span>
-            ${done}/${total}
-          </span>
-
-        </div>
-
-
-        <div class="list-items">
-
-          ${
-            itemsHtml ||
-            '<div style="color:var(--text-tertiary);font-size:13px;padding:4px 0;">暂无项目</div>'
-          }
-
-        </div>
-
-
-        <div
-          class="add-task-row"
-          style="margin-top:4px;"
-        >
-
-          <input
-            type="text"
-            placeholder="添加项目..."
-            onkeydown="
-              if(event.key==='Enter')
-                addListItem(
-                  '${list.id}',
-                  this
-                )
-            "
+          <span
+            class="ttl"
+            onclick="toggleListItem('${list.id}', '${item.id}', this)"
+            style="cursor:pointer;"
           >
+            ${esc(item.text)}
+          </span>
 
           <button
-            onclick="
-              addListItem(
-                '${list.id}',
-                this.previousElementSibling
-              )
+            style="
+              background:none;
+              border:none;
+              color:var(--text-tertiary);
+              cursor:pointer;
+              font-size:14px;
             "
+            onclick="deleteListItem('${list.id}', '${item.id}')"
           >
-            +
+            ×
           </button>
-
         </div>
-
       `;
+    });
 
+    card.innerHTML = `
+      <div class="list-card-header">
+        <span class="list-card-title">${esc(list.name)}</span>
+        <div class="list-card-actions">
+          <button onclick="deleteList('${list.id}')" title="删除清单">🗑</button>
+        </div>
+      </div>
 
-      grid.appendChild(
-        card
-      );
-    }
-  );
+      <div class="list-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${percent}%"></div>
+        </div>
+        <span>${done}/${total}</span>
+      </div>
+
+      <div class="list-items">
+        ${itemsHtml || '<div style="color:var(--text-tertiary);font-size:13px;padding:4px 0;">暂无项目</div>'}
+      </div>
+
+      <div class="add-task-row" style="margin-top:4px;">
+        <input
+          type="text"
+          placeholder="添加项目..."
+          onkeydown="if(event.key==='Enter') addListItem('${list.id}', this)"
+        >
+        <button
+          onclick="addListItem('${list.id}', this.previousElementSibling)"
+        >
+          +
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
 }
 
 
-/* =========================================================
-   事件绑定
-   ========================================================= */
-
+/* ================= 事件绑定 ================= */
 
 document
   .getElementById('book-prev')
-  .addEventListener(
-    'click',
-    () => {
+  .addEventListener('click', () => {
 
-      if (
-        bookPeriod === 'month'
-      ) {
+    if (bookPeriod === 'month') {
 
-        bookDate =
-          new Date(
-            bookDate.getFullYear(),
-            bookDate.getMonth() - 1,
-            1
-          );
+      bookDate = new Date(
+        bookDate.getFullYear(),
+        bookDate.getMonth() - 1,
+        1
+      );
 
-      }
+    } else if (bookPeriod === 'week') {
 
-      else if (
-        bookPeriod === 'week'
-      ) {
+      bookDate.setDate(bookDate.getDate() - 7);
 
-        bookDate.setDate(
-          bookDate.getDate() - 7
-        );
+    } else {
 
-      }
-
-      else {
-
-        bookDate =
-          new Date(
-            bookDate.getFullYear() - 1,
-            0,
-            1
-          );
-      }
-
-      renderBook();
+      bookDate = new Date(
+        bookDate.getFullYear() - 1,
+        0,
+        1
+      );
     }
-  );
+
+    renderBook();
+  });
 
 
 document
   .getElementById('book-next')
-  .addEventListener(
-    'click',
-    () => {
+  .addEventListener('click', () => {
 
-      if (
-        bookPeriod === 'month'
-      ) {
+    if (bookPeriod === 'month') {
 
-        bookDate =
-          new Date(
-            bookDate.getFullYear(),
-            bookDate.getMonth() + 1,
-            1
-          );
+      bookDate = new Date(
+        bookDate.getFullYear(),
+        bookDate.getMonth() + 1,
+        1
+      );
 
-      }
+    } else if (bookPeriod === 'week') {
 
-      else if (
-        bookPeriod === 'week'
-      ) {
+      bookDate.setDate(bookDate.getDate() + 7);
 
-        bookDate.setDate(
-          bookDate.getDate() + 7
-        );
+    } else {
 
-      }
-
-      else {
-
-        bookDate =
-          new Date(
-            bookDate.getFullYear() + 1,
-            0,
-            1
-          );
-      }
-
-      renderBook();
+      bookDate = new Date(
+        bookDate.getFullYear() + 1,
+        0,
+        1
+      );
     }
-  );
+
+    renderBook();
+  });
 
 
 document
   .querySelectorAll('.tab')
-  .forEach(
-    tab => {
+  .forEach(tab => {
 
-      tab.addEventListener(
-        'click',
-        () => {
+    tab.addEventListener('click', () => {
 
-          document
-            .querySelectorAll(
-              '.tab'
-            )
-            .forEach(
-              t =>
-                t.classList.remove(
-                  'active'
-                )
-            );
+      document
+        .querySelectorAll('.tab')
+        .forEach(t => t.classList.remove('active'));
 
-          document
-            .querySelectorAll(
-              '.view'
-            )
-            .forEach(
-              v =>
-                v.classList.remove(
-                  'active'
-                )
-            );
+      document
+        .querySelectorAll('.view')
+        .forEach(v => v.classList.remove('active'));
 
-          tab.classList.add(
-            'active'
-          );
+      tab.classList.add('active');
 
-          const view =
-            tab.dataset.view;
+      const view = tab.dataset.view;
 
-          document
-            .getElementById(
-              'view-' + view
-            )
-            .classList.add(
-              'active'
-            );
+      document
+        .getElementById('view-' + view)
+        .classList.add('active');
 
+      if (view === 'plan') {
 
-          if (
-            view === 'plan'
-          ) {
+        document
+          .getElementById('header-bottom-display')
+          .style.display = 'block';
 
-            document
-              .getElementById(
-                'header-bottom-display'
-              )
-              .style.display =
-              'block';
+        renderAll();
 
-            renderAll();
+      } else {
 
-          }
+        document
+          .getElementById('header-bottom-display')
+          .style.display = 'none';
 
-          else {
-
-            document
-              .getElementById(
-                'header-bottom-display'
-              )
-              .style.display =
-              'none';
-
-
-            if (
-              view === 'habits'
-            ) {
-
-              renderHabits();
-
-            }
-
-            else if (
-              view === 'book'
-            ) {
-
-              renderBook();
-
-            }
-
-            else if (
-              view === 'lists'
-            ) {
-
-              renderLists();
-
-            }
-          }
-
+        if (view === 'habits') {
+          renderHabits();
+        } else if (view === 'book') {
+          renderBook();
+        } else if (view === 'lists') {
+          renderLists();
         }
-      );
-    }
-  );
+      }
+    });
+  });
 
 
 document
-  .getElementById(
-    'calendar-modal'
-  )
-  .addEventListener(
-    'click',
-    e => {
-
-      if (
-        e.target.id ===
-        'calendar-modal'
-      ) {
-        closeCalendarModal();
-      }
-    }
-  );
+  .getElementById('calendar-modal')
+  .addEventListener('click', e => {
+    if (e.target.id === 'calendar-modal') closeCalendarModal();
+  });
 
 
 document
-  .getElementById(
-    'list-modal'
-  )
-  .addEventListener(
-    'click',
-    e => {
-
-      if (
-        e.target.id ===
-        'list-modal'
-      ) {
-        closeListModal();
-      }
-    }
-  );
+  .getElementById('list-modal')
+  .addEventListener('click', e => {
+    if (e.target.id === 'list-modal') closeListModal();
+  });
 
 
 document
-  .getElementById(
-    'sync-modal'
-  )
-  .addEventListener(
-    'click',
-    e => {
-
-      if (
-        e.target.id ===
-        'sync-modal'
-      ) {
-        closeSyncModal();
-      }
-    }
-  );
+  .getElementById('sync-modal')
+  .addEventListener('click', e => {
+    if (e.target.id === 'sync-modal') closeSyncModal();
+  });
 
 
 document
-  .getElementById(
-    'day-detail-modal'
-  )
-  .addEventListener(
-    'click',
-    e => {
-
-      if (
-        e.target.id ===
-        'day-detail-modal'
-      ) {
-        closeDayDetailModal();
-      }
-    }
-  );
+  .getElementById('day-detail-modal')
+  .addEventListener('click', e => {
+    if (e.target.id === 'day-detail-modal') closeDayDetailModal();
+  });
 
 
 document
-  .getElementById(
-    'crop-modal'
-  )
-  .addEventListener(
-    'click',
-    e => {
-
-      if (
-        e.target.id ===
-        'crop-modal'
-      ) {
-        closeCropModal();
-      }
-    }
-  );
+  .getElementById('crop-modal')
+  .addEventListener('click', e => {
+    if (e.target.id === 'crop-modal') closeCropModal();
+  });
 
 
 document
-  .getElementById(
-    'tag-action-modal'
-  )
-  .addEventListener(
-    'click',
-    e => {
-
-      if (
-        e.target.id ===
-        'tag-action-modal'
-      ) {
-        closeTagActionModal();
-      }
-    }
-  );
+  .getElementById('tag-action-modal')
+  .addEventListener('click', e => {
+    if (e.target.id === 'tag-action-modal') closeTagActionModal();
+  });
 
 
 /* ================= 初始化 ================= */

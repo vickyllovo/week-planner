@@ -264,8 +264,6 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .heatmap-cell{width:16px;height:16px;border-radius:4px;background:var(--habit-bg);
   cursor:pointer;transition:0.1s}
 .heatmap-cell:active{transform:scale(0.9)}
-.heatmap-cell.done{background:var(--success)}
-.heatmap-cell.makeup{background:var(--habit-makeup)}
 .heatmap-cell.future{background:transparent;cursor:default}
 .heatmap-legend{display:flex;gap:8px;font-size:10px;color:var(--text-secondary);
   padding:4px 0 0 0;align-items:center}
@@ -343,9 +341,30 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .photo-history-scroll{display:flex;gap:8px;overflow-x:auto;padding:6px 0;
   -webkit-overflow-scrolling:touch;min-height:60px}
 .photo-history-item{flex:none;width:52px;height:52px;border-radius:8px;overflow:hidden;
-  cursor:pointer;border:1px solid var(--separator);background:var(--bg)}
+  cursor:pointer;border:1px solid var(--separator);background:var(--bg);position:relative}
 .photo-history-item img{width:100%;height:100%;object-fit:cover}
 .photo-history-empty{font-size:12px;color:var(--text-tertiary);padding:8px 0}
+
+/* ✅ 新增：历史标签删除按钮 */
+.del-history-btn{
+  position:absolute;
+  top:2px;
+  right:2px;
+  width:18px;
+  height:18px;
+  background:rgba(0,0,0,0.5);
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  font-size:12px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:2;
+}
+.del-history-btn:active{background:rgba(0,0,0,0.8);}
 
 /* 裁剪器 */
 .crop-container{display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -685,6 +704,13 @@ let selectedDay = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
 let selectedTaskId = null;
 let bookPeriod = 'day';
 let bookDate = new Date();
+
+/* ✅ 预设习惯颜色 */
+const HABIT_COLORS = [
+  '#5C9A71', '#D97736', '#4F6BED', '#8E44AD', '#E74C3C',
+  '#1ABC9C', '#F39C12', '#3498DB', '#9B59B6', '#E67E22',
+  '#16A085', '#2E4053', '#C0392B', '#27AE60'
+];
 
 function getMonday(d) {
   const date = new Date(d); date.setHours(0,0,0,0);
@@ -1145,6 +1171,17 @@ function reuseHistoryPhoto(base64) {
   document.getElementById('tag-action-img').src = base64;
   document.getElementById('tag-action-modal').classList.add('show');
 }
+
+/* ✅ 从历史中删除照片 */
+function deleteHistoryPhoto(index) {
+  if (!confirm('从历史标签中删除这张图片吗？')) return;
+  if (db.photoHistory && db.photoHistory[index]) {
+    db.photoHistory.splice(index, 1);
+    saveLocal();
+    renderPhotoHistory();
+  }
+}
+
 function renderDayPhotos(dateObj) {
   const weekKey = getWeekKey(getMonday(dateObj));
   const dayIdx = (dateObj.getDay() + 6) % 7;
@@ -1185,10 +1222,14 @@ function renderPhotoHistory() {
     container.innerHTML = '<div class="photo-history-empty">暂无历史照片</div>';
     return;
   }
-  history.forEach(p => {
+  history.forEach((p, index) => {
     const item = document.createElement('div');
     item.className = 'photo-history-item';
-    item.innerHTML = `<img src="${p}">`;
+    /* ✅ 新增删除按钮 */
+    item.innerHTML = `
+      <img src="${p}">
+      <button class="del-history-btn" onclick="event.stopPropagation(); deleteHistoryPhoto(${index})">×</button>
+    `;
     item.onclick = () => reuseHistoryPhoto(p);
     container.appendChild(item);
   });
@@ -1236,7 +1277,6 @@ function closePeriodDetailModal() {
   document.getElementById('period-detail-modal').classList.remove('show');
 }
 
-/* 周详情弹窗 */
 function openWeekDetailModal() {
   const weekStart = getMonday(bookDate);
   const weekKey = getWeekKey(weekStart);
@@ -1266,7 +1306,6 @@ function openWeekDetailModal() {
   openPeriodDetailModal(`第 ${weekNum} 周 总结`, html);
 }
 
-/* 月详情弹窗（新版：本月心得 + 每周每日完成情况） */
 function openMonthDetailModal() {
   const year = bookDate.getFullYear();
   const month = bookDate.getMonth();
@@ -1316,7 +1355,6 @@ function openMonthDetailModal() {
   openPeriodDetailModal(`${year}年${month + 1}月 总结`, html);
 }
 
-/* 年详情弹窗 */
 function openYearDetailModal() {
   const year = bookDate.getFullYear();
   const yearNote = db.summaries['year-' + year] || '';
@@ -1483,7 +1521,7 @@ function openCalendarModal() {
 }
 function closeCalendarModal() { document.getElementById('calendar-modal').classList.remove('show'); }
 
-/* ============ 习惯渲染 ============ */
+/* ============ 习惯渲染（多色） ============ */
 function renderHabits() {
   const list = document.getElementById('habit-list');
   list.innerHTML = '';
@@ -1494,9 +1532,14 @@ function renderHabits() {
   const today = new Date();
   const tStr = todayStr();
   const cmh = getMonday(today);
-  db.habits.forEach(h => {
+
+  db.habits.forEach((h, idx) => {
     const card = document.createElement('div');
     card.className = 'habit-card';
+
+    /* ✅ 根据索引分配颜色 */
+    const baseColor = HABIT_COLORS[idx % HABIT_COLORS.length];
+
     let streak = 0;
     let d = new Date(today);
     while (true) {
@@ -1505,6 +1548,7 @@ function renderHabits() {
       if (v === 'done' || v === true) { streak++; d.setDate(d.getDate() - 1); }
       else break;
     }
+
     let heatmapHtml = '';
     for (let w = 16; w >= 0; w--) {
       const ws = new Date(cmh);
@@ -1517,15 +1561,21 @@ function renderHabits() {
           heatmapHtml += `<div class="heatmap-cell future"></div>`;
         } else {
           const v = h.records[ds];
-          let cls = '';
-          if (v === 'done' || v === true) cls = 'done';
-          else if (v === 'makeup') cls = 'makeup';
-          heatmapHtml += `<div class="heatmap-cell ${cls}" onclick="cycleHabitRecord('${h.id}', '${ds}')" title="${ds}"></div>`;
+          let style = '';
+          if (v === 'done' || v === true) {
+            style = `background:${baseColor};`;
+          } else if (v === 'makeup') {
+            style = `background:${baseColor};opacity:0.4;`;
+          }
+          /* 未打卡状态保持默认底色 var(--habit-bg) */
+          heatmapHtml += `<div class="heatmap-cell" style="${style}" onclick="cycleHabitRecord('${h.id}', '${ds}')" title="${ds}"></div>`;
         }
       }
     }
+
     const isCheckedToday = (h.records[tStr] === 'done' || h.records[tStr] === true);
     const btnText = isCheckedToday ? '✅ 已打卡' : '⭕ 今日打卡';
+
     card.innerHTML = `
       <div class="habit-top">
         <span class="habit-name">${esc(h.name)}</span>
@@ -1533,8 +1583,8 @@ function renderHabits() {
       </div>
       <div class="heatmap-container"><div class="heatmap-grid">${heatmapHtml}</div></div>
       <div class="heatmap-legend">
-        <span class="swatch" style="background:var(--success)"></span><span>完成</span>
-        <span class="swatch" style="background:var(--habit-makeup);margin-left:8px"></span><span>补签</span>
+        <span class="swatch" style="background:${baseColor}"></span><span>完成</span>
+        <span class="swatch" style="background:${baseColor};opacity:0.4;margin-left:8px"></span><span>补签</span>
       </div>
       <div class="habit-footer">
         <button class="checkin-btn ${isCheckedToday ? 'checked' : ''}"
@@ -1849,7 +1899,6 @@ function renderYearSummary() {
   container.appendChild(view);
 }
 
-/* 总结主渲染 */
 function renderBook() {
   const labelEl = document.getElementById('book-period-label');
   const baseLabel = getPeriodLabel();

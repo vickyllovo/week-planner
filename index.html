@@ -428,6 +428,38 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .tag-scope-buttons .primary{background:var(--accent);color:#fff}
 .tag-scope-buttons .secondary{background:#F4F0E8;color:var(--text)}
 
+/* ========== 新增：提醒弹窗样式 ========== */
+#reminder-stack{position:fixed;top:8px;right:8px;z-index:300;display:flex;flex-direction:column;
+  gap:8px;width:min(340px, calc(100vw - 16px));pointer-events:none}
+.reminder-card{pointer-events:auto;background:var(--card);border-radius:12px;padding:12px;
+  box-shadow:0 8px 30px rgba(120,90,50,0.20);border-left:4px solid var(--accent);
+  display:flex;gap:10px;animation:reminderIn .38s cubic-bezier(.2,.9,.3,1.15)}
+.reminder-card.habit{border-left-color:var(--success)}
+.reminder-card.urgent{border-left-color:var(--danger)}
+@keyframes reminderIn{from{transform:translateX(115%);opacity:0}to{transform:translateX(0);opacity:1}}
+.reminder-card.out{animation:reminderOut .26s ease forwards}
+@keyframes reminderOut{to{transform:translateX(115%);opacity:0}}
+.reminder-icon{font-size:20px;line-height:1;flex:none;margin-top:2px}
+.reminder-body{flex:1;min-width:0}
+.reminder-kicker{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.3px}
+.reminder-card.habit .reminder-kicker{color:var(--success)}
+.reminder-card.urgent .reminder-kicker{color:var(--danger)}
+.reminder-title{font-size:13px;font-weight:600;margin-top:2px;overflow-wrap:anywhere;line-height:1.4}
+.reminder-sub{font-size:11px;color:var(--text-secondary);margin-top:2px;overflow-wrap:anywhere}
+.reminder-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.reminder-actions button{border:none;border-radius:6px;padding:5px 10px;font-size:11px;
+  font-weight:600;cursor:pointer;white-space:nowrap}
+.reminder-actions .primary{background:var(--accent);color:#fff}
+.reminder-card.habit .reminder-actions .primary{background:var(--success)}
+.reminder-actions .ghost{background:#F4F0E8;color:var(--text-secondary)}
+.reminder-close{background:none;border:none;color:var(--text-tertiary);font-size:16px;
+  cursor:pointer;align-self:flex-start;padding:0 2px;line-height:1}
+.habit-top-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.habit-remind-btn{background:#F4F0E8;color:var(--text-secondary);border:none;border-radius:12px;
+  padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+.habit-remind-btn.on{background:var(--accent-soft);color:var(--accent)}
+.task-remind-hint{font-size:10px;color:var(--text-tertiary);margin-top:-2px}
+
 @media (max-width:768px){
   .view{padding:4px;gap:4px}
   #view-plan{flex-direction:row}
@@ -438,8 +470,6 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
   .task-item{gap:4px;padding:4px 2px}
   .task-item .ttl{font-size:12px;line-height:1.3}
   .task-item .chk{width:14px;height:14px;margin-top:2px}
-
-
   .task-preview{font-size:10px}
   .right-page{flex:1;gap:6px}
   .right-card{padding:10px;gap:6px}
@@ -486,6 +516,10 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
   .calendar-cell{padding:5px;min-height:55px}
   .cal-date{font-size:15px}
 }
+@media(max-width:420px){
+  #reminder-stack{top:6px;right:6px;width:calc(100vw - 12px)}
+  .reminder-card{padding:10px}
+}
 </style>
 </head>
 <body>
@@ -525,6 +559,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
         <div class="form-row">
           <input type="datetime-local" id="new-task-time">
         </div>
+        <div class="task-remind-hint">⏰ 填写时间后，到点会自动弹窗提醒你</div>
         <textarea id="new-task-details" placeholder="详细描述 / 子计划（每行一个）"></textarea>
         <button class="add-btn" onclick="createTaskFromForm()">添加到当前日期</button>
       </div>
@@ -740,13 +775,17 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
   </div>
 </div>
 
+<!-- ✅ 新增：提醒弹窗容器 -->
+<div id="reminder-stack"></div>
+
 <script>
 const STORAGE_KEY = 'weekly-plan-book-v5';
 const SYNC_KEY = 'vicky-planner-sync-config';
 
 let db = {
   tasks: [], notes: {}, habits: [], summaries: {}, lists: [],
-  photos: {}, globalPhotos: [], photoHistory: []
+  photos: {}, globalPhotos: [], photoHistory: [],
+  weeklyPlans: {}, reminderState: { tasks: {}, habits: {}, habitSnooze: {} }
 };
 
 let currentMonday = getMonday(new Date());
@@ -796,6 +835,14 @@ function todayKey() {
 }
 function todayStr() { return formatDate(new Date()); }
 
+/* ✅ 新增：保证 reminderState 结构完整 */
+function ensureReminderState() {
+  if (!db.reminderState) db.reminderState = {};
+  if (!db.reminderState.tasks) db.reminderState.tasks = {};
+  if (!db.reminderState.habits) db.reminderState.habits = {};
+  if (!db.reminderState.habitSnooze) db.reminderState.habitSnooze = {};
+}
+
 function loadLocal() {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
@@ -809,6 +856,7 @@ function loadLocal() {
     if (!db.globalPhotos) db.globalPhotos = [];
     if (!db.photoHistory) db.photoHistory = [];
     if (!db.weeklyPlans) db.weeklyPlans = {};
+    ensureReminderState();
     const all = [];
     Object.keys(db.photos).forEach(k => {
       (db.photos[k] || []).forEach(p => { if (!all.includes(p)) all.push(p); });
@@ -819,7 +867,8 @@ function loadLocal() {
     saveLocal();
   } catch (e) {
     db = { tasks: [], notes: {}, habits: [], summaries: {}, lists: [],
-           photos: {}, globalPhotos: [], photoHistory: [], weeklyPlans: {} };
+           photos: {}, globalPhotos: [], photoHistory: [], weeklyPlans: {},
+           reminderState: { tasks: {}, habits: {}, habitSnooze: {} } };
   }
 }
 function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
@@ -899,7 +948,8 @@ async function downloadFromCloud() {
     if (!db.photos) db.photos = {};
     if (!db.globalPhotos) db.globalPhotos = [];
     if (!db.photoHistory) db.photoHistory = [];
-      if (!db.weeklyPlans) db.weeklyPlans = {};
+    if (!db.weeklyPlans) db.weeklyPlans = {};
+    ensureReminderState();
     const all = [];
     Object.keys(db.photos).forEach(k => {
       (db.photos[k] || []).forEach(p => { if (!all.includes(p)) all.push(p); });
@@ -941,6 +991,7 @@ function importData(event) {
       if (!db.globalPhotos) db.globalPhotos = [];
       if (!db.photoHistory) db.photoHistory = [];
       if (!db.weeklyPlans) db.weeklyPlans = {};
+      ensureReminderState();
       saveLocal();
       renderAll(); renderHabits(); renderBook(); renderLists();
       alert('数据导入成功！');
@@ -973,11 +1024,17 @@ function toggleTask(id) {
   if (!t) return;
   t.done = !t.done;
   saveLocal(); renderAll();
+  /* ✅ 任务被勾选完成后，收起它的提醒卡片 */
+  if (t.done) dismissReminder('task-' + id);
 }
 function deleteTask(id) {
   if (!confirm('确定要删除吗？')) return;
   db.tasks = db.tasks.filter(x => x.id !== id);
   if (selectedTaskId === id) selectedTaskId = null;
+  /* ✅ 清理提醒状态 */
+  ensureReminderState();
+  delete db.reminderState.tasks[id];
+  dismissReminder('task-' + id);
   saveLocal(); renderAll();
 }
 function deleteSelectedTask() { if (selectedTaskId) deleteTask(selectedTaskId); }
@@ -1001,16 +1058,17 @@ function createTaskFromForm() {
     week_key:currentWeekKey, day:selectedDay, title,
     done:false, dueDate:timeEl.value, details:detailsEl.value
   });
+  const hadTime = !!timeEl.value;
   titleEl.value = ''; timeEl.value = ''; detailsEl.value = '';
   saveLocal(); renderAll();
-  alert('已添加到当前日期！');
+  alert(hadTime ? '已添加到当前日期，到点会弹窗提醒你！' : '已添加到当前日期！');
 }
 
 /* ============ 习惯 ============ */
 function addHabit() {
   const name = prompt('输入新习惯的名称（例如：戒奶茶、背单词）：');
   if (!name || !name.trim()) return;
-  db.habits.push({ id:'habit-' + Date.now(), name:name.trim(), records:{} });
+  db.habits.push({ id:'habit-' + Date.now(), name:name.trim(), records:{}, remindTime:'' });
   saveLocal(); renderHabits();
 }
 function toggleHabitRecord(habitId, dateStr) {
@@ -1033,7 +1091,42 @@ function cycleHabitRecord(habitId, dateStr) {
 function deleteHabit(habitId) {
   if (!confirm('确定要删除这个习惯吗？')) return;
   db.habits = db.habits.filter(x => x.id !== habitId);
+  /* ✅ 清理提醒状态 */
+  ensureReminderState();
+  delete db.reminderState.habits[habitId];
+  delete db.reminderState.habitSnooze[habitId];
   saveLocal(); renderHabits();
+}
+
+/* ✅ 新增：设置习惯每日提醒时间 */
+function setHabitReminder(habitId) {
+  const h = db.habits.find(x => x.id === habitId);
+  if (!h) return;
+  const input = prompt(
+    '设置「' + h.name + '」的每日提醒时间\n格式：24小时制，例如 21:00\n留空 = 关闭提醒',
+    h.remindTime || ''
+  );
+  if (input === null) return;
+  const v = input.trim();
+  if (!v) {
+    delete h.remindTime;
+    ensureReminderState();
+    delete db.reminderState.habits[habitId];
+    delete db.reminderState.habitSnooze[habitId];
+    saveLocal(); renderHabits();
+    return;
+  }
+  const m = v.match(/^(\d{1,2})[:：](\d{1,2})$/);
+  if (!m) { alert('格式不正确，请输入类似 21:00 的时间'); return; }
+  const hh = Number(m[1]), mm = Number(m[2]);
+  if (hh > 23 || mm > 59) { alert('时间超出范围（00:00 ~ 23:59）'); return; }
+  h.remindTime = String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0');
+  ensureReminderState();
+  /* 重置今天的提醒标记，让新时间立即生效 */
+  delete db.reminderState.habits[habitId];
+  delete db.reminderState.habitSnooze[habitId];
+  saveLocal(); renderHabits();
+  alert('已设置：每天 ' + h.remindTime + ' 提醒你打卡');
 }
 
 /* ============ 清单 ============ */
@@ -1215,7 +1308,6 @@ function applyTagScope(scope) {
     db.globalPhotos.push(base64);
   }
   if (!db.photoHistory) db.photoHistory = [];
-      if (!db.weeklyPlans) db.weeklyPlans = {};
   if (!db.photoHistory.includes(base64)) db.photoHistory.unshift(base64);
   if (db.photoHistory.length > 30) db.photoHistory = db.photoHistory.slice(0, 30);
   saveLocal(); renderBook(); openDayDetailModal(dateObj); closeTagActionModal();
@@ -1280,7 +1372,6 @@ function renderPhotoHistory() {
   history.forEach((p, index) => {
     const item = document.createElement('div');
     item.className = 'photo-history-item';
-    /* ✅ 新增删除按钮 */
     item.innerHTML = `
       <img src="${p}">
       <button class="del-history-btn" onclick="event.stopPropagation(); deleteHistoryPhoto(${index})">×</button>
@@ -1576,8 +1667,6 @@ function openCalendarModal() {
 }
 function closeCalendarModal() { document.getElementById('calendar-modal').classList.remove('show'); }
 
-/* ============ 习惯渲染（多色） ============ */
-
 /* ============ 每周护肤 / 健身计划 ============ */
 let activeHabitSection = 'daily';
 let weeklyPlanMonday = getMonday(new Date());
@@ -1603,8 +1692,8 @@ function switchHabitSection(section) {
 function handleHabitPrimaryAction() {
   if (activeHabitSection === 'daily') { addHabit(); return; }
   const today = new Date();
-  const currentMonday = getMonday(today);
-  const dayIndex = formatDate(currentMonday) === formatDate(weeklyPlanMonday) ? (today.getDay() + 6) % 7 : 0;
+  const currentMondayLocal = getMonday(today);
+  const dayIndex = formatDate(currentMondayLocal) === formatDate(weeklyPlanMonday) ? (today.getDay() + 6) % 7 : 0;
   addWeeklyTask(activeHabitSection, dayIndex);
 }
 
@@ -1796,7 +1885,6 @@ function renderHabits() {
     const card = document.createElement('div');
     card.className = 'habit-card';
 
-    /* ✅ 根据索引分配颜色 */
     const baseColor = HABIT_COLORS[idx % HABIT_COLORS.length];
 
     let streak = 0;
@@ -1812,9 +1900,9 @@ function renderHabits() {
     for (let w = 16; w >= 0; w--) {
       const ws = new Date(cmh);
       ws.setDate(ws.getDate() - w * 7);
-      for (let d = 0; d < 7; d++) {
+      for (let d2 = 0; d2 < 7; d2++) {
         const dt = new Date(ws);
-        dt.setDate(dt.getDate() + d);
+        dt.setDate(dt.getDate() + d2);
         const ds = formatDate(dt);
         if (dt > today) {
           heatmapHtml += `<div class="heatmap-cell future"></div>`;
@@ -1826,7 +1914,6 @@ function renderHabits() {
           } else if (v === 'makeup') {
             style = `background:${baseColor};opacity:0.4;`;
           }
-          /* 未打卡状态保持默认底色 var(--habit-bg) */
           heatmapHtml += `<div class="heatmap-cell" style="${style}" onclick="cycleHabitRecord('${h.id}', '${ds}')" title="${ds}"></div>`;
         }
       }
@@ -1838,7 +1925,11 @@ function renderHabits() {
     card.innerHTML = `
       <div class="habit-top">
         <span class="habit-name">${esc(h.name)}</span>
-        <span class="habit-streak">连续 ${streak} 天</span>
+        <div class="habit-top-right">
+          <button class="habit-remind-btn ${h.remindTime ? 'on' : ''}"
+            onclick="setHabitReminder('${h.id}')">${h.remindTime ? '⏰ ' + h.remindTime : '⏰ 设提醒'}</button>
+          <span class="habit-streak">连续 ${streak} 天</span>
+        </div>
       </div>
       <div class="heatmap-container"><div class="heatmap-grid">${heatmapHtml}</div></div>
       <div class="heatmap-legend">
@@ -2267,6 +2358,320 @@ function renderLists() {
   });
 }
 
+/* ============================================================
+   ✅ 新增：提醒系统（任务截止 + 习惯打卡）
+   ============================================================ */
+const REMINDER_TICK = 20000;   // 每 20 秒检查一次
+let audioCtx = null;
+
+/* --- 提示音 --- */
+function ensureAudio() {
+  try {
+    if (!audioCtx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) { /* 忽略 */ }
+}
+document.addEventListener('pointerdown', ensureAudio, true);
+document.addEventListener('keydown', ensureAudio, true);
+
+function playReminderSound() {
+  ensureAudio();
+  if (navigator.vibrate) { try { navigator.vibrate([80, 60, 80]); } catch (e) {} }
+  if (!audioCtx) return;
+  try {
+    const now = audioCtx.currentTime;
+    [0, 0.18, 0.36].forEach((offset, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = i === 2 ? 1046.5 : 880;
+      gain.gain.setValueAtTime(0.0001, now + offset);
+      gain.gain.exponentialRampToValueAtTime(0.18, now + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.24);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.28);
+    });
+  } catch (e) { /* 忽略 */ }
+}
+
+/* --- 卡片渲染 --- */
+function createReminderCard(opts) {
+  const stack = document.getElementById('reminder-stack');
+  if (!stack) return null;
+  if (opts.key && stack.querySelector('[data-key="' + opts.key + '"]')) return null;
+
+  const card = document.createElement('div');
+  card.className = 'reminder-card' + (opts.type ? ' ' + opts.type : '');
+  if (opts.key) card.setAttribute('data-key', opts.key);
+
+  const icon = document.createElement('div');
+  icon.className = 'reminder-icon';
+  icon.textContent = opts.icon || '⏰';
+
+  const body = document.createElement('div');
+  body.className = 'reminder-body';
+
+  const kicker = document.createElement('div');
+  kicker.className = 'reminder-kicker';
+  kicker.textContent = opts.kicker || '提醒';
+  body.appendChild(kicker);
+
+  const title = document.createElement('div');
+  title.className = 'reminder-title';
+  title.textContent = opts.title || '';
+  body.appendChild(title);
+
+  if (opts.sub) {
+    const sub = document.createElement('div');
+    sub.className = 'reminder-sub';
+    sub.textContent = opts.sub;
+    body.appendChild(sub);
+  }
+
+  if (opts.actions && opts.actions.length) {
+    const acts = document.createElement('div');
+    acts.className = 'reminder-actions';
+    opts.actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.className = a.primary ? 'primary' : 'ghost';
+      btn.textContent = a.label;
+      btn.onclick = () => {
+        try { a.onClick && a.onClick(); } catch (e) { console.error(e); }
+        closeReminderCard(card);
+      };
+      acts.appendChild(btn);
+    });
+    body.appendChild(acts);
+  }
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'reminder-close';
+  closeBtn.textContent = '×';
+  closeBtn.onclick = () => closeReminderCard(card);
+
+  card.appendChild(icon);
+  card.appendChild(body);
+  card.appendChild(closeBtn);
+  stack.appendChild(card);
+  return card;
+}
+
+function closeReminderCard(card) {
+  if (!card || !card.parentNode) return;
+  card.classList.add('out');
+  setTimeout(() => { if (card.parentNode) card.remove(); }, 280);
+}
+
+function dismissReminder(key) {
+  const stack = document.getElementById('reminder-stack');
+  if (!stack) return;
+  const card = stack.querySelector('[data-key="' + key + '"]');
+  if (card) closeReminderCard(card);
+}
+
+/* --- 跳转到任务所在周 --- */
+function mondayFromWeekKey(weekKey) {
+  try {
+    const y = Number(weekKey.split('-W')[0]);
+    let m = getMonday(new Date(y, 0, 1));
+    for (let i = 0; i < 60; i++) {
+      if (getWeekKey(m) === weekKey) return new Date(m);
+      m.setDate(m.getDate() + 7);
+    }
+  } catch (e) { /* 忽略 */ }
+  return getMonday(new Date());
+}
+
+function switchToView(view) {
+  const tab = document.querySelector('.tab[data-view="' + view + '"]');
+  if (tab && !tab.classList.contains('active')) tab.click();
+}
+
+function gotoTask(taskId) {
+  const t = db.tasks.find(x => x.id === taskId);
+  if (!t) return;
+  switchToView('plan');
+  if (t.week_key) {
+    currentMonday = mondayFromWeekKey(t.week_key);
+    currentWeekKey = t.week_key;
+  }
+  selectedDay = (t.day === null || t.day === undefined) ? 0 : Number(t.day);
+  selectedTaskId = t.id;
+  renderAll();
+}
+
+function gotoHabit(habitId) {
+  switchToView('habits');
+  switchHabitSection('daily');
+  renderHabits();
+}
+
+/* --- 任务提醒卡片 --- */
+function pushTaskReminder(task, dueTs, nowTs) {
+  const overdueMin = Math.max(0, Math.round((nowTs - dueTs) / 60000));
+  let timeStr = '';
+  try {
+    timeStr = new Date(dueTs).toLocaleString('zh-CN', {
+      month: 'numeric', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    });
+  } catch (e) { timeStr = ''; }
+
+  createReminderCard({
+    key: 'task-' + task.id,
+    type: overdueMin > 0 ? 'urgent' : '',
+    icon: '⏰',
+    kicker: overdueMin > 0 ? '任务时间已到' : '任务到时间啦',
+    title: task.title,
+    sub: overdueMin > 0
+      ? `${timeStr} · 已超时 ${overdueMin} 分钟`
+      : `${timeStr} · 该开始啦`,
+    actions: [
+      {
+        label: '✔ 标记完成', primary: true,
+        onClick: () => {
+          const t = db.tasks.find(x => x.id === task.id);
+          if (t) {
+            t.done = true;
+            saveLocal();
+            renderAll(); renderBook();
+          }
+        }
+      },
+      {
+        label: '⏱ 稍后10分钟',
+        onClick: () => {
+          ensureReminderState();
+          const st = db.reminderState.tasks[task.id];
+          if (st) {
+            st.notified = true;
+            st.snoozeUntil = Date.now() + 10 * 60000;
+          }
+          saveLocal();
+        }
+      },
+      { label: '查看', onClick: () => gotoTask(task.id) }
+    ]
+  });
+}
+
+/* --- 习惯提醒卡片 --- */
+function pushHabitReminder(habit, nowTs) {
+  createReminderCard({
+    key: 'habit-' + habit.id,
+    type: 'habit',
+    icon: '🔥',
+    kicker: '习惯打卡提醒',
+    title: habit.name,
+    sub: `今天还没打卡（每天 ${habit.remindTime} 提醒）`,
+    actions: [
+      {
+        label: '✔ 立即打卡', primary: true,
+        onClick: () => {
+          const h = db.habits.find(x => x.id === habit.id);
+          if (h) {
+            h.records[todayStr()] = 'done';
+            saveLocal();
+            renderHabits(); renderBook();
+          }
+        }
+      },
+      {
+        label: '⏱ 稍后30分钟',
+        onClick: () => {
+          ensureReminderState();
+          /* 清掉今天已提醒标记，让 30 分钟后再触发 */
+          delete db.reminderState.habits[habit.id];
+          db.reminderState.habitSnooze[habit.id] = Date.now() + 30 * 60000;
+          saveLocal();
+        }
+      },
+      { label: '查看', onClick: () => gotoHabit(habit.id) }
+    ]
+  });
+}
+
+/* --- 核心检查逻辑 --- */
+function checkReminders() {
+  ensureReminderState();
+  const rs = db.reminderState;
+  const now = Date.now();
+  const nowDate = new Date(now);
+  const todayS = formatDate(nowDate);
+  const nowMinutes = nowDate.getHours() * 60 + nowDate.getMinutes();
+  let fired = 0;
+
+  /* 1) 任务截止提醒 */
+  db.tasks.forEach(t => {
+    if (!t.dueDate || t.done) return;
+    const due = new Date(t.dueDate).getTime();
+    if (isNaN(due)) return;
+    if (now < due) return;                       // 还没到点
+    if (now - due > 24 * 3600 * 1000) return;    // 超过一天就不再打扰
+
+    let st = rs.tasks[t.id];
+    if (!st || st.due !== due) {                 // 首次 / 截止时间被修改过
+      st = rs.tasks[t.id] = { due: due, notified: false, snoozeUntil: 0 };
+    }
+    if (st.notified) {
+      if (!st.snoozeUntil) return;               // 已提醒过，且没设置稍后
+      if (now < st.snoozeUntil) return;          // 稍后时间还没到
+      st.snoozeUntil = 0;                        // 稍后时间到了 → 再提醒一次
+    }
+    st.notified = true;
+    fired++;
+    pushTaskReminder(t, due, now);
+  });
+
+  /* 2) 习惯每日打卡提醒 */
+  db.habits.forEach(h => {
+    if (!h.remindTime) return;
+    const parts = String(h.remindTime).split(':');
+    const hh = Number(parts[0]), mm = Number(parts[1]);
+    if (isNaN(hh) || isNaN(mm)) return;
+
+    const targetMinutes = hh * 60 + mm;
+    if (nowMinutes < targetMinutes) return;                    // 还没到提醒时间
+    if (nowMinutes - targetMinutes > 180) return;              // 超过3小时就不再提醒
+
+    const targetTs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), hh, mm).getTime();
+
+    const rec = h.records[todayS];
+    if (rec === 'done' || rec === true) return;                // 今天已完成
+
+    const snooze = rs.habitSnooze[h.id] || 0;
+    if (now < snooze) return;                                  // 稍后提醒中
+
+    const last = rs.habits[h.id] || 0;
+    if (last >= targetTs) return;                              // 今天这个时间点已经提醒过
+
+    rs.habits[h.id] = now;
+    fired++;
+    pushHabitReminder(h, now);
+  });
+
+  if (fired > 0) {
+    saveLocal();
+    playReminderSound();
+  }
+}
+
+/* --- 启动提醒引擎 --- */
+function startReminderEngine() {
+  ensureReminderState();
+  setInterval(checkReminders, REMINDER_TICK);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkReminders();
+  });
+  window.addEventListener('focus', checkReminders);
+  setTimeout(checkReminders, 1500);   // 页面加载后延迟检查一次
+}
+
 /* ============ 事件绑定 ============ */
 document.getElementById('book-prev').addEventListener('click', () => {
   if (bookPeriod === 'day') bookDate = new Date(bookDate.getFullYear(), bookDate.getMonth() - 1, 1);
@@ -2327,6 +2732,7 @@ renderAll();
 renderHabits();
 renderBook();
 renderLists();
+startReminderEngine();   // ✅ 启动提醒
 </script>
 </body>
 </html>

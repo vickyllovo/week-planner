@@ -735,14 +735,13 @@ function ensureReminderState() {
 }
 
 /* ============================================================
-   ===== 原生桥接层（WebToApp / WebToApk / Kapsula 自动检测）=====
-   任意一个存在即可工作；都不存在时自动降级为页内提醒
+   ===== 原生桥接层（增强诊断版）=====
    ============================================================ */
 const NativeBridge = {
   _kind: null,
   detect() {
-    if (window.WebToApp && typeof window.WebToApp.scheduleNotification === 'function') return 'webtoapp';
-    if (window.WebToApk && typeof window.WebToApk.scheduleNotification === 'function') return 'webtoapk';
+    if (window.WebToApk && typeof window.WebToApk.scheduleNotification === 'function') return 'WebToApk';
+    if (window.WebToApp && typeof window.WebToApp.scheduleNotification === 'function') return 'WebToApp';
     if (window.kapsula && window.kapsula.notify) return 'kapsula';
     return null;
   },
@@ -750,13 +749,17 @@ const NativeBridge = {
     if (!this._kind) this._kind = this.detect();
     return !!this._kind;
   },
+  api() {
+    if (this._kind === 'WebToApk') return window.WebToApk;
+    if (this._kind === 'WebToApp') return window.WebToApp;
+    return null;
+  },
   async requestPermission() {
     try {
-      if (window.WebToApp && typeof window.WebToApp.requestNotificationPermission === 'function') {
-        await window.WebToApp.requestNotificationPermission();
-      } else if (window.WebToApk && typeof window.WebToApk.requestNotificationPermission === 'function') {
-        await window.WebToApk.requestNotificationPermission();
-      } else if (window.kapsula && window.kapsula.notify && typeof window.kapsula.notify.requestPermission === 'function') {
+      const a = this.api();
+      if (a && typeof a.requestNotificationPermission === 'function') {
+        await a.requestNotificationPermission();
+      } else if (this._kind === 'kapsula' && window.kapsula.notify.requestPermission) {
         await window.kapsula.notify.requestPermission();
       }
     } catch (e) {}
@@ -769,11 +772,11 @@ const NativeBridge = {
     const title = '⏰ 任务提醒';
     const body = task.title || '该做这件事了';
     try {
-      if (this._kind === 'webtoapp' || this._kind === 'webtoapk') {
-        const api = this._kind === 'webtoapp' ? window.WebToApp : window.WebToApk;
-        await api.scheduleNotification(id, title, body, String(at), 'none');
-      } else if (this._kind === 'kapsula') {
+      if (this._kind === 'kapsula') {
         await window.kapsula.notify.schedule({ id, at, title, body });
+      } else {
+        const a = this.api();
+        await a.scheduleNotification(id, title, body, String(at), 'none');
       }
     } catch (e) { console.warn('[Native] scheduleTask failed', e); }
   },
@@ -786,14 +789,7 @@ const NativeBridge = {
     const hh = Number(parts[0]), mm = Number(parts[1]);
     if (isNaN(hh) || isNaN(mm)) return;
     try {
-      if (this._kind === 'webtoapp' || this._kind === 'webtoapk') {
-        const api = this._kind === 'webtoapp' ? window.WebToApp : window.WebToApk;
-        // 使用 next occurrence 作为首次触发时间，repeat='daily' 让它每天重复
-        const now = new Date();
-        const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
-        if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
-        await api.scheduleNotification(id, title, body, String(next.getTime()), 'daily');
-      } else if (this._kind === 'kapsula') {
+      if (this._kind === 'kapsula') {
         if (typeof window.kapsula.notify.scheduleDaily === 'function') {
           await window.kapsula.notify.scheduleDaily({ id, time: habit.remindTime, title, body });
         } else {
@@ -802,17 +798,23 @@ const NativeBridge = {
           if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
           await window.kapsula.notify.schedule({ id, at: next.getTime(), title, body });
         }
+      } else {
+        const a = this.api();
+        const now = new Date();
+        const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+        if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+        await a.scheduleNotification(id, title, body, String(next.getTime()), 'daily');
       }
     } catch (e) { console.warn('[Native] scheduleHabit failed', e); }
   },
   async cancel(id) {
     if (!this.available() || !id) return;
     try {
-      if (this._kind === 'webtoapp' || this._kind === 'webtoapk') {
-        const api = this._kind === 'webtoapp' ? window.WebToApp : window.WebToApk;
-        if (typeof api.cancelNotification === 'function') await api.cancelNotification(id);
-      } else if (this._kind === 'kapsula') {
+      if (this._kind === 'kapsula') {
         if (typeof window.kapsula.notify.cancel === 'function') await window.kapsula.notify.cancel(id);
+      } else {
+        const a = this.api();
+        if (typeof a.cancelNotification === 'function') await a.cancelNotification(id);
       }
     } catch (e) {}
   },
@@ -820,7 +822,38 @@ const NativeBridge = {
   cancelHabit(habitId) { return this.cancel('habit-' + habitId); }
 };
 
-/* 把所有未完成任务的闹钟 + 所有习惯每日提醒重新预约一遍 */
+/* ===== 诊断工具：点一下就知道桥接状态 ===== */
+async function diagnoseNativeBridge() {
+  const lines = [];
+  lines.push('window.WebToApk : ' + (window.WebToApk ? typeof window.WebToApk : '不存在'));
+  lines.push('window.WebToApp : ' + (window.WebToApp ? typeof window.WebToApp : '不存在'));
+  lines.push('window.kapsula : ' + (window.kapsula ? typeof window.kapsula : '不存在'));
+  lines.push('检测结果 : ' + (NativeBridge.available() ? ('✅ ' + NativeBridge._kind) : '❌ 全部不存在'));
+  alert('=== 桥接诊断 ===\n' + lines.join('\n') + '\n\n' +
+    (NativeBridge.available()
+      ? '桥接已注入，正在尝试发送 5 秒后的测试通知...'
+      : '桥接未注入！请重新打包 APK，并在构建向导里勾选「Notifications」和「⏰ Reminders」。'));
+
+  if (!NativeBridge.available()) return;
+
+  await NativeBridge.requestPermission();
+  const testAt = Date.now() + 5000;
+  const id = 'test-' + Date.now();
+  try {
+    if (NativeBridge._kind === 'kapsula') {
+      await window.kapsula.notify.schedule({
+        id, at: testAt, title: '🔔 测试通知', body: '如果你看到这条通知，说明系统提醒已接通。'
+      });
+    } else {
+      const a = NativeBridge.api();
+      await a.scheduleNotification(id, '🔔 测试通知', '如果你看到这条通知，说明系统提醒已接通。', String(testAt), 'none');
+    }
+    alert('测试通知已预约，5 秒后看锁屏/通知栏。\n\n如果没有出现，请检查：\n1. 手机是否允许该 App 发通知\n2. 是否关闭了电池优化\n3. 是否允许锁屏通知');
+  } catch (e) {
+    alert('预约失败：' + e.message);
+  }
+}
+
 async function rescheduleAllNative() {
   if (!NativeBridge.available()) return;
   await NativeBridge.requestPermission();
@@ -841,7 +874,6 @@ function loadLocal() {
     if (!db.globalPhotos) db.globalPhotos = [];
     if (!db.photoHistory) db.photoHistory = [];
     ensureReminderState();
-    // 习惯兼容老数据：没有 remindTime 字段时补一个空值
     db.habits.forEach(h => { if (typeof h.remindTime !== 'string') h.remindTime = ''; });
     const all = [];
     Object.keys(db.photos).forEach(k => {
@@ -859,7 +891,7 @@ function loadLocal() {
 }
 function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
 
-/* ============ 云同步（保持原样） ============ */
+/* ============ 云同步（保持原样，略） ============ */
 function getSyncConfig() {
   try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {user:'',repo:'',token:''}; }
   catch (e) { return {user:'',repo:'',token:''}; }
@@ -872,6 +904,9 @@ function openSyncModal() {
   document.getElementById('sync-token').value = cfg.token || '';
   document.getElementById('sync-status').textContent =
     cfg.user ? '配置已保存，可上传/下载' : '尚未配置，请填写 Gitee 信息';
+  document.getElementById('sync-status').textContent =
+    (cfg.user ? '配置已保存，可上传/下载' : '尚未配置，请填写 Gitee 信息')
+    + '\n桥接状态：' + (NativeBridge.available() ? '✅ ' + NativeBridge._kind : '❌ 未注入');
   document.getElementById('sync-modal').classList.add('show');
 }
 function closeSyncModal() { document.getElementById('sync-modal').classList.remove('show'); }
@@ -1049,10 +1084,16 @@ function createTaskFromForm() {
   const hadTime = !!timeEl.value;
   titleEl.value = ''; timeEl.value = ''; detailsEl.value = '';
   saveLocal(); renderAll();
-  if (hadTime) NativeBridge.scheduleTask(newTask);
-  alert(hadTime
-    ? (NativeBridge.available() ? '已添加，并预约了系统闹钟！' : '已添加，到点会在页面内提醒你')
-    : '已添加到当前日期！');
+  if (hadTime) {
+    if (NativeBridge.available()) {
+      NativeBridge.scheduleTask(newTask);
+      alert('已添加，并预约了系统闹钟！\n\n5分钟后如果没弹，点「⚙️ 同步」里的「🔔 测试系统通知」诊断。');
+    } else {
+      alert('已添加。\n\n⚠️ 但检测到原生桥接未注入，无法锁屏提醒。\n请重新打包 APK，勾选 Notifications 和 ⏰ Reminders。');
+    }
+  } else {
+    alert('已添加到当前日期！');
+  }
 }
 
 /* ============ 习惯 ============ */
@@ -1099,7 +1140,6 @@ function setHabitReminder(habitId) {
   if (input === null) return;
   const v = input.trim();
   if (!v) {
-    delete h.remindTime;
     h.remindTime = '';
     ensureReminderState();
     delete db.reminderState.habits[habitId];
@@ -1118,10 +1158,14 @@ function setHabitReminder(habitId) {
   delete db.reminderState.habitSnooze[habitId];
   saveLocal(); renderHabits();
   NativeBridge.cancelHabit(h.id).then(() => NativeBridge.scheduleHabit(h));
-  alert('已设置：每天 ' + h.remindTime + ' 提醒你打卡');
+  if (NativeBridge.available()) {
+    alert('已设置：每天 ' + h.remindTime + ' 提醒你打卡');
+  } else {
+    alert('时间已保存，但原生桥接未注入，无法锁屏提醒。\n请重新打包 APK 勾选 Reminders。');
+  }
 }
 
-/* ============ 清单 ============ */
+/* ============ 清单（略，保持原样） ============ */
 function openListModal() {
   document.getElementById('list-name').value = '';
   document.getElementById('list-batch-items').value = '';
@@ -1191,7 +1235,7 @@ function deleteListItem(listId, itemId) {
   saveLocal(); renderLists();
 }
 
-/* ============ 照片裁剪（保持原样） ============ */
+/* ============ 照片裁剪（略，保持原样） ============ */
 let cropOffsetX = 0, cropOffsetY = 0, cropZoom = 1, cropBaseScale = 1;
 function handleDayPhotoUpload(event) {
   const file = event.target.files[0];
@@ -1407,7 +1451,6 @@ function openPeriodDetailModal(title, html) {
 function closePeriodDetailModal() {
   document.getElementById('period-detail-modal').classList.remove('show');
 }
-
 function openWeekDetailModal() {
   const weekStart = getMonday(bookDate);
   const weekKey = getWeekKey(weekStart);
@@ -2290,112 +2333,4 @@ function checkReminders() {
     if (isNaN(due)) return;
     if (now < due) return;
     if (now - due > 24 * 3600 * 1000) return;
-    let st = rs.tasks[t.id];
-    if (!st || st.due !== due) st = rs.tasks[t.id] = { due: due, notified: false, snoozeUntil: 0 };
-    if (st.notified) {
-      if (!st.snoozeUntil) return;
-      if (now < st.snoozeUntil) return;
-      st.snoozeUntil = 0;
-    }
-    st.notified = true;
-    fired++;
-    pushTaskReminder(t, due, now);
-  });
-
-  db.habits.forEach(h => {
-    if (!h.remindTime) return;
-    const parts = String(h.remindTime).split(':');
-    const hh = Number(parts[0]), mm = Number(parts[1]);
-    if (isNaN(hh) || isNaN(mm)) return;
-    const targetMinutes = hh * 60 + mm;
-    if (nowMinutes < targetMinutes) return;
-    if (nowMinutes - targetMinutes > 180) return;
-    const targetTs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), hh, mm).getTime();
-    const rec = h.records[todayS];
-    if (rec === 'done' || rec === true) return;
-    const snooze = rs.habitSnooze[h.id] || 0;
-    if (now < snooze) return;
-    const last = rs.habits[h.id] || 0;
-    if (last >= targetTs) return;
-    rs.habits[h.id] = now;
-    fired++;
-    pushHabitReminder(h);
-  });
-
-  if (fired > 0) { saveLocal(); playReminderSound(); }
-}
-
-function startReminderEngine() {
-  ensureReminderState();
-  setInterval(checkReminders, REMINDER_TICK);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkReminders(); });
-  window.addEventListener('focus', checkReminders);
-  setTimeout(checkReminders, 1500);
-}
-
-/* ============ 事件绑定 ============ */
-document.getElementById('book-prev').addEventListener('click', () => {
-  if (bookPeriod === 'day') bookDate = new Date(bookDate.getFullYear(), bookDate.getMonth() - 1, 1);
-  else if (bookPeriod === 'week') bookDate.setDate(bookDate.getDate() - 7);
-  else if (bookPeriod === 'month') bookDate = new Date(bookDate.getFullYear(), bookDate.getMonth() - 1, 1);
-  else bookDate = new Date(bookDate.getFullYear() - 1, 0, 1);
-  renderBook();
-});
-document.getElementById('book-next').addEventListener('click', () => {
-  if (bookPeriod === 'day') bookDate = new Date(bookDate.getFullYear(), bookDate.getMonth() + 1, 1);
-  else if (bookPeriod === 'week') bookDate.setDate(bookDate.getDate() + 7);
-  else if (bookPeriod === 'month') bookDate = new Date(bookDate.getFullYear(), bookDate.getMonth() + 1, 1);
-  else bookDate = new Date(bookDate.getFullYear() + 1, 0, 1);
-  renderBook();
-});
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    tab.classList.add('active');
-    const view = tab.dataset.view;
-    document.getElementById('view-' + view).classList.add('active');
-    if (view === 'plan') {
-      document.getElementById('header-bottom-display').style.display = 'block';
-      renderAll();
-    } else {
-      document.getElementById('header-bottom-display').style.display = 'none';
-      if (view === 'habits') renderHabits();
-      else if (view === 'book') renderBook();
-      else if (view === 'lists') renderLists();
-    }
-  });
-});
-document.getElementById('calendar-modal').addEventListener('click', e => {
-  if (e.target.id === 'calendar-modal') closeCalendarModal();
-});
-document.getElementById('list-modal').addEventListener('click', e => {
-  if (e.target.id === 'list-modal') closeListModal();
-});
-document.getElementById('sync-modal').addEventListener('click', e => {
-  if (e.target.id === 'sync-modal') closeSyncModal();
-});
-document.getElementById('day-detail-modal').addEventListener('click', e => {
-  if (e.target.id === 'day-detail-modal') closeDayDetailModal();
-});
-document.getElementById('period-detail-modal').addEventListener('click', e => {
-  if (e.target.id === 'period-detail-modal') closePeriodDetailModal();
-});
-document.getElementById('crop-modal').addEventListener('click', e => {
-  if (e.target.id === 'crop-modal') closeCropModal();
-});
-document.getElementById('tag-action-modal').addEventListener('click', e => {
-  if (e.target.id === 'tag-action-modal') closeTagActionModal();
-});
-
-loadLocal();
-renderAll();
-renderHabits();
-renderBook();
-renderLists();
-startReminderEngine();
-// 加载完成后重新预约所有原生闹钟（防止 App 重启后提醒丢失）
-setTimeout(() => { rescheduleAllNative(); }, 2000);
-</script>
-</body>
-</html>
+    let st = rs.tasks

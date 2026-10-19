@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>VickyLog</title>
 <style>
+/* 样式部分与之前完全一致，保持不变 */
 :root{--bg:#FDFBF7;--card:#FFFDFA;--text:#3A322B;--t2:#8C8279;--t3:#C2B8A3;--ac:#D97736;--acs:#FDF3E8;--dg:#D9534F;--sc:#5C9A71;--hb:#F4F0E8;--sep:#EFE9DF;--rc:10px;--rb:8px;--sh:0 1px 6px rgba(160,130,90,.04)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;height:100vh;height:100dvh;display:flex;flex-direction:column;font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
@@ -339,7 +340,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 </div>
 <div class="mo" id="calendar-modal"><div class="mc2"><h3>选择日期</h3><div id="calendar-container"></div><div class="mb"><button class="cn" onclick="closeCalendarModal()">关闭</button></div></div></div>
 <div class="mo" id="list-modal"><div class="mc2"><h3>新建清单</h3><input type="text" id="list-name" placeholder="清单名称"><label class="fu">📁 上传 TXT / CSV 文件<input type="file" id="list-file-input" accept=".txt,.csv" onchange="handleFileUpload(this)" style="display:none"></label><textarea id="list-batch-items" placeholder="或直接粘贴（每行一个）"></textarea><div class="mb"><button class="cn" onclick="closeListModal()">取消</button><button class="sv" onclick="saveNewList()">创建</button></div></div></div>
-<div class="mo" id="sync-modal"><div class="mc2"><h3>☁️ 云同步设置</h3><div id="sync-status" style="font-size:12px;color:var(--t2);margin-bottom:10px;text-align:center">正在加载配置...</div><input type="text" id="sync-user" placeholder="Gitee 用户名"><input type="text" id="sync-repo" placeholder="Gitee 仓库名"><input type="password" id="sync-token" placeholder="私人令牌（Token）"><div class="mb"><button class="cn" onclick="saveSyncConfig()">保存配置</button></div><div style="display:flex;gap:8px;margin-top:10px"><button class="sv" style="flex:1;border:0;border-radius:8px;padding:10px;cursor:pointer" onclick="uploadToCloud()">⬆ 上传到云端</button><button style="flex:1;border:0;border-radius:8px;padding:10px;cursor:pointer;background:#F4F0E8;color:var(--text)" onclick="downloadFromCloud()">⬇ 从云端下载</button></div><div class="mb"><button class="cn" onclick="closeSyncModal()">关闭</button></div><div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--sep)"><button onclick="diagnoseNativeBridge()" style="width:100%;border:0;border-radius:8px;padding:10px;background:var(--hb);color:var(--ac);font-size:13px;font-weight:600;cursor:pointer">🔔 测试系统通知（诊断桥接）</button></div></div></div>
+<div class="mo" id="sync-modal"><div class="mc2"><h3>☁️ 云同步设置</h3><div id="sync-status" style="font-size:12px;color:var(--t2);margin-bottom:10px;text-align:center">正在加载配置...</div><input type="text" id="sync-user" placeholder="Gitee 用户名"><input type="text" id="sync-repo" placeholder="Gitee 仓库名"><input type="password" id="sync-token" placeholder="私人令牌（Token）"><div class="mb"><button class="cn" onclick="saveSyncConfig()">保存配置</button></div><div style="display:flex;gap:8px;margin-top:10px"><button class="sv" style="flex:1;border:0;border-radius:8px;padding:10px;cursor:pointer" onclick="uploadToCloud()">⬆ 上传到云端</button><button style="flex:1;border:0;border-radius:8px;padding:10px;cursor:pointer;background:#F4F0E8;color:var(--text)" onclick="downloadFromCloud()">⬇ 从云端下载</button></div><div class="mb"><button class="cn" onclick="closeSyncModal()">关闭</button></div><div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--sep)"><button onclick="diagnoseNotification()" style="width:100%;border:0;border-radius:8px;padding:10px;background:var(--hb);color:var(--ac);font-size:13px;font-weight:600;cursor:pointer">🔔 测试系统通知</button></div></div></div>
 <div class="mo" id="day-detail-modal"><div class="mc2"><h3 id="day-detail-title">日期详情</h3><div style="font-size:13px;font-weight:600;margin-bottom:6px">📝 今日心得</div><div id="day-detail-note-display" class="dnt">暂无心得</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">✅ 任务完成情况</div><div id="day-detail-tasks" style="font-size:13px;line-height:1.8;margin-bottom:12px"></div><div style="font-size:13px;font-weight:600;margin:12px 0 6px">🏷️ 今日照片标签</div><div id="day-detail-photos" class="ddp"></div><label class="fu">📷 上传新标签<input type="file" accept="image/*" onchange="handleDayPhotoUpload(event)" style="display:none"></label><div style="font-size:13px;font-weight:600;margin:12px 0 6px">🕘 历史标签</div><div id="photo-history-list" class="phs"><div class="phe">暂无历史照片</div></div><div class="mb"><button class="cn" onclick="closeDayDetailModal()">关闭</button></div></div></div>
 <div class="mo" id="period-detail-modal"><div class="mc2"><h3 id="period-detail-title">周详情</h3><div id="period-detail-content"></div><div class="mb"><button class="cn" onclick="closePeriodDetailModal()">关闭</button></div></div></div>
 <div class="mo" id="crop-modal"><div class="mc2" style="max-width:440px"><h3>裁剪照片（1:1）</h3><div class="crp"><div class="crb" id="crop-box"><img id="crop-image" alt=""></div><div class="crc"><label>缩放</label><input type="range" id="crop-zoom" min="0.1" max="3" step="0.01" value="1"></div><div style="font-size:11px;color:var(--t2);text-align:center">拖动图片选择区域，滑动缩放</div></div><div class="mb"><button class="cn" onclick="closeCropModal()">取消</button><button class="sv" onclick="confirmCrop()">确认上传</button></div></div></div>
@@ -361,119 +362,76 @@ function todayKey(){const d=new Date();return getWeekKey(getMonday(d))+'-'+((d.g
 function todayStr(){return formatDate(new Date())}
 function ensureRS(){if(!db.reminderState)db.reminderState={};['tasks','habits','habitSnooze'].forEach(k=>{if(!db.reminderState[k])db.reminderState[k]={}})}
 
-const NB={
-  _kind:null,
-  detect(){
-    if(window.NativeBridge && typeof window.NativeBridge.scheduleNotification === 'function')return'NativeBridge';
-    if(window.WebToApk && typeof window.WebToApk.scheduleNotification === 'function')return'WebToApk';
-    if(window.WebToApp && typeof window.WebToApp.scheduleNotification === 'function')return'WebToApp';
-    if(window.kapsula && window.kapsula.notify)return'kapsula';
-    return null;
-  },
-  available(){if(!this._kind)this._kind=this.detect();return!!this._kind},
-  api(){
-    if(this._kind==='NativeBridge')return window.NativeBridge;
-    if(this._kind==='WebToApk')return window.WebToApk;
-    if(this._kind==='WebToApp')return window.WebToApp;
-    return null;
-  },
-  async requestPermission(){
-    try{
-      const a=this.api();
-      if(a&&typeof a.requestNotificationPermission==='function')await a.requestNotificationPermission();
-      else if(this._kind==='kapsula'&&window.kapsula.notify.requestPermission)await window.kapsula.notify.requestPermission();
-    }catch(e){}
-  },
-  async scheduleTask(t){
-    if(!this.available()||!t||!t.dueDate||t.done)return;
-    const at=new Date(t.dueDate).getTime();
-    if(isNaN(at)||at<=Date.now())return;
-    const id='task-'+t.id,ti='⏰ 任务提醒',bo=t.title||'该做这件事了';
-    try{
-      if(this._kind==='kapsula')await window.kapsula.notify.schedule({id,at,title:ti,body:bo});
-      else{const a=this.api();await a.scheduleNotification(id,ti,bo,String(at),'none')}
-    }catch(e){console.warn(e)}
-  },
-  async scheduleHabit(h){
-    if(!this.available()||!h||!h.remindTime)return;
-    const id='habit-'+h.id,ti='🔥 习惯打卡提醒',bo=h.name+'（每天 '+h.remindTime+'）';
-    const p=String(h.remindTime).split(':'),hh=+p[0],mm=+p[1];
-    if(isNaN(hh)||isNaN(mm))return;
-    try{
-      if(this._kind==='kapsula'){
-        if(typeof window.kapsula.notify.scheduleDaily==='function')await window.kapsula.notify.scheduleDaily({id,time:h.remindTime,title:ti,body:bo});
-        else{
-          const n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm,0,0);
-          if(nx.getTime()<=n.getTime())nx.setDate(nx.getDate()+1);
-          await window.kapsula.notify.schedule({id,at:nx.getTime(),title:ti,body:bo})
-        }
-      }else{
-        const a=this.api(),n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm,0,0);
-        if(nx.getTime()<=n.getTime())nx.setDate(nx.getDate()+1);
-        await a.scheduleNotification(id,ti,bo,String(nx.getTime()),'daily')
+// 诊断工具
+async function diagnoseNotification(){
+  if (!("Notification" in window)) {
+    alert('❌ 当前环境不支持网页通知 (new Notification)。\n请检查 WebToApp 是否开启了通知权限。');
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    alert('✅ 通知权限已授予。即将发送一条测试通知（请切到后台观察）。');
+    new Notification('🔔 测试通知', { body: '如果你看到了这条通知，说明网页通知可以正常工作！' });
+  } else if (Notification.permission === 'denied') {
+    alert('❌ 通知权限被拒绝。请去系统设置里允许该 App 发送通知。');
+  } else {
+    alert('⏳ 正在请求通知权限...');
+    try {
+      const p = await Notification.requestPermission();
+      if (p === 'granted') {
+        new Notification('🔔 测试通知', { body: '权限获取成功！' });
+      } else {
+        alert('❌ 权限请求失败或被拒绝。');
       }
-    }catch(e){console.warn(e)}
-  },
-  async cancel(id){
-    if(!this.available()||!id)return;
-    try{
-      if(this._kind==='kapsula'){if(typeof window.kapsula.notify.cancel==='function')await window.kapsula.notify.cancel(id)}
-      else{const a=this.api();if(typeof a.cancelNotification==='function')await a.cancelNotification(id)}
-    }catch(e){}
-  },
-  cancelTask(id){return this.cancel('task-'+id)},
-  cancelHabit(id){return this.cancel('habit-'+id)}
-};
-
-async function diagnoseNativeBridge(){
-  const lines=[
-    'window.NativeBridge : '+(window.NativeBridge?typeof window.NativeBridge:'不存在'),
-    'window.WebToApk : '+(window.WebToApk?typeof window.WebToApk:'不存在'),
-    'window.WebToApp : '+(window.WebToApp?typeof window.WebToApp:'不存在'),
-    'window.kapsula : '+(window.kapsula?typeof window.kapsula:'不存在'),
-    '检测结果 : '+(NB.available()?'✅ '+NB._kind:'❌ 全部不存在')
-  ];
-  alert('=== 桥接诊断 ===\n'+lines.join('\n')+'\n\n'+(NB.available()?'桥接已注入，正在尝试发送 5 秒后的测试通知...':'桥接未注入！请检查 WebToApp 设置里的 NativeBridge 接口是否开启，以及构建时的权限。'));
-  if(!NB.available())return;
-  await NB.requestPermission();
-  const testAt=Date.now()+5000,id='test-'+Date.now();
-  try{
-    if(NB._kind==='kapsula')await window.kapsula.notify.schedule({id,at:testAt,title:'🔔 测试通知',body:'如果你看到这条通知，说明系统提醒已接通。'});
-    else{const a=NB.api();await a.scheduleNotification(id,'🔔 测试通知','如果你看到这条通知，说明系统提醒已接通。',String(testAt),'none')}
-    alert('测试通知已预约，5 秒后看锁屏/通知栏。\n\n如果没有出现，请检查：\n1. 手机是否允许该 App 发通知\n2. 是否关闭了电池优化\n3. 是否允许锁屏通知')
-  }catch(e){
-    alert('预约失败：'+e.message)
+    } catch (e) {
+      alert('❌ 请求权限出错：' + e.message);
+    }
   }
 }
-async function rescheduleAllNative(){
-  if(!NB.available())return;
-  await NB.requestPermission();
-  db.tasks.forEach(t=>{if(!t.done&&t.dueDate)NB.scheduleTask(t)});
-  db.habits.forEach(h=>{if(h.remindTime)NB.scheduleHabit(h)})
+
+// 核心：调用网页原生通知
+function showSystemNotification(title, body) {
+  if (!("Notification" in window)) return false;
+  if (Notification.permission === 'granted') {
+    try {
+      new Notification(title, { body: body });
+      return true;
+    } catch(e) {
+      console.warn('通知失败', e);
+      return false;
+    }
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') {
+        try { new Notification(title, { body: body }); } catch(e) {}
+      }
+    });
+  }
+  return false;
 }
+
 function loadLocal(){try{const d=localStorage.getItem(SK);if(d)db=JSON.parse(d);['tasks','habits','lists'].forEach(k=>{if(!db[k])db[k]=[]});['notes','summaries','photos'].forEach(k=>{if(!db[k])db[k]={}});if(!db.globalPhotos)db.globalPhotos=[];if(!db.photoHistory)db.photoHistory=[];ensureRS();db.habits.forEach(h=>{if(typeof h.remindTime!=='string')h.remindTime=''});const all=[];Object.keys(db.photos).forEach(k=>{(db.photos[k]||[]).forEach(p=>{if(!all.includes(p))all.push(p)})});(db.globalPhotos||[]).forEach(p=>{if(!all.includes(p))all.push(p)});all.forEach(p=>{if(!db.photoHistory.includes(p))db.photoHistory.push(p)});if(db.photoHistory.length>30)db.photoHistory=db.photoHistory.slice(0,30);saveLocal()}catch(e){db={tasks:[],notes:{},habits:[],summaries:{},lists:[],photos:{},globalPhotos:[],photoHistory:[],reminderState:{tasks:{},habits:{},habitSnooze:{}}}}}
 function saveLocal(){localStorage.setItem(SK,JSON.stringify(db))}
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(YK))||{user:'',repo:'',token:''}}catch(e){return{user:'',repo:'',token:''}}}
 function saveSyncConfigToStorage(c){localStorage.setItem(YK,JSON.stringify(c))}
-function openSyncModal(){const c=getSyncConfig();document.getElementById('sync-user').value=c.user||'';document.getElementById('sync-repo').value=c.repo||'';document.getElementById('sync-token').value=c.token||'';document.getElementById('sync-status').textContent=(c.user?'配置已保存，可上传/下载':'尚未配置')+'\n桥接状态：'+(NB.available()?'✅ '+NB._kind:'❌ 未注入');document.getElementById('sync-modal').classList.add('show')}
+function openSyncModal(){const c=getSyncConfig();document.getElementById('sync-user').value=c.user||'';document.getElementById('sync-repo').value=c.repo||'';document.getElementById('sync-token').value=c.token||'';document.getElementById('sync-status').textContent=(c.user?'配置已保存，可上传/下载':'尚未配置');document.getElementById('sync-modal').classList.add('show')}
 function closeSyncModal(){document.getElementById('sync-modal').classList.remove('show')}
 function saveSyncConfig(){const c={user:document.getElementById('sync-user').value.trim(),repo:document.getElementById('sync-repo').value.trim(),token:document.getElementById('sync-token').value.trim()};if(!c.user||!c.repo||!c.token){alert('请完整填写');return}saveSyncConfigToStorage(c);document.getElementById('sync-status').textContent='配置已保存！';alert('配置保存成功！')}
 async function uploadToCloud(){const c=getSyncConfig();if(!c.user||!c.repo||!c.token){alert('请先填写 Gitee 信息');return}const s=document.getElementById('sync-status');s.textContent='正在上传...';try{let sha=null;const gu=`https://gitee.com/api/v5/repos/${c.user}/${c.repo}/contents/vicky-planner-data.json?access_token=${c.token}&ref=master`;const gr=await fetch(gu);if(gr.ok){const g=await gr.json();sha=g.sha}const content=btoa(unescape(encodeURIComponent(JSON.stringify(db))));const pu=`https://gitee.com/api/v5/repos/${c.user}/${c.repo}/contents/vicky-planner-data.json`;const pb={access_token:c.token,content,message:`同步 ${new Date().toLocaleString()}`,branch:'master'};if(sha)pb.sha=sha;const pr=await fetch(pu,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(pb)});if(pr.ok){s.textContent='上传成功！';alert('上传成功！')}else{const e=await pr.json();s.textContent='上传失败：'+(e.message||'未知');alert('上传失败')}}catch(e){s.textContent='网络错误：'+e.message;alert('上传失败')}}
-async function downloadFromCloud(){const c=getSyncConfig();if(!c.user||!c.repo||!c.token){alert('请先填写 Gitee 信息');return}const s=document.getElementById('sync-status');s.textContent='正在下载...';try{const gu=`https://gitee.com/api/v5/repos/${c.user}/${c.repo}/contents/vicky-planner-data.json?access_token=${c.token}&ref=master`;const r=await fetch(gu);if(!r.ok){s.textContent='下载失败：云端无数据';alert('下载失败');return}const d=await r.json();const cs=decodeURIComponent(escape(atob(d.content)));const cd=JSON.parse(cs);if(!confirm('将从云端覆盖本地数据，确定吗？')){s.textContent='已取消';return}db=cd;['tasks','habits','lists'].forEach(k=>{if(!db[k])db[k]=[]});['notes','summaries','photos'].forEach(k=>{if(!db[k])db[k]={}});if(!db.globalPhotos)db.globalPhotos=[];if(!db.photoHistory)db.photoHistory=[];ensureRS();db.habits.forEach(h=>{if(typeof h.remindTime!=='string')h.remindTime=''});saveLocal();renderAll();renderHabits();renderBook();renderLists();rescheduleAllNative();s.textContent='下载成功！';alert('下载成功！')}catch(e){s.textContent='网络错误：'+e.message;alert('下载失败')}}
+async function downloadFromCloud(){const c=getSyncConfig();if(!c.user||!c.repo||!c.token){alert('请先填写 Gitee 信息');return}const s=document.getElementById('sync-status');s.textContent='正在下载...';try{const gu=`https://gitee.com/api/v5/repos/${c.user}/${c.repo}/contents/vicky-planner-data.json?access_token=${c.token}&ref=master`;const r=await fetch(gu);if(!r.ok){s.textContent='下载失败：云端无数据';alert('下载失败');return}const d=await r.json();const cs=decodeURIComponent(escape(atob(d.content)));const cd=JSON.parse(cs);if(!confirm('将从云端覆盖本地数据，确定吗？')){s.textContent='已取消';return}db=cd;['tasks','habits','lists'].forEach(k=>{if(!db[k])db[k]=[]});['notes','summaries','photos'].forEach(k=>{if(!db[k])db[k]={}});if(!db.globalPhotos)db.globalPhotos=[];if(!db.photoHistory)db.photoHistory=[];ensureRS();db.habits.forEach(h=>{if(typeof h.remindTime!=='string')h.remindTime=''});saveLocal();renderAll();renderHabits();renderBook();renderLists();s.textContent='下载成功！';alert('下载成功！')}catch(e){s.textContent='网络错误：'+e.message;alert('下载失败')}}
 function exportData(){const d=JSON.stringify(db,null,2);const b=new Blob([d],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`vicky-planner-备份-${formatDate(new Date())}.json`;a.click();URL.revokeObjectURL(u)}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const im=JSON.parse(ev.target.result);if(!confirm('将覆盖当前所有数据，确定吗？'))return;db=im;['tasks','habits','lists'].forEach(k=>{if(!db[k])db[k]=[]});['notes','summaries','photos'].forEach(k=>{if(!db[k])db[k]={}});if(!db.globalPhotos)db.globalPhotos=[];if(!db.photoHistory)db.photoHistory=[];ensureRS();db.habits.forEach(h=>{if(typeof h.remindTime!=='string')h.remindTime=''});saveLocal();renderAll();renderHabits();renderBook();renderLists();rescheduleAllNative();alert('导入成功！')}catch(e){alert('文件格式错误')}};r.readAsText(f);e.target.value=''}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const im=JSON.parse(ev.target.result);if(!confirm('将覆盖当前所有数据，确定吗？'))return;db=im;['tasks','habits','lists'].forEach(k=>{if(!db[k])db[k]=[]});['notes','summaries','photos'].forEach(k=>{if(!db[k])db[k]={}});if(!db.globalPhotos)db.globalPhotos=[];if(!db.photoHistory)db.photoHistory=[];ensureRS();db.habits.forEach(h=>{if(typeof h.remindTime!=='string')h.remindTime=''});saveLocal();renderAll();renderHabits();renderBook();renderLists();alert('导入成功！')}catch(e){alert('文件格式错误')}};r.readAsText(f);e.target.value=''}
 function addInboxTask(el){const t=el.value.trim();if(!t)return;db.tasks.push({id:'task-'+Date.now()+Math.random().toString(36).slice(2),week_key:null,day:null,title:t,done:false,dueDate:'',details:''});el.value='';saveLocal();renderAll()}
 function moveToDay(id,day){const t=db.tasks.find(x=>x.id===id);if(!t)return;t.week_key=currentWeekKey;t.day=+day;saveLocal();renderAll()}
-function toggleTask(id){const t=db.tasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;saveLocal();renderAll();if(t.done){dismissReminder('task-'+id);NB.cancelTask(t.id)}else NB.scheduleTask(t)}
-function deleteTask(id){if(!confirm('确定删除？'))return;db.tasks=db.tasks.filter(x=>x.id!==id);if(selectedTaskId===id)selectedTaskId=null;ensureRS();delete db.reminderState.tasks[id];dismissReminder('task-'+id);NB.cancelTask(id);saveLocal();renderAll()}
+function toggleTask(id){const t=db.tasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;saveLocal();renderAll();if(t.done){dismissReminder('task-'+id)}}
+function deleteTask(id){if(!confirm('确定删除？'))return;db.tasks=db.tasks.filter(x=>x.id!==id);if(selectedTaskId===id)selectedTaskId=null;ensureRS();delete db.reminderState.tasks[id];dismissReminder('task-'+id);saveLocal();renderAll()}
 function deleteSelectedTask(){if(selectedTaskId)deleteTask(selectedTaskId)}
-function saveSelectedTask(){const t=db.tasks.find(x=>x.id===selectedTaskId);if(!t)return;t.title=document.getElementById('detail-edit-title').value.trim()||t.title;t.dueDate=document.getElementById('detail-edit-time').value;t.details=document.getElementById('detail-edit-desc').value;saveLocal();renderAll();NB.cancelTask(t.id).then(()=>NB.scheduleTask(t));alert('已保存！')}
-function createTaskFromForm(){const te=document.getElementById('new-task-title'),ti=document.getElementById('new-task-time'),de=document.getElementById('new-task-details');const t=te.value.trim();if(!t){alert('请输入任务名称');return}const nt={id:'task-'+Date.now()+Math.random().toString(36).slice(2),week_key:currentWeekKey,day:selectedDay,title:t,done:false,dueDate:ti.value,details:de.value};db.tasks.push(nt);const h=!!ti.value;te.value='';ti.value='';de.value='';saveLocal();renderAll();if(h){if(NB.available()){NB.scheduleTask(nt);alert('已添加，并预约了系统闹钟！\n\n5分钟后没弹，点「⚙️ 同步」里「🔔 测试系统通知」诊断。')}else alert('已添加。\n\n⚠️ 原生桥接未注入，无法锁屏提醒。\n请确保打包时开启了 NativeBridge 接口。')}else alert('已添加到当前日期！')}
+function saveSelectedTask(){const t=db.tasks.find(x=>x.id===selectedTaskId);if(!t)return;t.title=document.getElementById('detail-edit-title').value.trim()||t.title;t.dueDate=document.getElementById('detail-edit-time').value;t.details=document.getElementById('detail-edit-desc').value;saveLocal();renderAll();alert('已保存！')}
+function createTaskFromForm(){const te=document.getElementById('new-task-title'),ti=document.getElementById('new-task-time'),de=document.getElementById('new-task-details');const t=te.value.trim();if(!t){alert('请输入任务名称');return}const nt={id:'task-'+Date.now()+Math.random().toString(36).slice(2),week_key:currentWeekKey,day:selectedDay,title:t,done:false,dueDate:ti.value,details:de.value};db.tasks.push(nt);const h=!!ti.value;te.value='';ti.value='';de.value='';saveLocal();renderAll();if(h){alert('已添加。\n\n提醒依赖于网页通知。如果 App 在后台被系统杀掉，定时器会停止导致提醒失效。')}else alert('已添加到当前日期！')}
 function addHabit(){const n=prompt('输入新习惯名称：');if(!n||!n.trim())return;db.habits.push({id:'habit-'+Date.now(),name:n.trim(),records:{},remindTime:''});saveLocal();renderHabits()}
 function toggleHabitRecord(id,ds){const h=db.habits.find(x=>x.id===id);if(!h)return;const v=h.records[ds];if(v==='done'||v===true)delete h.records[ds];else h.records[ds]='done';saveLocal();renderHabits()}
 function cycleHabitRecord(id,ds){const h=db.habits.find(x=>x.id===id);if(!h)return;const v=h.records[ds];if(!v)h.records[ds]='makeup';else if(v==='makeup')h.records[ds]='done';else delete h.records[ds];saveLocal();renderHabits()}
-function deleteHabit(id){if(!confirm('确定删除这个习惯？'))return;db.habits=db.habits.filter(x=>x.id!==id);ensureRS();delete db.reminderState.habits[id];delete db.reminderState.habitSnooze[id];dismissReminder('habit-'+id);NB.cancelHabit(id);saveLocal();renderHabits()}
-function setHabitReminder(id){const h=db.habits.find(x=>x.id===id);if(!h)return;const v=prompt('设置「'+h.name+'」的每日提醒时间\n格式 24 小时制，如 21:00\n留空=关闭',h.remindTime||'');if(v===null)return;const s=v.trim();if(!s){h.remindTime='';ensureRS();delete db.reminderState.habits[id];delete db.reminderState.habitSnooze[id];NB.cancelHabit(id);saveLocal();renderHabits();return}const m=s.match(/^(\d{1,2})[:：](\d{1,2})$/);if(!m){alert('格式不正确，请输入如 21:00');return}const hh=+m[1],mm=+m[2];if(hh>23||mm>59){alert('时间超出范围');return}h.remindTime=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');ensureRS();delete db.reminderState.habits[id];delete db.reminderState.habitSnooze[id];saveLocal();renderHabits();NB.cancelHabit(h.id).then(()=>NB.scheduleHabit(h));alert(NB.available()?'已设置：每天 '+h.remindTime+' 提醒你打卡':'时间已保存，但桥接未注入无法锁屏提醒。')}
+function deleteHabit(id){if(!confirm('确定删除这个习惯？'))return;db.habits=db.habits.filter(x=>x.id!==id);ensureRS();delete db.reminderState.habits[id];delete db.reminderState.habitSnooze[id];dismissReminder('habit-'+id);saveLocal();renderHabits()}
+function setHabitReminder(id){const h=db.habits.find(x=>x.id===id);if(!h)return;const v=prompt('设置「'+h.name+'」的每日提醒时间\n格式 24 小时制，如 21:00\n留空=关闭',h.remindTime||'');if(v===null)return;const s=v.trim();if(!s){h.remindTime='';ensureRS();delete db.reminderState.habits[id];delete db.reminderState.habitSnooze[id];saveLocal();renderHabits();return}const m=s.match(/^(\d{1,2})[:：](\d{1,2})$/);if(!m){alert('格式不正确，请输入如 21:00');return}const hh=+m[1],mm=+m[2];if(hh>23||mm>59){alert('时间超出范围');return}h.remindTime=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');ensureRS();delete db.reminderState.habits[id];delete db.reminderState.habitSnooze[id];saveLocal();renderHabits();alert('已设置：每天 '+h.remindTime+' 提醒你打卡')}
 function openListModal(){document.getElementById('list-name').value='';document.getElementById('list-batch-items').value='';document.getElementById('list-file-input').value='';document.getElementById('list-modal').classList.add('show')}
 function closeListModal(){document.getElementById('list-modal').classList.remove('show')}
 function handleFileUpload(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{document.getElementById('list-batch-items').value=e.target.result};r.readAsText(f);i.value=''}
@@ -533,16 +491,23 @@ function mondayFromWeekKey(wk){try{const y=Number(wk.split('-W')[0]);let m=getMo
 function switchToView(v){const t=document.querySelector('.tab[data-view="'+v+'"]');if(t&&!t.classList.contains('active'))t.click()}
 function gotoTask(id){const t=db.tasks.find(x=>x.id===id);if(!t)return;switchToView('plan');if(t.week_key){currentMonday=mondayFromWeekKey(t.week_key);currentWeekKey=t.week_key}selectedDay=(t.day===null||t.day===undefined)?0:Number(t.day);selectedTaskId=t.id;renderAll()}
 function gotoHabit(id){switchToView('habits');renderHabits()}
-function pushTaskReminder(t,due,now){const om=Math.max(0,Math.round((now-due)/6e4));let ts='';try{ts=new Date(due).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})}catch(e){}createReminderCard({key:'task-'+t.id,type:om>0?'urg':'',icon:'⏰',kicker:om>0?'任务时间已到':'任务到时间啦',title:t.title,sub:om>0?`${ts} · 已超时 ${om} 分钟`:`${ts} · 该开始啦`,actions:[{label:'✔ 标记完成',primary:true,onClick:()=>{const tt=db.tasks.find(x=>x.id===t.id);if(tt){tt.done=true;saveLocal();renderAll();renderBook();NB.cancelTask(tt.id)}}},{label:'⏱ 稍后10分钟',onClick:()=>{ensureRS();const st=db.reminderState.tasks[t.id];if(st){st.notified=true;st.snoozeUntil=Date.now()+6e5}saveLocal()}},{label:'查看',onClick:()=>gotoTask(t.id)}]})}
-function pushHabitReminder(h){createReminderCard({key:'habit-'+h.id,type:'hb2c',icon:'🔥',kicker:'习惯打卡提醒',title:h.name,sub:`今天还没打卡（每天 ${h.remindTime} 提醒）`,actions:[{label:'✔ 立即打卡',primary:true,onClick:()=>{const hh=db.habits.find(x=>x.id===h.id);if(hh){hh.records[todayStr()]='done';saveLocal();renderHabits();renderBook()}}},{label:'⏱ 稍后30分钟',onClick:()=>{ensureRS();delete db.reminderState.habits[h.id];db.reminderState.habitSnooze[h.id]=Date.now()+18e5;saveLocal()}},{label:'查看',onClick:()=>gotoHabit(h.id)}]})}
+function pushTaskReminder(t,due,now){const om=Math.max(0,Math.round((now-due)/6e4));let ts='';try{ts=new Date(due).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})}catch(e){}
+  // 触发原生通知
+  showSystemNotification('⏰ 任务提醒: ' + t.title, om>0?`已超时 ${om} 分钟`:`${ts} · 该开始啦`);
+  
+  createReminderCard({key:'task-'+t.id,type:om>0?'urg':'',icon:'⏰',kicker:om>0?'任务时间已到':'任务到时间啦',title:t.title,sub:om>0?`${ts} · 已超时 ${om} 分钟`:`${ts} · 该开始啦`,actions:[{label:'✔ 标记完成',primary:true,onClick:()=>{const tt=db.tasks.find(x=>x.id===t.id);if(tt){tt.done=true;saveLocal();renderAll();renderBook()}}},{label:'⏱ 稍后10分钟',onClick:()=>{ensureRS();const st=db.reminderState.tasks[t.id];if(st){st.notified=true;st.snoozeUntil=Date.now()+6e5}saveLocal()}},{label:'查看',onClick:()=>gotoTask(t.id)}]})}
+function pushHabitReminder(h){
+  // 触发原生通知
+  showSystemNotification('🔥 习惯打卡提醒', h.name + ' 今天还没打卡哦');
+  
+  createReminderCard({key:'habit-'+h.id,type:'hb2c',icon:'🔥',kicker:'习惯打卡提醒',title:h.name,sub:`今天还没打卡（每天 ${h.remindTime} 提醒）`,actions:[{label:'✔ 立即打卡',primary:true,onClick:()=>{const hh=db.habits.find(x=>x.id===h.id);if(hh){hh.records[todayStr()]='done';saveLocal();renderHabits();renderBook()}}},{label:'⏱ 稍后30分钟',onClick:()=>{ensureRS();delete db.reminderState.habits[h.id];db.reminderState.habitSnooze[h.id]=Date.now()+18e5;saveLocal()}},{label:'查看',onClick:()=>gotoHabit(h.id)}]})}
 function checkReminders(){ensureRS();const rs=db.reminderState,now=Date.now(),nd=new Date(now),ts=formatDate(nd),nm=nd.getHours()*60+nd.getMinutes();let fired=0;db.tasks.forEach(t=>{if(!t.dueDate||t.done)return;const due=new Date(t.dueDate).getTime();if(isNaN(due))return;if(now<due)return;if(now-due>864e5)return;let st=rs.tasks[t.id];if(!st||st.due!==due)st=rs.tasks[t.id]={due:due,notified:false,snoozeUntil:0};if(st.notified){if(!st.snoozeUntil)return;if(now<st.snoozeUntil)return;st.snoozeUntil=0}st.notified=true;fired++;pushTaskReminder(t,due,now)});db.habits.forEach(h=>{if(!h.remindTime)return;const p=String(h.remindTime).split(':'),hh=+p[0],mm=+p[1];if(isNaN(hh)||isNaN(mm))return;const tm=hh*60+mm;if(nm<tm)return;if(nm-tm>180)return;const tt=new Date(nd.getFullYear(),nd.getMonth(),nd.getDate(),hh,mm).getTime();const rec=h.records[ts];if(rec==='done'||rec===true)return;const sn=rs.habitSnooze[h.id]||0;if(now<sn)return;const last=rs.habits[h.id]||0;if(last>=tt)return;rs.habits[h.id]=now;fired++;pushHabitReminder(h)});if(fired>0){saveLocal();playReminderSound()}}
 function startReminderEngine(){ensureRS();setInterval(checkReminders,RICK);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});window.addEventListener('focus',checkReminders);setTimeout(checkReminders,1500)}
 document.getElementById('book-prev').addEventListener('click',()=>{if(bookPeriod==='day')bookDate=new Date(bookDate.getFullYear(),bookDate.getMonth()-1,1);else if(bookPeriod==='week')bookDate.setDate(bookDate.getDate()-7);else if(bookPeriod==='month')bookDate=new Date(bookDate.getFullYear(),bookDate.getMonth()-1,1);else bookDate=new Date(bookDate.getFullYear()-1,0,1);renderBook()});
 document.getElementById('book-next').addEventListener('click',()=>{if(bookPeriod==='day')bookDate=new Date(bookDate.getFullYear(),bookDate.getMonth()+1,1);else if(bookPeriod==='week')bookDate.setDate(bookDate.getDate()+7);else if(bookPeriod==='month')bookDate=new Date(bookDate.getFullYear(),bookDate.getMonth()+1,1);else bookDate=new Date(bookDate.getFullYear()+1,0,1);renderBook()});
 document.querySelectorAll('.tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));tab.classList.add('active');const v=tab.dataset.view;document.getElementById('view-'+v).classList.add('active');if(v==='plan'){document.getElementById('header-bottom-display').style.display='block';renderAll()}else{document.getElementById('header-bottom-display').style.display='none';if(v==='habits')renderHabits();else if(v==='book')renderBook();else if(v==='lists')renderLists()}})});
 ['calendar-modal','list-modal','sync-modal','day-detail-modal','period-detail-modal','crop-modal','tag-action-modal'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('show')})});
-loadLocal();renderAll();renderHabits();renderBook();renderLists();startReminderEngine();setTimeout(()=>rescheduleAllNative(),2000);
+loadLocal();renderAll();renderHabits();renderBook();renderLists();startReminderEngine();
 </script>
 </body>
 </html>
-```

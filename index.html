@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>vicky planner</title>
+<title>VickyLog</title>
 <style>
 :root{--bg:#FDFBF7;--card:#FFFDFA;--text:#3A322B;--t2:#8C8279;--t3:#C2B8A3;--ac:#D97736;--acs:#FDF3E8;--dg:#D9534F;--sc:#5C9A71;--hb:#F4F0E8;--sep:#EFE9DF;--rc:10px;--rb:8px;--sh:0 1px 6px rgba(160,130,90,.04)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -360,9 +360,97 @@ function formatDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStar
 function todayKey(){const d=new Date();return getWeekKey(getMonday(d))+'-'+((d.getDay()+6)%7)}
 function todayStr(){return formatDate(new Date())}
 function ensureRS(){if(!db.reminderState)db.reminderState={};['tasks','habits','habitSnooze'].forEach(k=>{if(!db.reminderState[k])db.reminderState[k]={}})}
-const NB={_kind:null,detect(){if(window.WebToApk&&typeof window.WebToApk.scheduleNotification==='function')return'WebToApk';if(window.WebToApp&&typeof window.WebToApp.scheduleNotification==='function')return'WebToApp';if(window.kapsula&&window.kapsula.notify)return'kapsula';return null},available(){if(!this._kind)this._kind=this.detect();return!!this._kind},api(){if(this._kind==='WebToApk')return window.WebToApk;if(this._kind==='WebToApp')return window.WebToApp;return null},async requestPermission(){try{const a=this.api();if(a&&typeof a.requestNotificationPermission==='function')await a.requestNotificationPermission();else if(this._kind==='kapsula'&&window.kapsula.notify.requestPermission)await window.kapsula.notify.requestPermission()}catch(e){}},async scheduleTask(t){if(!this.available()||!t||!t.dueDate||t.done)return;const at=new Date(t.dueDate).getTime();if(isNaN(at)||at<=Date.now())return;const id='task-'+t.id,ti='⏰ 任务提醒',bo=t.title||'该做这件事了';try{if(this._kind==='kapsula')await window.kapsula.notify.schedule({id,at,title:ti,body:bo});else{const a=this.api();await a.scheduleNotification(id,ti,bo,String(at),'none')}}catch(e){console.warn(e)}},async scheduleHabit(h){if(!this.available()||!h||!h.remindTime)return;const id='habit-'+h.id,ti='🔥 习惯打卡提醒',bo=h.name+'（每天 '+h.remindTime+'）';const p=String(h.remindTime).split(':'),hh=+p[0],mm=+p[1];if(isNaN(hh)||isNaN(mm))return;try{if(this._kind==='kapsula'){if(typeof window.kapsula.notify.scheduleDaily==='function')await window.kapsula.notify.scheduleDaily({id,time:h.remindTime,title:ti,body:bo});else{const n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm,0,0);if(nx.getTime()<=n.getTime())nx.setDate(nx.getDate()+1);await window.kapsula.notify.schedule({id,at:nx.getTime(),title:ti,body:bo})}}else{const a=this.api(),n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm,0,0);if(nx.getTime()<=n.getTime())nx.setDate(nx.getDate()+1);await a.scheduleNotification(id,ti,bo,String(nx.getTime()),'daily')}}catch(e){console.warn(e)}},async cancel(id){if(!this.available()||!id)return;try{if(this._kind==='kapsula'){if(typeof window.kapsula.notify.cancel==='function')await window.kapsula.notify.cancel(id)}else{const a=this.api();if(typeof a.cancelNotification==='function')await a.cancelNotification(id)}}catch(e){}},cancelTask(id){return this.cancel('task-'+id)},cancelHabit(id){return this.cancel('habit-'+id)}};
-async function diagnoseNativeBridge(){const lines=['window.WebToApk : '+(window.WebToApk?typeof window.WebToApk:'不存在'),'window.WebToApp : '+(window.WebToApp?typeof window.WebToApp:'不存在'),'window.kapsula : '+(window.kapsula?typeof window.kapsula:'不存在'),'检测结果 : '+(NB.available()?'✅ '+NB._kind:'❌ 全部不存在')];alert('=== 桥接诊断 ===\n'+lines.join('\n')+'\n\n'+(NB.available()?'桥接已注入，正在尝试发送 5 秒后的测试通知...':'桥接未注入！请重新打包 APK，并在构建向导里勾选 Notifications 和 ⏰ Reminders。'));if(!NB.available())return;await NB.requestPermission();const testAt=Date.now()+5000,id='test-'+Date.now();try{if(NB._kind==='kapsula')await window.kapsula.notify.schedule({id,at:testAt,title:'🔔 测试通知',body:'如果你看到这条通知，说明系统提醒已接通。'});else{const a=NB.api();await a.scheduleNotification(id,'🔔 测试通知','如果你看到这条通知，说明系统提醒已接通。',String(testAt),'none')}alert('测试通知已预约，5 秒后看锁屏/通知栏。\n\n如果没有出现，请检查：\n1. 手机是否允许该 App 发通知\n2. 是否关闭了电池优化\n3. 是否允许锁屏通知')}catch(e){alert('预约失败：'+e.message)}}
-async function rescheduleAllNative(){if(!NB.available())return;await NB.requestPermission();db.tasks.forEach(t=>{if(!t.done&&t.dueDate)NB.scheduleTask(t)});db.habits.forEach(h=>{if(h.remindTime)NB.scheduleHabit(h)})}
+
+const NB={
+  _kind:null,
+  detect(){
+    if(window.NativeBridge && typeof window.NativeBridge.scheduleNotification === 'function')return'NativeBridge';
+    if(window.WebToApk && typeof window.WebToApk.scheduleNotification === 'function')return'WebToApk';
+    if(window.WebToApp && typeof window.WebToApp.scheduleNotification === 'function')return'WebToApp';
+    if(window.kapsula && window.kapsula.notify)return'kapsula';
+    return null;
+  },
+  available(){if(!this._kind)this._kind=this.detect();return!!this._kind},
+  api(){
+    if(this._kind==='NativeBridge')return window.NativeBridge;
+    if(this._kind==='WebToApk')return window.WebToApk;
+    if(this._kind==='WebToApp')return window.WebToApp;
+    return null;
+  },
+  async requestPermission(){
+    try{
+      const a=this.api();
+      if(a&&typeof a.requestNotificationPermission==='function')await a.requestNotificationPermission();
+      else if(this._kind==='kapsula'&&window.kapsula.notify.requestPermission)await window.kapsula.notify.requestPermission();
+    }catch(e){}
+  },
+  async scheduleTask(t){
+    if(!this.available()||!t||!t.dueDate||t.done)return;
+    const at=new Date(t.dueDate).getTime();
+    if(isNaN(at)||at<=Date.now())return;
+    const id='task-'+t.id,ti='⏰ 任务提醒',bo=t.title||'该做这件事了';
+    try{
+      if(this._kind==='kapsula')await window.kapsula.notify.schedule({id,at,title:ti,body:bo});
+      else{const a=this.api();await a.scheduleNotification(id,ti,bo,String(at),'none')}
+    }catch(e){console.warn(e)}
+  },
+  async scheduleHabit(h){
+    if(!this.available()||!h||!h.remindTime)return;
+    const id='habit-'+h.id,ti='🔥 习惯打卡提醒',bo=h.name+'（每天 '+h.remindTime+'）';
+    const p=String(h.remindTime).split(':'),hh=+p[0],mm=+p[1];
+    if(isNaN(hh)||isNaN(mm))return;
+    try{
+      if(this._kind==='kapsula'){
+        if(typeof window.kapsula.notify.scheduleDaily==='function')await window.kapsula.notify.scheduleDaily({id,time:h.remindTime,title:ti,body:bo});
+        else{
+          const n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm,0,0);
+          if(nx.getTime()<=n.getTime())nx.setDate(nx.getDate()+1);
+          await window.kapsula.notify.schedule({id,at:nx.getTime(),title:ti,body:bo})
+        }
+      }else{
+        const a=this.api(),n=new Date(),nx=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm,0,0);
+        if(nx.getTime()<=n.getTime())nx.setDate(nx.getDate()+1);
+        await a.scheduleNotification(id,ti,bo,String(nx.getTime()),'daily')
+      }
+    }catch(e){console.warn(e)}
+  },
+  async cancel(id){
+    if(!this.available()||!id)return;
+    try{
+      if(this._kind==='kapsula'){if(typeof window.kapsula.notify.cancel==='function')await window.kapsula.notify.cancel(id)}
+      else{const a=this.api();if(typeof a.cancelNotification==='function')await a.cancelNotification(id)}
+    }catch(e){}
+  },
+  cancelTask(id){return this.cancel('task-'+id)},
+  cancelHabit(id){return this.cancel('habit-'+id)}
+};
+
+async function diagnoseNativeBridge(){
+  const lines=[
+    'window.NativeBridge : '+(window.NativeBridge?typeof window.NativeBridge:'不存在'),
+    'window.WebToApk : '+(window.WebToApk?typeof window.WebToApk:'不存在'),
+    'window.WebToApp : '+(window.WebToApp?typeof window.WebToApp:'不存在'),
+    'window.kapsula : '+(window.kapsula?typeof window.kapsula:'不存在'),
+    '检测结果 : '+(NB.available()?'✅ '+NB._kind:'❌ 全部不存在')
+  ];
+  alert('=== 桥接诊断 ===\n'+lines.join('\n')+'\n\n'+(NB.available()?'桥接已注入，正在尝试发送 5 秒后的测试通知...':'桥接未注入！请检查 WebToApp 设置里的 NativeBridge 接口是否开启，以及构建时的权限。'));
+  if(!NB.available())return;
+  await NB.requestPermission();
+  const testAt=Date.now()+5000,id='test-'+Date.now();
+  try{
+    if(NB._kind==='kapsula')await window.kapsula.notify.schedule({id,at:testAt,title:'🔔 测试通知',body:'如果你看到这条通知，说明系统提醒已接通。'});
+    else{const a=NB.api();await a.scheduleNotification(id,'🔔 测试通知','如果你看到这条通知，说明系统提醒已接通。',String(testAt),'none')}
+    alert('测试通知已预约，5 秒后看锁屏/通知栏。\n\n如果没有出现，请检查：\n1. 手机是否允许该 App 发通知\n2. 是否关闭了电池优化\n3. 是否允许锁屏通知')
+  }catch(e){
+    alert('预约失败：'+e.message)
+  }
+}
+async function rescheduleAllNative(){
+  if(!NB.available())return;
+  await NB.requestPermission();
+  db.tasks.forEach(t=>{if(!t.done&&t.dueDate)NB.scheduleTask(t)});
+  db.habits.forEach(h=>{if(h.remindTime)NB.scheduleHabit(h)})
+}
 function loadLocal(){try{const d=localStorage.getItem(SK);if(d)db=JSON.parse(d);['tasks','habits','lists'].forEach(k=>{if(!db[k])db[k]=[]});['notes','summaries','photos'].forEach(k=>{if(!db[k])db[k]={}});if(!db.globalPhotos)db.globalPhotos=[];if(!db.photoHistory)db.photoHistory=[];ensureRS();db.habits.forEach(h=>{if(typeof h.remindTime!=='string')h.remindTime=''});const all=[];Object.keys(db.photos).forEach(k=>{(db.photos[k]||[]).forEach(p=>{if(!all.includes(p))all.push(p)})});(db.globalPhotos||[]).forEach(p=>{if(!all.includes(p))all.push(p)});all.forEach(p=>{if(!db.photoHistory.includes(p))db.photoHistory.push(p)});if(db.photoHistory.length>30)db.photoHistory=db.photoHistory.slice(0,30);saveLocal()}catch(e){db={tasks:[],notes:{},habits:[],summaries:{},lists:[],photos:{},globalPhotos:[],photoHistory:[],reminderState:{tasks:{},habits:{},habitSnooze:{}}}}}
 function saveLocal(){localStorage.setItem(SK,JSON.stringify(db))}
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(YK))||{user:'',repo:'',token:''}}catch(e){return{user:'',repo:'',token:''}}}
@@ -380,7 +468,7 @@ function toggleTask(id){const t=db.tasks.find(x=>x.id===id);if(!t)return;t.done=
 function deleteTask(id){if(!confirm('确定删除？'))return;db.tasks=db.tasks.filter(x=>x.id!==id);if(selectedTaskId===id)selectedTaskId=null;ensureRS();delete db.reminderState.tasks[id];dismissReminder('task-'+id);NB.cancelTask(id);saveLocal();renderAll()}
 function deleteSelectedTask(){if(selectedTaskId)deleteTask(selectedTaskId)}
 function saveSelectedTask(){const t=db.tasks.find(x=>x.id===selectedTaskId);if(!t)return;t.title=document.getElementById('detail-edit-title').value.trim()||t.title;t.dueDate=document.getElementById('detail-edit-time').value;t.details=document.getElementById('detail-edit-desc').value;saveLocal();renderAll();NB.cancelTask(t.id).then(()=>NB.scheduleTask(t));alert('已保存！')}
-function createTaskFromForm(){const te=document.getElementById('new-task-title'),ti=document.getElementById('new-task-time'),de=document.getElementById('new-task-details');const t=te.value.trim();if(!t){alert('请输入任务名称');return}const nt={id:'task-'+Date.now()+Math.random().toString(36).slice(2),week_key:currentWeekKey,day:selectedDay,title:t,done:false,dueDate:ti.value,details:de.value};db.tasks.push(nt);const h=!!ti.value;te.value='';ti.value='';de.value='';saveLocal();renderAll();if(h){if(NB.available()){NB.scheduleTask(nt);alert('已添加，并预约了系统闹钟！\n\n5分钟后没弹，点「⚙️ 同步」里「🔔 测试系统通知」诊断。')}else alert('已添加。\n\n⚠️ 原生桥接未注入，无法锁屏提醒。\n请重新打包 APK 勾选 Notifications 和 ⏰ Reminders。')}else alert('已添加到当前日期！')}
+function createTaskFromForm(){const te=document.getElementById('new-task-title'),ti=document.getElementById('new-task-time'),de=document.getElementById('new-task-details');const t=te.value.trim();if(!t){alert('请输入任务名称');return}const nt={id:'task-'+Date.now()+Math.random().toString(36).slice(2),week_key:currentWeekKey,day:selectedDay,title:t,done:false,dueDate:ti.value,details:de.value};db.tasks.push(nt);const h=!!ti.value;te.value='';ti.value='';de.value='';saveLocal();renderAll();if(h){if(NB.available()){NB.scheduleTask(nt);alert('已添加，并预约了系统闹钟！\n\n5分钟后没弹，点「⚙️ 同步」里「🔔 测试系统通知」诊断。')}else alert('已添加。\n\n⚠️ 原生桥接未注入，无法锁屏提醒。\n请确保打包时开启了 NativeBridge 接口。')}else alert('已添加到当前日期！')}
 function addHabit(){const n=prompt('输入新习惯名称：');if(!n||!n.trim())return;db.habits.push({id:'habit-'+Date.now(),name:n.trim(),records:{},remindTime:''});saveLocal();renderHabits()}
 function toggleHabitRecord(id,ds){const h=db.habits.find(x=>x.id===id);if(!h)return;const v=h.records[ds];if(v==='done'||v===true)delete h.records[ds];else h.records[ds]='done';saveLocal();renderHabits()}
 function cycleHabitRecord(id,ds){const h=db.habits.find(x=>x.id===id);if(!h)return;const v=h.records[ds];if(!v)h.records[ds]='makeup';else if(v==='makeup')h.records[ds]='done';else delete h.records[ds];saveLocal();renderHabits()}
@@ -457,3 +545,4 @@ loadLocal();renderAll();renderHabits();renderBook();renderLists();startReminderE
 </script>
 </body>
 </html>
+```

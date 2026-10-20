@@ -181,12 +181,10 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .htr{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .hrb{background:var(--hb);color:var(--t2);border:0;border-radius:12px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
 
-/* 分组样式 */
 .group-title{font-size:15px;font-weight:700;color:var(--text);margin:10px 4px 0;display:flex;align-items:center;gap:6px;}
 .group-title span{font-size:12px;color:var(--t2);font-weight:500;}
 .overall-hm-card{background:linear-gradient(135deg, #FFFDFA, #FDF7EE);border:1px solid var(--ac);}
 
-/* 每周习惯样式 */
 .wt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--sep);font-size:13px;}
 .wt-row:last-child{border-bottom:0}
 .wt-day{font-weight:600;width:40px;color:var(--t2);flex:none;}
@@ -404,6 +402,16 @@ function toggleHabitRecord(habitId, dateStr) {
   saveLocal(); renderHabits();
 }
 
+function cycleHabitRecord(habitId, dateStr) {
+  const h = db.habits.find(x => x.id === habitId);
+  if (!h) return;
+  const v = h.records[dateStr];
+  if (!v) h.records[dateStr] = 'makeup';
+  else if (v === 'makeup') h.records[dateStr] = 'done';
+  else delete h.records[dateStr];
+  saveLocal(); renderHabits();
+}
+
 function toggleWeeklyTask(habitId, dayIdx) {
   const h = db.weeklyHabits.find(x => x.id === habitId);
   if (!h) return;
@@ -424,47 +432,7 @@ function deleteHabit(id, isWeekly) {
   saveLocal(); renderHabits();
 }
 
-/* ============ 渲染热力图工具 ============ */
-function buildHeatmapHtml(records, color, isWeekly, habitId) {
-  const td = new Date();
-  const cm = getMonday(td);
-  let html = '';
-  for (let w = 16; w >= 0; w--) {
-    const ws = new Date(cm);
-    ws.setDate(ws.getDate() - w * 7);
-    const weekKey = getWeekKey(ws);
-    
-    for (let j = 0; j < 7; j++) {
-      const dt = new Date(ws);
-      dt.setDate(dt.getDate() + j);
-      
-      if (dt > td) {
-        html += `<div class="hm fu"></div>`;
-        continue;
-      }
-      
-      const dateStr = formatDate(dt);
-      let isDone = false;
-      
-      if (isWeekly) {
-        // 每周习惯：只有这周所有设定任务都完成了才亮
-        const tasks = Object.keys(records).length > 0 ? Object.keys(records) : [];
-        // 但这里 records 传的是任务打卡记录，需要换个判断
-        // 实际上每周热力图是按周算，所以这7个格子显示同一周的状态
-        const allWeekTasksDone = Object.keys(records).filter(k=>k.startsWith(weekKey + '-'));
-        // 抱歉这里逻辑有误，重新看：每周习惯记录在 records 里
-      }
-      
-      // 对每日习惯，单独判断；对每日总览，特殊处理
-      if (records[dateStr] === 'done') isDone = true;
-      
-      let style = isDone ? `background:${color};` : '';
-      html += `<div class="hm" style="${style}" title="${dateStr}"></div>`;
-    }
-  }
-  return html;
-}
-
+/* ============ 渲染每日习惯 ============ */
 function renderHabits() {
   if (currentHabitTab === 'daily') {
     renderDailyHabits();
@@ -473,7 +441,6 @@ function renderHabits() {
   }
 }
 
-/* ============ 渲染每日习惯 ============ */
 function renderDailyHabits() {
   const l = document.getElementById('habit-list');
   l.innerHTML = '';
@@ -522,7 +489,9 @@ function renderDailyHabits() {
           if (dt > td) hm += '<div class="hm fu"></div>';
           else {
             const v = h.records[ds];
-            let sty = v === 'done' ? `background:${bc};` : '';
+            let sty = '';
+            if (v === 'done') sty = `background:${bc};`;
+            else if (v === 'makeup') sty = `background:${bc};opacity:.4;`;
             hm += `<div class="hm" style="${sty}" onclick="cycleHabitRecord('${h.id}','${ds}')" title="${ds}"></div>`;
           }
         }
@@ -550,7 +519,6 @@ function renderDailyHabits() {
 }
 
 function buildOverallHeatmap() {
-  // 如果一天内的所有 dailyHabits 都完成了，这个格子就亮
   const td = new Date();
   const cm = getMonday(td);
   let hm = '';
@@ -562,7 +530,6 @@ function buildOverallHeatmap() {
       if (dt > td) {
         hm += '<div class="hm fu"></div>';
       } else {
-        // 判断是否全部完成
         let allDone = db.habits.length > 0 && db.habits.every(h => h.records[ds] === 'done');
         let sty = allDone ? `background:var(--sc);` : '';
         hm += `<div class="hm" style="${sty}" title="${ds}"></div>`;
@@ -598,7 +565,7 @@ function renderWeeklyHabits() {
     c.className = 'hc';
     const bc = HC[idx % HC.length];
     
-    // 每周热力图：按周算
+    // 每周热力图
     let hm = '';
     const cm = getMonday(new Date());
     const td = new Date();
@@ -606,7 +573,6 @@ function renderWeeklyHabits() {
       const ws = new Date(cm); ws.setDate(ws.getDate() - w * 7);
       const weekKey = getWeekKey(ws);
       
-      // 判断这一周是否完全完成
       const taskDays = Object.keys(h.tasks);
       const allDone = taskDays.length > 0 && taskDays.every(day => h.records[weekKey + '-' + day] === 'done');
       

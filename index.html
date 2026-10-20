@@ -86,7 +86,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .bt button{background:var(--hb);color:var(--t2);border:0;border-radius:16px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer}
 .bt button.active{background:var(--ac);color:#fff}
 .bkt{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--card);border-radius:var(--rc);box-shadow:var(--sh);overflow:hidden}
-.bkb{flex:0 0 auto;display:flex;flex-direction:column;background:var(--card);border-radius:var(--rc);box-shadow:var(--sh);padding:8px 10px;min-height:120px;max-height:220px;overflow-y:auto;}
+.bkb{flex:0 0 135px;display:flex;flex-direction:column;background:var(--card);border-radius:var(--rc);box-shadow:var(--sh);padding:8px 10px;min-height:110px}
 .bbt{font-size:12px;font-weight:600;color:var(--ac);margin-bottom:4px;flex:none}
 .bba{display:flex;justify-content:flex-end;margin-top:4px;flex:none}
 .bba button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer}
@@ -111,7 +111,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .mt.pd{background:var(--acs);color:var(--ac);border-left:2px solid var(--ac)}
 .mt.dn{background:#F0F0F0;color:var(--t3);text-decoration:line-through}
 .mm{font-size:8px;color:var(--t2);text-align:center}
-.weeks-summary, .months-summary, .years-summary{flex:1;overflow-y:auto;padding:6px}
+.wsv{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
 .wst{flex:none;font-size:16px;font-weight:700;color:var(--ac);text-align:center;padding:10px;cursor:pointer;border-bottom:1px solid var(--sep);display:flex;align-items:center;justify-content:center;gap:6px}
 .wst .ar{font-size:12px;color:var(--t3)}
 .wdl{flex:1;min-height:0;overflow-y:auto;padding:4px}
@@ -127,6 +127,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .wdtg{font-size:11px;padding:2px 6px;background:var(--acs);color:var(--ac);border-radius:4px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
 .wdtg.dn{background:#F0F0F0;color:var(--t3);text-decoration:line-through}
 .wdte{font-size:11px;color:var(--t3)}
+.mwv{flex:1;min-height:0;overflow-y:auto;padding:6px}
 .mwb{border:1px solid var(--sep);border-radius:8px;padding:8px 10px;margin-bottom:8px;background:var(--bg);cursor:pointer}
 .mwb:active{background:var(--acs);border-color:var(--ac)}
 .mwh{font-size:13px;font-weight:700;color:var(--ac);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
@@ -155,12 +156,6 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .bsta:focus{border-color:var(--ac);background:var(--card)}
 .bnv{display:flex;justify-content:space-between;align-items:center;padding:4px 0;flex:none}
 .bnv button{background:var(--hb);color:var(--ac);border:0;border-radius:var(--rb);padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
-/* 总结页辅助 */
-.book-section-title{font-size:12px;font-weight:700;color:var(--ac);margin:8px 0 4px}
-.book-photos-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}
-.book-habits-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
-.book-habit-chip{font-size:11px;background:var(--hb);padding:2px 8px;border-radius:12px;color:var(--t2)}
-.book-habit-chip.done{background:var(--sc);color:#fff}
 
 /* 习惯页 */
 #view-habits{flex-direction:column;gap:0}
@@ -338,17 +333,9 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
     <div id="month-calendar" style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;"></div>
   </div>
   <div class="bkb">
-    <div class="bbt" id="book-bottom-title">今日详情</div>
-    <!-- 总结页辅助信息（照片 + 习惯） -->
-    <div id="book-day-habits"></div>
-    <div id="book-day-photos"></div>
-    <div style="display:flex; gap:8px; align-items:flex-start; flex:1;">
-      <textarea class="bsta" id="book-summary-input" placeholder="在这里写下心得..."></textarea>
-      <div style="display:flex; flex-direction:column; gap:4px;">
-        <button onclick="triggerBookPhoto()" style="background:var(--hb);color:var(--ac);border:1px dashed var(--ac);border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">📷 传照片</button>
-        <button onclick="saveBookSummary()" style="background:var(--ac);color:#fff;border:0;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;">完成</button>
-      </div>
-    </div>
+    <div class="bbt" id="book-bottom-title">今日心得</div>
+    <textarea class="bsta" id="book-summary-input" placeholder="在这里写下心得..."></textarea>
+    <div class="bba"><button onclick="saveBookSummary()">完成</button></div>
   </div>
   <div class="bnv"><button id="book-prev">‹ 上一页</button><span id="book-period-label-bottom">2026年10月</span><button id="book-next">下一页 ›</button></div>
 </div>
@@ -363,7 +350,37 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 <div class="mo" id="calendar-modal"><div class="mc2"><h3>选择日期</h3><div id="calendar-container"></div><div class="mb"><button class="cn" onclick="closeCalendarModal()">关闭</button></div></div></div>
 <div class="mo" id="list-modal"><div class="mc2"><h3>新建清单</h3><input type="text" id="list-name" placeholder="清单名称"><label class="fu">📁 上传 TXT / CSV 文件<input type="file" id="list-file-input" accept=".txt,.csv" onchange="handleFileUpload(this)" style="display:none"></label><textarea id="list-batch-items" placeholder="或直接粘贴（每行一个）"></textarea><div class="mb"><button class="cn" onclick="closeListModal()">取消</button><button class="sv" onclick="saveNewList()">创建</button></div></div></div>
 <div class="mo" id="sync-modal"><div class="mc2"><h3>☁️ 云同步设置</h3><div id="sync-status" style="font-size:12px;color:var(--t2);margin-bottom:10px;text-align:center">正在加载配置...</div><input type="text" id="sync-user" placeholder="Gitee 用户名"><input type="text" id="sync-repo" placeholder="Gitee 仓库名"><input type="password" id="sync-token" placeholder="私人令牌（Token）"><div class="mb"><button class="cn" onclick="saveSyncConfig()">保存配置</button></div><div style="display:flex;gap:8px;margin-top:10px"><button class="sv" style="flex:1;border:0;border-radius:8px;padding:10px;cursor:pointer" onclick="uploadToCloud()">⬆ 上传到云端</button><button style="flex:1;border:0;border-radius:8px;padding:10px;cursor:pointer;background:#F4F0E8;color:var(--text)" onclick="downloadFromCloud()">⬇ 从云端下载</button></div><div class="mb"><button class="cn" onclick="closeSyncModal()">关闭</button></div></div></div>
-<div class="mo" id="day-detail-modal"><div class="mc2"><h3 id="day-detail-title">日期详情</h3><div style="font-size:13px;font-weight:600;margin-bottom:6px">📝 今日心得</div><div id="day-detail-note-display" class="dnt">暂无心得</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">✅ 任务完成情况</div><div id="day-detail-tasks" style="font-size:13px;line-height:1.8;margin-bottom:12px"></div><div style="font-size:13px;font-weight:600;margin:12px 0 6px">🏷️ 今日照片标签</div><div id="day-detail-photos" class="ddp"></div><label class="fu">📷 上传新标签<input type="file" accept="image/*" onchange="handleDayPhotoUpload(event)" style="display:none"></label><div style="font-size:13px;font-weight:600;margin:12px 0 6px">🕘 历史标签</div><div id="photo-history-list" class="phs"><div class="phe">暂无历史照片</div></div><div class="mb"><button class="cn" onclick="closeDayDetailModal()">关闭</button></div></div></div>
+
+<!-- 日期详情弹窗（包含任务、习惯、照片和心得） -->
+<div class="mo" id="day-detail-modal">
+  <div class="mc2">
+    <h3 id="day-detail-title">日期详情</h3>
+    
+    <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ac)">🔥 习惯打卡</div>
+    <div id="day-detail-habits" style="margin-bottom:12px;"></div>
+
+    <div style="font-size:13px;font-weight:600;margin-bottom:6px">✅ 任务完成情况</div>
+    <div id="day-detail-tasks" style="font-size:13px;line-height:1.8;margin-bottom:12px"></div>
+
+    <div style="font-size:13px;font-weight:600;margin-bottom:6px">📝 今日心得</div>
+    <div id="day-detail-note-display" class="dnt">暂无心得</div>
+
+    <div style="font-size:13px;font-weight:600;margin:12px 0 6px">🏷️ 今日照片标签</div>
+    <div id="day-detail-photos" class="ddp"></div>
+
+    <!-- 使用 label 触发，保证 WebView 不会拦截 -->
+    <label class="fu" style="display:block; text-align:center; padding:10px; font-size:13px; margin-top:4px;">
+      📷 点击这里上传照片
+      <input type="file" accept="image/*" onchange="handleDayPhotoUpload(event)" style="display:none">
+    </label>
+
+    <div style="font-size:13px;font-weight:600;margin:12px 0 6px">🕘 历史标签（点击直接复用）</div>
+    <div id="photo-history-list" class="phs"><div class="phe">暂无历史照片</div></div>
+
+    <div class="mb"><button class="cn" onclick="closeDayDetailModal()">关闭</button></div>
+  </div>
+</div>
+
 <div class="mo" id="period-detail-modal"><div class="mc2"><h3 id="period-detail-title">周详情</h3><div id="period-detail-content"></div><div class="mb"><button class="cn" onclick="closePeriodDetailModal()">关闭</button></div></div></div>
 <div class="mo" id="crop-modal"><div class="mc2" style="max-width:440px"><h3>裁剪照片（1:1）</h3><div class="crp"><div class="crb" id="crop-box"><img id="crop-image" alt=""></div><div class="crc"><label>缩放</label><input type="range" id="crop-zoom" min="0.1" max="3" step="0.01" value="1"></div><div style="font-size:11px;color:var(--t2);text-align:center">拖动图片选择区域，滑动缩放</div></div><div class="mb"><button class="cn" onclick="closeCropModal()">取消</button><button class="sv" onclick="confirmCrop()">确认上传</button></div></div></div>
 <div class="mo tam" id="tag-action-modal"><div class="mc2"><h3>应用这张照片标签</h3><img id="tag-action-img" src="" alt=""><div style="font-size:13px;color:var(--t2);margin-bottom:12px">你想让这张图片应用在哪里？</div><div class="tsb"><button class="pr" onclick="applyTagScope('day')">仅应用于本日</button><button class="sc" onclick="applyTagScope('all')">应用于全部日期</button><button class="sc" onclick="closeTagActionModal()">取消</button></div></div></div>
@@ -377,7 +394,6 @@ let bookPeriod='day',bookDate=new Date();
 let currentHabitTab='daily';
 const HC=['#5C9A71','#D97736','#4F6BED','#8E44AD','#E74C3C','#1ABC9C','#F39C12','#3498DB','#9B59B6','#E67E22','#16A085','#2E4053','#C0392B','#27AE60'];
 const CAT_NAMES={morning:'🌅 早晨',noon:'☀️ 中午',evening:'🌙 晚上'};
-
 function getMonday(d){const x=new Date(d);x.setHours(0,0,0,0);const day=x.getDay();return new Date(x.setDate(x.getDate()-day+(day===0?-6:1)))}
 function getWeekKey(m){const t=new Date(m);t.setDate(t.getDate()+3);const ys=new Date(t.getFullYear(),0,1);return t.getFullYear()+'-W'+String(Math.ceil(((t-ys)/864e5+1)/7)).padStart(2,'0')}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -473,7 +489,10 @@ function toggleHabitRecord(habitId, dateStr) {
   if (!h) return;
   if (h.records[dateStr] === 'done') delete h.records[dateStr];
   else h.records[dateStr] = 'done';
-  saveLocal(); renderHabits(); renderBook();
+  saveLocal(); renderHabits(); renderBook(); 
+  if (document.getElementById('day-detail-modal').classList.contains('show')) {
+     openDayDetailModal(window._cdd);
+  }
 }
 
 function cycleHabitRecord(habitId, dateStr) {
@@ -494,6 +513,9 @@ function toggleWeeklyTask(habitId, dayIdx) {
   if (h.records[key] === 'done') delete h.records[key];
   else h.records[key] = 'done';
   saveLocal(); renderHabits(); renderBook();
+  if (document.getElementById('day-detail-modal').classList.contains('show')) {
+     openDayDetailModal(window._cdd);
+  }
 }
 
 function deleteHabit(id, isWeekly) {
@@ -676,37 +698,7 @@ function toggleListItem(lid,iid,btn){const l=db.lists.find(x=>x.id===lid);if(!l)
 function addListItem(lid,el){const t=el.value.trim();if(!t)return;const l=db.lists.find(x=>x.id===lid);if(!l)return;l.items.push({id:'item-'+Date.now()+Math.random().toString(36).slice(2),text:t,done:false});el.value='';saveLocal();renderLists()}
 function deleteListItem(lid,iid){if(!confirm('删除这个项目？'))return;const l=db.lists.find(x=>x.id===lid);if(!l)return;l.items=l.items.filter(x=>x.id!==iid);saveLocal();renderLists()}
 let cOX=0,cOY=0,cZ=1,cBS=1;
-function triggerBookPhoto() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = (e) => {
-    handleDayPhotoUpload(e, bookDate); // 把 bookDate 传进去，默认就是这一天
-  };
-  input.click();
-}
-function handleDayPhotoUpload(e, targetDate) {
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    const img=document.getElementById('crop-image');
-    cOX=0;cOY=0;cZ=1;
-    document.getElementById('crop-zoom').value=1;
-    img.onload=function(){
-      document.getElementById('crop-modal').classList.add('show');
-      requestAnimationFrame(()=>{
-        const b=document.getElementById('crop-box');
-        cBS=Math.max(b.offsetWidth/img.naturalWidth,b.offsetWidth/img.naturalHeight);
-        renderCropImage();
-      });
-    };
-    img.src=ev.target.result;
-    // 记住当前要上传的日期
-    window._uploadDate = targetDate || new Date();
-    e.target.value='';
-  };
-  r.readAsDataURL(f);
-}
+function handleDayPhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const img=document.getElementById('crop-image');cOX=0;cOY=0;cZ=1;document.getElementById('crop-zoom').value=1;img.onload=function(){document.getElementById('crop-modal').classList.add('show');requestAnimationFrame(()=>{const b=document.getElementById('crop-box');cBS=Math.max(b.offsetWidth/img.naturalWidth,b.offsetWidth/img.naturalHeight);renderCropImage()})};img.src=ev.target.result;e.target.value=''};r.readAsDataURL(f)}
 function renderCropImage(){const img=document.getElementById('crop-image');if(!img||!img.naturalWidth)return;const b=document.getElementById('crop-box'),bs=b.offsetWidth,s=cBS*cZ,dw=img.naturalWidth*s,dh=img.naturalHeight*s;img.style.left=((bs-dw)/2+cOX)+'px';img.style.top=((bs-dh)/2+cOY)+'px';img.style.width=dw+'px';img.style.height=dh+'px'}
 function closeCropModal(){document.getElementById('crop-modal').classList.remove('show')}
 document.getElementById('crop-zoom').addEventListener('input',e=>{cZ=parseFloat(e.target.value);renderCropImage()});
@@ -717,22 +709,65 @@ cbe.addEventListener('pointerup',e=>{drag=false;try{cbe.releasePointerCapture(e.
 cbe.addEventListener('pointercancel',e=>{drag=false;try{cbe.releasePointerCapture(e.pointerId)}catch(_){}});
 function confirmCrop(){const img=document.getElementById('crop-image');if(!img||!img.naturalWidth){alert('没有可裁剪的图片');return}const b=document.getElementById('crop-box'),bs=b.offsetWidth,dw=parseFloat(img.style.width),s=dw/img.naturalWidth,sx=-parseFloat(img.style.left)/s,sy=-parseFloat(img.style.top)/s,sw=bs/s,sh=bs/s;const cv=document.createElement('canvas');cv.width=150;cv.height=150;const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,150,150);try{ctx.drawImage(img,sx,sy,sw,sh,0,0,150,150)}catch(e){alert('裁剪失败');return}const b64=cv.toDataURL('image/jpeg',0.6);document.getElementById('tag-action-img').src=b64;document.getElementById('crop-modal').classList.remove('show');window._pti=b64;document.getElementById('tag-action-modal').classList.add('show')}
 function closeTagActionModal(){document.getElementById('tag-action-modal').classList.remove('show');window._pti=null}
-function applyTagScope(sc){const b=window._pti;if(!b)return;
-  // 如果是通过总结页传的，使用 _uploadDate
-  const d = window._uploadDate ? new Date(window._uploadDate) : (window._cdd ? new Date(window._cdd) : new Date());
-  const wk=getWeekKey(getMonday(d)),di=(d.getDay()+6)%7,nk=`${wk}-${di}`;
-  if(sc==='day'){if(!db.photos[nk])db.photos[nk]=[];db.photos[nk].push(b)}
-  else{if(!db.globalPhotos)db.globalPhotos=[];db.globalPhotos.push(b)}
-  if(!db.photoHistory)db.photoHistory=[];
-  if(!db.photoHistory.includes(b))db.photoHistory.unshift(b);
-  if(db.photoHistory.length>30)db.photoHistory=db.photoHistory.slice(0,30);
-  saveLocal();renderBook();openDayDetailModal(d);closeTagActionModal();alert(sc==='day'?'已应用到本日':'已应用到全部日期')
-}
+function applyTagScope(sc){const b=window._pti;if(!b)return;const d=window._cdd?new Date(window._cdd):new Date();const wk=getWeekKey(getMonday(d)),di=(d.getDay()+6)%7,nk=`${wk}-${di}`;if(sc==='day'){if(!db.photos[nk])db.photos[nk]=[];db.photos[nk].push(b)}else{if(!db.globalPhotos)db.globalPhotos=[];db.globalPhotos.push(b)}if(!db.photoHistory)db.photoHistory=[];if(!db.photoHistory.includes(b))db.photoHistory.unshift(b);if(db.photoHistory.length>30)db.photoHistory=db.photoHistory.slice(0,30);saveLocal();renderBook();openDayDetailModal(d);closeTagActionModal();alert(sc==='day'?'已应用到本日':'已应用到全部日期')}
 function reuseHistoryPhoto(b){window._pti=b;document.getElementById('tag-action-img').src=b;document.getElementById('tag-action-modal').classList.add('show')}
 function deleteHistoryPhoto(i){if(!confirm('从历史标签删除这张图片？'))return;if(db.photoHistory&&db.photoHistory[i]){db.photoHistory.splice(i,1);saveLocal();renderPhotoHistory()}}
 function renderDayPhotos(d){const wk=getWeekKey(getMonday(d)),di=(d.getDay()+6)%7,nk=`${wk}-${di}`;const ps=db.photos[nk]||[],gp=db.globalPhotos||[],ap=[...ps,...gp];const c=document.getElementById('day-detail-photos');c.innerHTML='';if(ap.length===0){c.innerHTML='<div style="color:var(--t3);font-size:13px">暂无照片标签</div>';return}ap.forEach((p,i)=>{const dv=document.createElement('div');dv.className='pth';dv.innerHTML=`<img src="${p}">`;dv.onclick=()=>{if(confirm('删除这张照片标签？')){if(i<ps.length){db.photos[nk].splice(i,1);if(db.photos[nk].length===0)delete db.photos[nk]}else db.globalPhotos.splice(i-ps.length,1);saveLocal();renderBook();openDayDetailModal(d)}};c.appendChild(dv)})}
 function renderPhotoHistory(){const c=document.getElementById('photo-history-list');if(!c)return;const h=db.photoHistory||[];c.innerHTML='';if(h.length===0){c.innerHTML='<div class="phe">暂无历史照片</div>';return}h.forEach((p,i)=>{const it=document.createElement('div');it.className='phi';it.innerHTML=`<img src="${p}"><button class="dh2" onclick="event.stopPropagation();deleteHistoryPhoto(${i})">×</button>`;it.onclick=()=>reuseHistoryPhoto(p);c.appendChild(it)})}
-function openDayDetailModal(d){window._cdd=new Date(d);const wk=getWeekKey(getMonday(d)),di=(d.getDay()+6)%7,nk=`${wk}-${di}`;document.getElementById('day-detail-title').textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 详情`;const nt=db.notes[nk]||'';document.getElementById('day-detail-note-display').textContent=nt.trim()?nt:'暂无心得';const dt=db.tasks.filter(t=>t.week_key===wk&&t.day===di);const te=document.getElementById('day-detail-tasks');if(dt.length===0){te.innerHTML='<div style="color:var(--t3)">无任务</div>'}else{te.innerHTML=dt.map(t=>`<div>${t.done?'✅':'⭕'} <span style="${t.done?'text-decoration:line-through;color:var(--t3);':''}">${esc(t.title)}</span></div>`).join('')}renderDayPhotos(d);renderPhotoHistory();document.getElementById('day-detail-modal').classList.add('show')}
+
+// ✅ 重构：日期详情弹窗，包含任务、习惯、照片、心得
+function openDayDetailModal(d){
+  window._cdd=new Date(d);
+  const wk=getWeekKey(getMonday(d)),di=(d.getDay()+6)%7,nk=`${wk}-${di}`, ds=formatDate(d);
+  
+  document.getElementById('day-detail-title').textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 详情`;
+  
+  // 1. 渲染习惯
+  const hc = document.getElementById('day-detail-habits');
+  hc.innerHTML = '';
+  let habitsHtml = '';
+  
+  // 每日习惯
+  db.habits.forEach(h => {
+    const ck = h.records[ds] === 'done';
+    habitsHtml += `<div style="display:inline-block; margin:0 8px 8px 0;">
+      <button onclick="toggleHabitRecord('${h.id}', '${ds}')" style="background:${ck?'var(--sc)':'var(--hb)'}; color:${ck?'#fff':'var(--t2)'}; border:1px solid var(--sc); border-radius:12px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer;">
+        ${ck ? '✅' : '⭕'} ${esc(h.name)}
+      </button>
+    </div>`;
+  });
+  // 每周习惯
+  db.weeklyHabits.forEach(h => {
+    if (h.tasks[di]) {
+      const ck = h.records[`${wk}-${di}`] === 'done';
+      habitsHtml += `<div style="display:inline-block; margin:0 8px 8px 0;">
+        <button onclick="toggleWeeklyTask('${h.id}', ${di})" style="background:${ck?'var(--ac)':'var(--hb)'}; color:${ck?'#fff':'var(--t2)'}; border:1px solid var(--ac); border-radius:12px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer;">
+          ${ck ? '✅' : '⭕'} [周习惯] ${esc(h.tasks[di])}
+        </button>
+      </div>`;
+    }
+  });
+  hc.innerHTML = habitsHtml || '<div style="color:var(--t3);font-size:12px;margin-bottom:8px;">这一天没有设置习惯</div>';
+
+  // 2. 渲染任务
+  const dt=db.tasks.filter(t=>t.week_key===wk&&t.day===di);
+  const te=document.getElementById('day-detail-tasks');
+  if(dt.length===0){
+    te.innerHTML='<div style="color:var(--t3);font-size:12px;">无任务</div>';
+  }else{
+    te.innerHTML=dt.map(t=>`<div>${t.done?'✅':'⭕'} <span style="${t.done?'text-decoration:line-through;color:var(--t3);':''}">${esc(t.title)}</span></div>`).join('');
+  }
+
+  // 3. 渲染心得
+  const nt=db.notes[nk]||'';
+  document.getElementById('day-detail-note-display').textContent=nt.trim()?nt:'暂无心得';
+
+  // 4. 渲染照片
+  renderDayPhotos(d);
+  renderPhotoHistory();
+  
+  document.getElementById('day-detail-modal').classList.add('show');
+}
 function closeDayDetailModal(){document.getElementById('day-detail-modal').classList.remove('show')}
 function openPeriodDetailModal(t,h){document.getElementById('period-detail-title').textContent=t;document.getElementById('period-detail-content').innerHTML=h;document.getElementById('period-detail-modal').classList.add('show')}
 function closePeriodDetailModal(){document.getElementById('period-detail-modal').classList.remove('show')}
@@ -755,27 +790,11 @@ function renderBook() {
   const le=document.getElementById('book-period-label'),bl=getPeriodLabel();
   le.onclick=null;le.style.cursor='default';le.style.color='';
   
-  const bkh = document.getElementById('book-day-habits');
-  const bkp = document.getElementById('book-day-photos');
-  bkh.innerHTML = ''; bkp.innerHTML = '';
-
   if(bookPeriod==='day') {
     le.textContent=bl;
     document.getElementById('book-period-sub').textContent='日历 · 点击日期查看详情';
     renderDaySummary();
-    document.getElementById('book-bottom-title').textContent='今日详情';
-    
-    // 显示今天的习惯和照片
-    const wk=getWeekKey(getMonday(bookDate)),di=(bookDate.getDay()+6)%7,nk=`${wk}-${di}`;
-    const dayHabits = db.habits.filter(h => h.records[formatDate(bookDate)] === 'done');
-    if (dayHabits.length > 0) {
-      bkh.innerHTML = `<div class="book-section-title">✅ 今日完成习惯</div><div class="book-habits-row">${dayHabits.map(h=>`<span class="book-habit-chip done">${esc(h.name)}</span>`).join('')}</div>`;
-    }
-    const ps=db.photos[nk]||[],gp=db.globalPhotos||[],ap=[...ps,...gp];
-    if (ap.length > 0) {
-      bkp.innerHTML = `<div class="book-section-title">🏷️ 照片标签</div><div class="book-photos-row">${ap.map(p=>`<div class="pth" style="width:44px;height:44px" onclick="openDayDetailModal(new Date('${formatDate(bookDate)}'))"><img src="${p}"></div>`).join('')}</div>`;
-    }
-
+    document.getElementById('book-bottom-title').textContent='今日心得';
     document.getElementById('book-summary-input').value=db.notes[todayKey()]||'';
   }
   else if(bookPeriod==='week') {

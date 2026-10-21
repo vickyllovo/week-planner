@@ -317,7 +317,6 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
  .weekly-task-actions button{padding:4px 2px}
 }
 
-
 /* 清单 */
 #view-lists{flex-direction:column;gap:8px;overflow-y:auto;padding:8px}
 .lists-header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 8px 4px}
@@ -345,6 +344,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
   padding:6px 8px;background:var(--bg);color:var(--text);outline:none;font-size:12px}
 .add-task-row button{width:32px;border:none;border-radius:6px;background:var(--accent);
   color:#fff;font-size:18px}
+
 
 /* 弹窗 */
 .modal-overlay{position:fixed;inset:0;background:rgba(58,50,43,0.3);backdrop-filter:blur(4px);
@@ -555,6 +555,57 @@ body { overflow: hidden; }
   .right-card, .right-card input, .right-card textarea, .right-card select {
     min-width: 0; max-width: 100%;
   }
+}
+
+
+/* v3: force the entire date column to fill its available width */
+#view-plan .left-page {
+  display: block !important;
+  width: 33.33% !important;
+  flex: 0 0 33.33% !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+#view-plan #days-container {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+#view-plan .day-group {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+#view-plan .day-head {
+  display: flex !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 10px 8px 6px !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  border-radius: 0 !important;
+}
+#view-plan .day-head.active {
+  width: 100% !important;
+  margin: 0 !important;
+  background: var(--accent-soft) !important;
+  border-left: 4px solid var(--accent) !important;
+}
+#view-plan .day-head .dnum,
+#view-plan .day-head .dname {
+  display: block !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+#view-plan .task-list { width: 100% !important; min-width: 0 !important; }
+#view-plan .task-item { width: 100% !important; min-width: 0 !important; }
+#view-plan .task-content { flex: 1 1 0 !important; min-width: 0 !important; }
+#view-plan .task-item .ttl { overflow-wrap: anywhere !important; word-break: normal !important; }
+@media (max-width: 768px) {
+  #view-plan .left-page { flex-basis: 33.33% !important; width: 33.33% !important; }
 }
 
 </style>

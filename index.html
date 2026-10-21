@@ -9,7 +9,6 @@
   --bg:#FDFBF7; --card:#FFFDFA; --text:#3A322B; --text-secondary:#8C8279;
   --text-tertiary:#C2B8A3; --accent:#D97736; --accent-soft:#FDF3E8;
   --danger:#D9534F; --success:#5C9A71; --habit-bg:#F4F0E8;
-  --habit-makeup:#B5D9BF;
   --separator:#EFE9DF; --radius-card:10px; --radius-btn:8px;
   --shadow-card:0 1px 6px rgba(160,130,90,0.04);
 }
@@ -28,21 +27,21 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .sync-btn-header{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-btn);
   padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 .header-bottom{text-align:center;font-size:13px;font-weight:600;color:var(--text)}
-.view{flex:1;display:none;overflow:hidden;padding:4px;gap:4px}
+.view{flex:1;display:none;overflow:hidden;padding:4px;gap:4px;width:100%;max-width:100%}
 .view.active{display:flex}
 
 /* 周计划 */
-#view-plan{flex-direction:row}
-.left-page{width:33.33%;flex:none;display:flex;flex-direction:column;overflow-y:auto;
+#view-plan{flex-direction:row;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
+.left-page{width:33.33%;max-width:33.33%;flex:none;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
   background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
-.day-group{display:flex;flex-direction:column;border-bottom:1px solid var(--separator)}
+.day-group{display:flex;flex-direction:column;border-bottom:1px solid var(--separator);width:100%;box-sizing:border-box;overflow:hidden}
 .day-group:last-child{border-bottom:none}
-.day-head{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 8px 6px 8px;cursor:pointer}
+.day-head{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 8px 6px 8px;cursor:pointer;width:100%;box-sizing:border-box}
 .day-head.active{background:var(--accent-soft);border-left:3px solid var(--accent)}
 .dnum{font-size:22px;font-weight:700;color:var(--text);line-height:1.1}
 .dname{font-size:14px;font-weight:600;color:var(--text-secondary)}
-.task-list{padding:0 2px 8px 2px;display:flex;flex-direction:column}
-.task-item{display:flex;align-items:flex-start;gap:4px;padding:4px;border-radius:6px;cursor:pointer}
+.task-list{padding:0 2px 8px 2px;display:flex;flex-direction:column;width:100%;box-sizing:border-box;overflow:hidden}
+.task-item{display:flex;align-items:flex-start;gap:4px;padding:4px;border-radius:6px;cursor:pointer;width:100%;box-sizing:border-box;overflow:hidden}
 .task-item.active{background:var(--accent-soft)}
 .task-item .chk{width:14px;height:14px;border-radius:50%;border:2px solid var(--text-tertiary);
   background:var(--card);flex:none;cursor:pointer;padding:0;display:flex;align-items:center;
@@ -50,65 +49,65 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .task-item.done .chk{background:var(--accent);border-color:var(--accent)}
 .task-item.done .chk::after{content:'';width:3px;height:6px;border:2px solid #fff;
   border-top:0;border-left:0;transform:rotate(45deg) translate(-1px,-1px)}
-.task-content{flex:1;min-width:0;display:flex;flex-direction:column}
-.task-item .ttl{font-size:12px;word-break:break-word;line-height:1.4;user-select:none;font-weight:500}
+.task-content{flex:1;min-width:0;width:0;display:flex;flex-direction:column;overflow:hidden}
+.task-item .ttl{font-size:12px;word-break:break-all;overflow-wrap:anywhere;white-space:normal;line-height:1.4;user-select:none;font-weight:500}
 .task-preview{font-size:10px;color:var(--text-secondary);margin-top:2px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;opacity:0.8}
+  overflow:hidden;text-overflow:ellipsis;opacity:0.8;width:100%}
 .task-item.done .ttl{color:var(--text-tertiary);text-decoration:line-through}
 .task-item.done .task-preview{text-decoration:line-through;opacity:0.5}
-.right-page{flex:1;display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-width:0}
+.right-page{flex:1;min-width:0;width:0;display:flex;flex-direction:column;gap:6px;overflow-y:auto;overflow-x:hidden;box-sizing:border-box}
 .right-card{background:var(--card);border-radius:var(--radius-card);padding:12px;
-  box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:6px}
+  box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:6px;width:100%;box-sizing:border-box;overflow:hidden}
 .inbox-title{font-size:12px;font-weight:600;color:var(--accent);display:flex;
   justify-content:space-between;align-items:center;margin-bottom:6px}
-.inbox-input-row{display:flex;gap:4px}
+.inbox-input-row{display:flex;gap:4px;width:100%;box-sizing:border-box}
 .inbox-input-row input{flex:1;border:1px solid var(--separator);border-radius:6px;
-  padding:6px 8px;font-size:12px;outline:none;background:var(--bg);color:var(--text);min-width:0}
+  padding:6px 8px;font-size:12px;outline:none;background:var(--bg);color:var(--text);min-width:0;width:100%;box-sizing:border-box}
 .inbox-input-row button{background:var(--accent);color:#fff;border:none;border-radius:6px;
-  padding:0 10px;font-size:14px;cursor:pointer}
+  padding:0 10px;font-size:14px;cursor:pointer;flex:none}
 .inbox-task-item{display:flex;align-items:flex-start;gap:6px;padding:6px 0;
-  border-bottom:1px solid var(--separator);font-size:12px}
+  border-bottom:1px solid var(--separator);font-size:12px;width:100%;box-sizing:border-box;overflow:hidden}
 .inbox-task-item:last-child{border-bottom:none}
-.inbox-task-item .chk{margin-top:2px}
-.inbox-task-item .task-content{flex:1;min-width:0}
-.inbox-task-item .ttl{font-size:12px;word-break:break-word;line-height:1.4;font-weight:500}
+.inbox-task-item .chk{margin-top:2px;flex:none}
+.inbox-task-item .task-content{flex:1;min-width:0;width:0;overflow:hidden}
+.inbox-task-item .ttl{font-size:12px;word-break:break-all;line-height:1.4;font-weight:500}
 .inbox-task-item .task-preview{font-size:10px;color:var(--text-secondary);margin-top:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .inbox-task-item select{font-size:11px;border:1px solid var(--separator);border-radius:4px;
-  background:var(--card);color:var(--text-secondary);outline:none;max-width:60px;margin-top:2px}
+  background:var(--card);color:var(--text-secondary);outline:none;max-width:60px;margin-top:2px;flex:none}
 .new-task-card .card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
-.new-task-form{display:flex;flex-direction:column;gap:8px}
+.new-task-form{display:flex;flex-direction:column;gap:8px;width:100%;box-sizing:border-box}
 .new-task-form input,.new-task-form textarea{width:100%;border:1px solid var(--separator);
   border-radius:6px;padding:8px 10px;font-size:12px;font-family:inherit;outline:none;
-  background:var(--bg);color:var(--text)}
+  background:var(--bg);color:var(--text);box-sizing:border-box}
 .new-task-form textarea{resize:vertical;min-height:50px}
 .new-task-form input:focus,.new-task-form textarea:focus{border-color:var(--accent);background:var(--card)}
-.new-task-form .form-row{display:flex;gap:6px;align-items:center}
-.new-task-form .form-row input[type="datetime-local"]{flex:1}
+.new-task-form .form-row{display:flex;gap:6px;align-items:center;width:100%;box-sizing:border-box}
+.new-task-form .form-row input[type="datetime-local"]{flex:1;min-width:0;width:100%;box-sizing:border-box}
 .new-task-form .add-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;
   padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
-.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;width:100%;box-sizing:border-box}
 .detail-title{font-weight:600;font-size:14px;color:var(--text)}
-.detail-date{font-size:12px;color:var(--text-secondary)}
+.detail-date{font-size:12px;color:var(--text-secondary);flex:none}
 .task-detail-area{background:#FDFCF9;border:1px solid var(--separator);border-radius:8px;
-  padding:10px;display:flex;flex-direction:column;gap:6px}
+  padding:10px;display:flex;flex-direction:column;gap:6px;width:100%;box-sizing:border-box}
 .task-detail-area .title-row input{width:100%;border:none;border-bottom:1px solid var(--separator);
-  font-size:14px;font-weight:600;background:transparent;outline:none;padding-bottom:4px;color:var(--text)}
+  font-size:14px;font-weight:600;background:transparent;outline:none;padding-bottom:4px;color:var(--text);box-sizing:border-box}
 .task-detail-area .time-row input{width:100%;border:none;font-size:12px;background:transparent;
-  outline:none;color:var(--text-secondary)}
+  outline:none;color:var(--text-secondary);box-sizing:border-box}
 .task-detail-area .desc-row textarea{width:100%;border:1px solid var(--separator);border-radius:6px;
   padding:8px;font-size:12px;font-family:inherit;resize:vertical;outline:none;min-height:60px;
-  background:var(--card);color:var(--text)}
-.task-detail-actions{display:flex;gap:6px;margin-top:4px}
+  background:var(--card);color:var(--text);box-sizing:border-box}
+.task-detail-actions{display:flex;gap:6px;margin-top:4px;width:100%;box-sizing:border-box}
 .task-detail-actions button{padding:8px 12px;border-radius:6px;border:none;font-size:12px;
   font-weight:600;cursor:pointer}
 .task-detail-actions .delete-btn{background:#FDE8E8;color:var(--danger)}
 .task-detail-actions .save-btn{background:var(--accent);color:#fff;flex:1}
 .no-selection-tip{color:var(--text-tertiary);font-size:12px;padding:8px 0;text-align:center}
 .right-footer{background:var(--card);border-radius:var(--radius-card);padding:10px;
-  box-shadow:var(--shadow-card);display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+  box-shadow:var(--shadow-card);display:flex;justify-content:space-between;align-items:center;margin-top:auto;width:100%;box-sizing:border-box;flex:none}
 .right-footer button{background:#F4F0E8;color:var(--accent);border:none;border-radius:var(--radius-btn);
-  padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+  padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;flex:none}
 .right-footer .week-display{font-size:13px;font-weight:600;color:var(--text);cursor:pointer;
   padding:4px 12px;border-radius:6px;background:var(--accent-soft)}
 
@@ -122,29 +121,29 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 
 /* 总结 */
 #view-book{flex-direction:column;gap:8px}
-.book-toolbar{display:flex;gap:4px;justify-content:center;flex:none}
+.book-toolbar{display:flex;gap:4px;justify-content:center;flex:none;width:100%}
 .book-toolbar button{background:#F4F0E8;color:var(--text-secondary);border:none;border-radius:16px;
-  padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer}
+  padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;flex:1;white-space:nowrap}
 .book-toolbar button.active{background:var(--accent);color:#fff}
 .book-top{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--card);
-  border-radius:var(--radius-card);box-shadow:var(--shadow-card);overflow:hidden}
+  border-radius:var(--radius-card);box-shadow:var(--shadow-card);overflow:hidden;width:100%;box-sizing:border-box}
 .book-bottom{flex:0 0 135px;display:flex;flex-direction:column;background:var(--card);
-  border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:8px 10px;min-height:110px}
+  border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:8px 10px;min-height:110px;width:100%;box-sizing:border-box}
 .book-bottom-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px;flex:none}
 .book-bottom-actions{display:flex;justify-content:flex-end;margin-top:4px;flex:none}
 .book-bottom-actions button{background:var(--accent);color:#fff;border:none;border-radius:8px;
   padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer}
 .calendar-header-bar{padding:10px 12px;border-bottom:1px solid var(--separator);background:#FDFCF9;
-  display:flex;justify-content:space-between;align-items:center;flex:none}
+  display:flex;justify-content:space-between;align-items:center;flex:none;width:100%;box-sizing:border-box}
 .calendar-header-bar h3{margin:0;font-size:15px;font-weight:600}
 .calendar-header-bar p{margin:0;font-size:12px;color:var(--text-secondary)}
 
 /* 日总结：月历 */
-.month-calendar{flex:1;min-height:0;display:flex;flex-direction:column;padding:4px;overflow:hidden;background:var(--card)}
-.month-weekdays{flex:none;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;margin-bottom:2px}
+.month-calendar{flex:1;min-height:0;display:flex;flex-direction:column;padding:4px;overflow:hidden;background:var(--card);width:100%;box-sizing:border-box}
+.month-weekdays{flex:none;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;margin-bottom:2px;width:100%}
 .month-weekday{text-align:center;padding:4px 0;font-size:11px;font-weight:600;color:var(--text-secondary)}
 .month-days-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
-  grid-template-rows:repeat(6,minmax(0,1fr));gap:2px}
+  grid-template-rows:repeat(6,minmax(0,1fr));gap:2px;width:100%}
 .month-day-cell{min-width:0;min-height:0;border:1px solid var(--separator);border-radius:6px;
   background:var(--bg);padding:4px;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;position:relative}
 .month-day-cell:active{background:var(--accent-soft)}
@@ -164,15 +163,15 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .month-more{font-size:8px;color:var(--text-secondary);text-align:center}
 
 /* 周总结 */
-.week-summary-view{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
+.week-summary-view{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--card);width:100%}
 .week-summary-title{flex:none;font-size:16px;font-weight:700;color:var(--accent);
   text-align:center;padding:10px;cursor:pointer;border-bottom:1px solid var(--separator);
   display:flex;align-items:center;justify-content:center;gap:6px;}
 .week-summary-title:active{background:var(--accent-soft)}
 .week-summary-title .arrow{font-size:12px;color:var(--text-tertiary)}
-.week-days-list{flex:1;min-height:0;overflow-y:auto;padding:4px}
+.week-days-list{flex:1;min-height:0;overflow-y:auto;padding:4px;width:100%;box-sizing:border-box}
 .week-day-row{display:flex;gap:6px;padding:6px 4px;border-bottom:1px solid var(--separator);
-  align-items:stretch;cursor:pointer;min-height:56px}
+  align-items:stretch;cursor:pointer;min-height:56px;width:100%;box-sizing:border-box;overflow:hidden}
 .week-day-row:last-child{border-bottom:none}
 .week-day-row.today{background:var(--accent-soft);border-radius:6px}
 .wd-date{width:52px;flex:none;font-size:12px;font-weight:600;line-height:1.4;color:var(--text)}
@@ -181,7 +180,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .wd-photo{width:44px;height:44px;border-radius:6px;object-fit:cover;flex:none;
   border:1px solid rgba(0,0,0,0.06)}
 .wd-photo-empty{font-size:11px;color:var(--text-tertiary)}
-.wd-tasks{flex:1;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;min-width:0}
+.wd-tasks{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start}
 .wd-task{font-size:11px;padding:2px 6px;background:var(--accent-soft);color:var(--accent);
   border-radius:4px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;
   line-height:1.4}
@@ -189,9 +188,9 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .wd-task-empty{font-size:11px;color:var(--text-tertiary)}
 
 /* 月总结：每周任务完成情况 */
-.month-weeks-view{flex:1;min-height:0;overflow-y:auto;padding:6px}
+.month-weeks-view{flex:1;min-height:0;overflow-y:auto;padding:6px;width:100%;box-sizing:border-box}
 .month-week-block{border:1px solid var(--separator);border-radius:8px;padding:8px 10px;margin-bottom:8px;
-  background:var(--bg);cursor:pointer;transition:0.15s;}
+  background:var(--bg);cursor:pointer;transition:0.15s;width:100%;box-sizing:border-box}
 .month-week-block:active{background:var(--accent-soft);border-color:var(--accent)}
 .month-week-header{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;
   display:flex;justify-content:space-between;align-items:center;}
@@ -203,13 +202,13 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .month-week-day-row .dcount.zero{color:var(--text-tertiary);font-weight:500}
 
 /* 年总结 */
-.year-summary-view{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
+.year-summary-view{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--card);width:100%}
 .year-summary-title{flex:none;font-size:18px;font-weight:700;color:var(--accent);
   text-align:center;padding:12px;cursor:pointer;border-bottom:1px solid var(--separator);
   display:flex;align-items:center;justify-content:center;gap:6px;}
 .year-summary-title:active{background:var(--accent-soft)}
 .year-summary-title .arrow{font-size:12px;color:var(--text-tertiary)}
-.year-grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;}
+.year-grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;width:100%;box-sizing:border-box}
 .year-month-card{background:var(--bg);border:1px solid var(--separator);border-radius:8px;
   padding:10px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   cursor:pointer;aspect-ratio:1;transition:0.15s;}
@@ -230,26 +229,26 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 
 .book-summary-textarea{flex:1;width:100%;border:1px solid var(--separator);border-radius:8px;
   background:var(--bg);font-size:13px;font-family:inherit;resize:none;outline:none;
-  line-height:1.6;color:var(--text);padding:8px;min-height:40px}
+  line-height:1.6;color:var(--text);padding:8px;min-height:40px;box-sizing:border-box}
 .book-summary-textarea:focus{border-color:var(--accent);background:var(--card)}
-.book-nav{display:flex;justify-content:space-between;align-items:center;padding:4px 0;flex:none}
+.book-nav{display:flex;justify-content:space-between;align-items:center;padding:4px 0;flex:none;width:100%;box-sizing:border-box}
 .book-nav button{background:#F4F0E8;color:var(--accent);border:none;border-radius:var(--radius-btn);
   padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
 
 /* 习惯 */
-#view-habits{flex-direction:column;gap:0}
-.habits-header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px 4px}
+#view-habits{flex-direction:column;gap:0;overflow-y:auto;box-sizing:border-box}
+.habits-header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px 4px;width:100%;box-sizing:border-box}
 .habits-header h2{margin:0;font-size:18px;font-weight:600}
 .add-habit-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-btn);
-  padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600}
-.habit-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:20px}
+  padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600;flex:none}
+.habit-list{flex:1;display:flex;flex-direction:column;gap:10px;padding-bottom:20px;width:100%;box-sizing:border-box}
 .habit-card{background:var(--card);border-radius:var(--radius-card);padding:14px;
-  box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px}
+  box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px;width:100%;box-sizing:border-box;overflow:hidden}
 .habit-top{display:flex;justify-content:space-between;align-items:center}
-.habit-name{font-weight:600;font-size:16px}
+.habit-name{font-weight:600;font-size:16px;word-break:break-all}
 .habit-streak{font-size:12px;color:var(--accent);background:#FEF3E2;padding:3px 8px;
-  border-radius:10px;font-weight:500}
-.heatmap-container{overflow-x:auto;padding-bottom:6px}
+  border-radius:10px;font-weight:500;flex:none}
+.heatmap-container{overflow-x:auto;padding-bottom:6px;width:100%;box-sizing:border-box}
 .heatmap-grid{display:grid;grid-template-rows:repeat(7,16px);grid-auto-flow:column;
   grid-auto-columns:16px;gap:3px;padding-bottom:2px}
 .heatmap-cell{width:16px;height:16px;border-radius:4px;background:var(--habit-bg);
@@ -259,45 +258,71 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .heatmap-legend{display:flex;gap:8px;font-size:10px;color:var(--text-secondary);
   padding:4px 0 0 0;align-items:center}
 .heatmap-legend .swatch{width:10px;height:10px;border-radius:2px;display:inline-block;flex:none}
-.habit-footer{display:flex;justify-content:space-between;align-items:center}
+.habit-footer{display:flex;justify-content:space-between;align-items:center;width:100%;box-sizing:border-box}
 .habit-actions button{background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:12px}
 .checkin-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;
   font-size:13px;font-weight:600;cursor:pointer}
 .checkin-btn.checked{background:var(--habit-bg);color:var(--text-secondary)}
 
 /* 习惯页 Tabs */
-.habit-mode-tabs{display:flex;gap:6px;padding:0 4px 10px;flex:none}
-.habit-mode-tabs button{flex:1;border:1px solid var(--separator);border-radius:8px;padding:8px 4px;background:#F4F0E8;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer}
+.habit-mode-tabs{display:flex;gap:6px;padding:0 4px 10px;flex:none;width:100%;box-sizing:border-box}
+.habit-mode-tabs button{flex:1;border:1px solid var(--separator);border-radius:8px;padding:8px 4px;background:#F4F0E8;color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .habit-mode-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-.group-title{font-size:15px;font-weight:700;color:var(--text);margin:10px 4px 0;display:flex;align-items:center;gap:6px;}
+.group-title{font-size:15px;font-weight:700;color:var(--text);margin:10px 4px 0;display:flex;align-items:center;gap:6px;width:100%;box-sizing:border-box}
 .group-title span{font-size:12px;color:var(--text-secondary);font-weight:500;}
 .overall-hm-card{background:linear-gradient(135deg, #FFFDFA, #FDF7EE);border:1px solid var(--accent);}
 
-.wt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--separator);font-size:13px;}
-.wt-row:last-child{border-bottom:0}
-.wt-day{font-weight:600;width:40px;color:var(--text-secondary);flex:none;}
-.wt-task{flex:1;color:var(--text);margin-left:8px;cursor:pointer;word-break:break-all;}
-.wt-task.empty{color:var(--text-tertiary);font-style:italic;}
-.wt-btn{background:var(--card);border:1px solid var(--separator);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-secondary);flex:none;}
-.wt-btn.done{background:var(--success);color:#fff;border-color:var(--success);}
-.wt-btn.add{border-style:dashed;}
+/* 周计划面板：绝对垂直排列 */
+.weekly-plan-panel{flex:1;min-height:0;display:flex !important;flex-direction:column !important;gap:10px !important;width:100% !important;box-sizing:border-box !important;overflow-y:auto !important;}
+.weekly-plan-toolbar{display:flex !important;flex-wrap:wrap !important;justify-content:center !important;align-items:center !important;gap:8px !important;background:var(--card);border-radius:10px;padding:10px;box-shadow:var(--shadow-card);width:100% !important;box-sizing:border-box !important}
+.weekly-plan-toolbar button{flex:none !important;white-space:nowrap !important;border:0;border-radius:7px;padding:7px 9px;background:#F4F0E8;color:var(--accent);font-size:12px;font-weight:600;}
+.weekly-plan-range{font-size:12px;font-weight:700;text-align:center;line-height:1.4;flex:1 1 100%;order:-1;}
+.weekly-plan-actions{display:flex !important;gap:6px !important;flex-wrap:wrap !important;width:100% !important;box-sizing:border-box !important}
+.weekly-plan-actions button{flex:1 !important;white-space:nowrap !important;border:0;border-radius:7px;padding:7px 9px;background:#F4F0E8;color:var(--accent);font-size:12px;font-weight:600;}
+.weekly-plan-progress{background:var(--card);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow-card);width:100% !important;box-sizing:border-box !important}
+.weekly-plan-progress-top{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:600;margin-bottom:6px}
+.weekly-progress-track{height:6px;border-radius:10px;background:#F0ECE3;overflow:hidden}
+.weekly-progress-fill{height:100%;background:var(--success);border-radius:10px;transition:width .2s}
+.weekly-day-card{background:var(--card);border-radius:10px;padding:11px 12px;box-shadow:var(--shadow-card);border:1px solid transparent;width:100% !important;box-sizing:border-box !important;display:flex !important;flex-direction:column !important;}
+.weekly-day-card.is-today{border-color:var(--accent);background:#FFFCF7}
+.weekly-day-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;width:100%}
+.weekly-day-title{font-size:13px;font-weight:700}
+.weekly-day-date{font-size:11px;color:var(--text-secondary);margin-left:6px;font-weight:500}
+.weekly-day-count{font-size:10px;color:var(--text-secondary);white-space:nowrap;flex:none}
+.weekly-task-list{display:flex;flex-direction:column;gap:6px;width:100%}
+.weekly-task-row{display:flex;align-items:center;gap:8px;min-width:0;width:100%}
+.weekly-task-check{width:19px;height:19px;flex:none;border:1.5px solid var(--text-tertiary);border-radius:6px;background:var(--card);padding:0}
+.weekly-task-row.done .weekly-task-check{background:var(--success);border-color:var(--success);position:relative}
+.weekly-task-row.done .weekly-task-check:after{content:"";position:absolute;width:4px;height:8px;border:2px solid white;border-top:0;border-left:0;transform:rotate(45deg);left:6px;top:3px}
+.weekly-task-text{flex:1;min-width:0;font-size:13px;overflow-wrap:anywhere}
+.weekly-task-row.done .weekly-task-text{color:var(--text-tertiary);text-decoration:line-through}
+.weekly-task-actions{display:flex;gap:2px;flex:none}
+.weekly-task-actions button{border:0;background:transparent;color:var(--text-secondary);font-size:11px;padding:4px;white-space:nowrap !important;}
+.weekly-day-empty{font-size:12px;color:var(--text-tertiary);padding:3px 0 6px;width:100%}
+.weekly-day-buttons{display:flex;gap:8px;margin-top:8px;width:100%;box-sizing:border-box}
+.weekly-day-buttons button{flex:1 !important;white-space:nowrap !important;border:1px dashed var(--separator);border-radius:6px;background:transparent;color:var(--accent);font-size:11px;padding:6px 8px;}
+.weekly-day-note{font-size:11px;color:var(--text-secondary);margin-top:7px;white-space:pre-wrap;overflow-wrap:anywhere;width:100%}
+.weekly-summary-box{background:var(--card);border-radius:10px;padding:10px;box-shadow:var(--shadow-card);width:100% !important;box-sizing:border-box !important}
+.weekly-summary-box label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+.weekly-summary-box textarea{width:100%;min-height:65px;resize:vertical;border:1px solid var(--separator);border-radius:7px;background:var(--bg);padding:8px;font:12px/1.5 inherit;color:var(--text);outline:none;box-sizing:border-box}
+.weekly-summary-box textarea:focus{border-color:var(--accent)}
 
 /* 清单 */
 #view-lists{flex-direction:column;gap:8px;overflow-y:auto;padding:8px}
 .lists-header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 8px 4px}
 .lists-header h2{margin:0;font-size:18px;font-weight:600}
-.list-grid{display:grid;grid-template-columns:1fr;gap:10px;padding-bottom:20px}
+.list-grid{display:grid;grid-template-columns:1fr;gap:10px;padding-bottom:20px;width:100%;box-sizing:border-box}
 .list-card{background:var(--card);border-radius:var(--radius-card);padding:14px;
-  box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:8px}
+  box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:8px;width:100%;box-sizing:border-box;overflow:hidden}
 .list-card-header{display:flex;justify-content:space-between;align-items:center}
-.list-card-title{font-weight:600;font-size:15px}
+.list-card-title{font-weight:600;font-size:15px;word-break:break-all}
 .list-card-actions button{background:none;border:none;color:var(--text-secondary);cursor:pointer}
 .list-progress{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary)}
 .progress-bar{flex:1;height:5px;background:#F0ECE3;border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;background:var(--accent);border-radius:3px}
-.list-items{display:flex;flex-direction:column;max-height:220px;overflow-y:auto}
-.list-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--separator);font-size:13px}
+.list-items{display:flex;flex-direction:column;max-height:220px;overflow-y:auto;width:100%;box-sizing:border-box}
+.list-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--separator);font-size:13px;width:100%;box-sizing:border-box;overflow:hidden}
 .list-item:last-child{border-bottom:none}
 .chk-square{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--text-tertiary);
   background:var(--card);flex:none;cursor:pointer;padding:0}
@@ -305,11 +330,12 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .list-item.done .chk-square::after{content:'';display:block;width:3px;height:6px;
   border:2px solid #fff;border-top:0;border-left:0;transform:rotate(45deg) translate(-1px,-1px)}
 .list-item.done .ttl{color:var(--text-tertiary);text-decoration:line-through}
-.add-task-row{display:flex;gap:5px}
+.list-item .ttl{flex:1;min-width:0;word-break:break-all;}
+.add-task-row{display:flex;gap:5px;width:100%;box-sizing:border-box}
 .add-task-row input{flex:1;min-width:0;border:1px solid var(--separator);border-radius:6px;
-  padding:6px 8px;background:var(--bg);color:var(--text);outline:none;font-size:12px}
+  padding:6px 8px;background:var(--bg);color:var(--text);outline:none;font-size:12px;width:100%;box-sizing:border-box}
 .add-task-row button{width:32px;border:none;border-radius:6px;background:var(--accent);
-  color:#fff;font-size:18px}
+  color:#fff;font-size:18px;flex:none}
 
 /* 弹窗 */
 .modal-overlay{position:fixed;inset:0;background:rgba(58,50,43,0.3);backdrop-filter:blur(4px);
@@ -318,11 +344,11 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-content{background:var(--card);border-radius:16px;padding:20px;width:90%;max-width:420px;
   max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(160,130,90,0.15);
-  animation:slideUp 0.3s ease}
+  animation:slideUp 0.3s ease;box-sizing:border-box}
 .modal-content h3{margin:0 0 16px 0;font-size:16px;font-weight:600;text-align:center}
 .modal-content input,.modal-content textarea{width:100%;padding:10px 12px;
   border:1px solid var(--separator);border-radius:8px;margin-bottom:10px;font-size:13px;
-  outline:none;font-family:inherit;background:#FDFCF9;color:var(--text)}
+  outline:none;font-family:inherit;background:#FDFCF9;color:var(--text);box-sizing:border-box}
 .modal-content textarea{resize:vertical;min-height:100px}
 .modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
 .modal-btns button{padding:10px 18px;border-radius:8px;border:none;font-size:14px;
@@ -354,24 +380,11 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 .photo-history-item img{width:100%;height:100%;object-fit:cover}
 .photo-history-empty{font-size:12px;color:var(--text-tertiary);padding:8px 0}
 
-/* ✅ 新增：历史标签删除按钮 */
 .del-history-btn{
-  position:absolute;
-  top:2px;
-  right:2px;
-  width:18px;
-  height:18px;
-  background:rgba(0,0,0,0.5);
-  color:#fff;
-  border:none;
-  border-radius:50%;
-  font-size:12px;
-  line-height:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:2;
+  position:absolute;top:2px;right:2px;width:18px;height:18px;
+  background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;
+  font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:2;
 }
 .del-history-btn:active{background:rgba(0,0,0,0.8);}
 
@@ -1746,38 +1759,41 @@ function renderWeeklyPlan() {
   const isCurrentWeek = formatDate(monday) === formatDate(getMonday(new Date()));
   const range = `${monday.getMonth()+1}月${monday.getDate()}日 - ${sunday.getMonth()+1}月${sunday.getDate()}日`;
   
-  const daysHtml = dayData.map(day => {
-    const isToday = day.dateKey === todayStr();
-    const tasksHtml = day.tasks.length ? day.tasks.map(task => `
-      <div class="weekly-task-row ${task.done ? 'done' : ''}">
-        <button class="weekly-task-check" aria-label="${task.done ? '取消完成' : '标记完成'}"
-          onclick="toggleWeeklyTask('${category}','${day.dateKey}','${task.id}')"></button>
-        <span class="weekly-task-text">${esc(task.text)}</span>
-        <span class="weekly-task-actions">
-          <button onclick="editWeeklyTask('${category}','${day.dateKey}','${task.id}')">编辑</button>
-          <button onclick="deleteWeeklyTask('${category}','${day.dateKey}','${task.id}')">删除</button>
-        </span>
-      </div>`).join('') : '<div class="weekly-day-empty">暂无安排</div>';
-    return `
-      <section class="weekly-day-card ${isToday ? 'is-today' : ''}">
-        <div class="weekly-day-head">
-          <div><span class="weekly-day-title">${WEEKDAY_NAMES[day.index]}</span><span class="weekly-day-date">${day.date.getMonth()+1}/${day.date.getDate()}</span></div>
-          <span class="weekly-day-count">${day.tasks.filter(task => task.done).length}/${day.tasks.length} 项完成</span>
-        </div>
-        <div class="weekly-task-list">${tasksHtml}</div>
-        ${day.note ? `<div class="weekly-day-note">📝 ${esc(day.note)}</div>` : ''}
-        <div class="weekly-day-buttons">
-          <button onclick="addWeeklyTask('${category}',${day.index})">＋ 添加任务</button>
-          <button onclick="editWeeklyDayNote('${category}','${day.dateKey}')">📝 ${day.note ? '修改备注' : '添加备注'}</button>
-        </div>
-      </section>`;
-  }).join('');
+  // 用 div 包裹防止 flex 挤压崩溃
+  const daysHtml = `<div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+    ${dayData.map(day => {
+      const isToday = day.dateKey === todayStr();
+      const tasksHtml = day.tasks.length ? day.tasks.map(task => `
+        <div class="weekly-task-row ${task.done ? 'done' : ''}">
+          <button class="weekly-task-check" aria-label="${task.done ? '取消完成' : '标记完成'}"
+            onclick="toggleWeeklyTask('${category}','${day.dateKey}','${task.id}')"></button>
+          <span class="weekly-task-text">${esc(task.text)}</span>
+          <span class="weekly-task-actions">
+            <button onclick="editWeeklyTask('${category}','${day.dateKey}','${task.id}')">编辑</button>
+            <button onclick="deleteWeeklyTask('${category}','${day.dateKey}','${task.id}')">删除</button>
+          </span>
+        </div>`).join('') : '<div class="weekly-day-empty">暂无安排</div>';
+      return `
+        <section class="weekly-day-card ${isToday ? 'is-today' : ''}">
+          <div class="weekly-day-head">
+            <div><span class="weekly-day-title">${WEEKDAY_NAMES[day.index]}</span><span class="weekly-day-date">${day.date.getMonth()+1}/${day.date.getDate()}</span></div>
+            <span class="weekly-day-count">${day.tasks.filter(task => task.done).length}/${day.tasks.length} 项完成</span>
+          </div>
+          <div class="weekly-task-list">${tasksHtml}</div>
+          ${day.note ? `<div class="weekly-day-note">📝 ${esc(day.note)}</div>` : ''}
+          <div class="weekly-day-buttons">
+            <button onclick="addWeeklyTask('${category}',${day.index})">＋ 添加任务</button>
+            <button onclick="editWeeklyDayNote('${category}','${day.dateKey}')">📝 ${day.note ? '修改备注' : '添加备注'}</button>
+          </div>
+        </section>`;
+    }).join('')}
+  </div>`;
 
   panel.innerHTML = `
     <div class="weekly-plan-toolbar">
       <button onclick="changeWeeklyPlanWeek(-1)">‹ 上一周</button>
-      <div class="weekly-plan-range">${range}<br><span style="font-size:10px;color:var(--text-secondary);font-weight:500">${isCurrentWeek ? '本周计划' : '历史/未来计划'}</span></div>
       <button onclick="changeWeeklyPlanWeek(1)">下一周 ›</button>
+      <div class="weekly-plan-range">${range}<br><span style="font-size:10px;color:var(--text-secondary);font-weight:500">${isCurrentWeek ? '本周计划' : '历史/未来计划'}</span></div>
     </div>
     <div class="weekly-plan-actions">
       <button onclick="copyPreviousWeeklyPlan('${category}')">复制上周计划</button>
@@ -2374,7 +2390,6 @@ document.getElementById('tag-action-modal').addEventListener('click', e => {
 });
 
 loadLocal();
-renderNotice();
 renderAll();
 renderHabits();
 renderBook();

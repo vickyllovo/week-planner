@@ -317,6 +317,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
  .weekly-task-actions button{padding:4px 2px}
 }
 
+
 /* 清单 */
 #view-lists{flex-direction:column;gap:8px;overflow-y:auto;padding:8px}
 .lists-header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 8px 4px}
@@ -486,7 +487,7 @@ header{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:v
 }
 
 
-/* ===== 手机端布局修复：避免周计划左栏被横向裁切 ===== */
+/* ===== 手机端周计划：日期栏铺满左侧整列 ===== */
 html, body {
   width: 100%;
   max-width: 100%;
@@ -494,59 +495,66 @@ html, body {
   margin-left: 0;
   margin-right: 0;
 }
-body {
-  overflow: hidden;
-}
-.view {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-}
+body { overflow: hidden; }
+.view { width: 100%; min-width: 0; max-width: 100%; }
 #view-plan {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
+  width: 100%; min-width: 0; max-width: 100%;
+  overflow: hidden; align-items: stretch;
 }
 #view-plan > .left-page {
-  width: 33.33%;
-  min-width: 0;
-  flex: 0 0 33.33%;
-  overflow-x: hidden;
+  width: 33.33%; min-width: 0; flex: 0 0 33.33%;
+  overflow-x: hidden; align-items: stretch;
 }
-#view-plan > .right-page {
-  min-width: 0;
-  flex: 1 1 0;
-  overflow-x: hidden;
-}
-#days-container,
-.day-group,
-.day-head,
-.task-list,
-.task-item,
-.task-content {
-  min-width: 0;
-  max-width: 100%;
-}
-.day-group,
-.day-head,
-.task-list {
+#days-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
+  min-width: 0;
 }
-.task-item .ttl,
-.task-preview {
-  overflow-wrap: anywhere;
-  word-break: break-word;
+.day-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
 }
+.day-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 8px 6px;
+  text-align: left;
+  border-radius: 0;
+}
+.day-head.active {
+  width: 100%;
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+}
+.day-head .dnum,
+.day-head .dname {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+.task-list, .task-item, .task-content { min-width: 0; max-width: 100%; }
+.task-item .ttl, .task-preview { overflow-wrap: anywhere; word-break: break-word; }
+#view-plan > .right-page { min-width: 0; flex: 1 1 0; overflow-x: hidden; }
 @media (max-width: 768px) {
   .view { padding: 4px; gap: 4px; }
   #view-plan { flex-direction: row; }
   #view-plan > .left-page { flex-basis: 33.33%; width: 33.33%; }
   #view-plan > .right-page { flex: 1 1 0; }
-  .right-card,
-  .right-card input,
-  .right-card textarea,
-  .right-card select { min-width: 0; max-width: 100%; }
+  .day-head { padding: 10px 8px 6px; }
+  .day-head.active { width: 100%; }
+  .day-head .dnum, .day-head .dname { text-align: left; }
+  .right-card, .right-card input, .right-card textarea, .right-card select {
+    min-width: 0; max-width: 100%;
+  }
 }
 
 </style>

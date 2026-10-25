@@ -518,10 +518,7 @@ button,label,.scell,.wday{touch-action:manipulation;}
 
 <div class="mov" id="m-sync"><div class="msh">
   <div class="mhdl"></div><div class="mttl">Supabase 云端储存</div>
-  <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px;">首次设置需要创作者配置一次 Supabase 项目地址和 anon key。普通用户只需注册自己的账号，不需要创建仓库。</div>
-  <input class="minp" id="sb-url" placeholder="Supabase Project URL，例如 https://xxx.supabase.co" autocomplete="url">
-  <input class="minp" id="sb-key" placeholder="Supabase anon / publishable key" autocomplete="off">
-  <button class="mbtn" onclick="saveSbConfig()">保存连接配置</button>
+  <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px;">云端服务已由 VickyLog 配置好。你只需要注册或登录自己的账号，无需填写项目 URL 或 key。</div>
   <div style="height:1px;background:var(--sep);margin:14px 0;"></div>
   <input class="minp" id="sb-email" type="email" placeholder="邮箱地址" autocomplete="email">
   <input class="minp" id="sb-password" type="password" placeholder="密码（至少 6 位）" autocomplete="current-password">
@@ -900,7 +897,8 @@ function rMy(){
 function edNm(){const n=prompt('给自己起个昵称：',db.nm==='自定义昵称'?'':(db.nm||''));if(n===null)return;db.nm=n.trim()||'自定义昵称';sv();rMy();rPlan();rSum();}
 function pickAv(){document.getElementById('av-file').click();}
 function hdAv(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=x=>{db.av=x.target.result;sv();rMy();};r.readAsDataURL(f);ev.target.value='';}
-function getSbConfig(){try{return JSON.parse(localStorage.getItem(SBK))||{};}catch(e){return {};}}
+const DEFAULT_SB_CONFIG={url:'https://jmewslkbgeosflwwbmuo.supabase.co',key:'sb_publishable_V-Zm4NqpiKcfw2KXQGRjoA_uHs-ix2s'};
+function getSbConfig(){try{const saved=JSON.parse(localStorage.getItem(SBK));if(saved&&saved.url&&saved.key)return saved;}catch(e){}return DEFAULT_SB_CONFIG;}
 function initSbClient(){const c=getSbConfig();if(!c.url||!c.key||!window.supabase)return false;try{sbClient=window.supabase.createClient(c.url,c.key);return true;}catch(e){console.error(e);return false;}}
 function saveSbConfig(){const url=document.getElementById('sb-url').value.trim().replace(/\/$/,''),key=document.getElementById('sb-key').value.trim();if(!/^https:\/\/[a-zA-Z0-9-]+\.supabase\.co$/.test(url)){alert('请填写正确的 Supabase Project URL');return;}if(!key){alert('请填写 anon / publishable key');return;}localStorage.setItem(SBK,JSON.stringify({url,key}));if(!initSbClient()){alert('连接配置已保存，但 Supabase SDK 加载失败。请检查网络后刷新页面。');return;}alert('连接配置已保存。现在可以注册或登录账号。');rMy();}
 async function sbSignUp(){if(!sbClient&&!initSbClient()){alert('请先填写并保存 Supabase 项目配置。');return;}const email=document.getElementById('sb-email').value.trim(),password=document.getElementById('sb-password').value;if(!email||password.length<6){alert('请输入邮箱和至少 6 位密码。');return;}try{const {data,error}=await sbClient.auth.signUp({email,password});if(error)throw error;if(data.session){sbUser=data.user;await afterSbLogin();alert('注册成功，云端储存已连接。');}else alert('注册请求已提交。请先到邮箱完成验证，再回来登录。');rMy();}catch(e){alert('注册失败：'+(e.message||'请检查网络及 Supabase 邮箱验证设置。'));}}

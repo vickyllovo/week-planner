@@ -553,6 +553,7 @@ const SK='vl-free',SBK='vl-supabase-config';
 let sbClient=null,sbUser=null,sbSaveTimer=null,sbApplyingCloud=false,sbBusy=false;
 const WD=['周一','周二','周三','周四','周五','周六','周日'];
 let db={tasks:[],inbox:[],habits:[],wh:[],notes:{},sum:{},lists:[],photos:{},gph:[],nm:'自定义昵称',av:'',yn:{}};
+let editingWHId=null;
 let cMon=getMon(new Date()),cWK=getWK(cMon),selD=tdi(),htab='daily',selPhotoDay=null;
 
 function tdi(){const d=new Date().getDay();return d===0?6:d-1;}
@@ -687,13 +688,17 @@ function swHTab(tab){htab=tab;
   document.getElementById('htab-'+tab).style.cssText='flex:1;padding:9px;border-radius:10px;border:1px solid var(--g);background:var(--g);color:#fff;font-size:12px;font-weight:600;cursor:pointer;';
   rHab();}
 function opAddH(){if(htab==='daily'){document.getElementById('mh-nm').value='';document.getElementById('mh-tm').value='';opM('m-habit');}
-  else{document.getElementById('mwh-nm').value='';const dc=document.getElementById('mwh-days');dc.innerHTML='';
+  else{editingWHId=null;document.querySelector('#m-wh .mttl').textContent='新建每周习惯';document.getElementById('mwh-nm').value='';const dc=document.getElementById('mwh-days');dc.innerHTML='';
     WD.forEach((d,i)=>{dc.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;color:var(--t2);width:28px;flex:none;">${d}</span><input class="minp" id="whd${i}" placeholder="这天的任务" style="margin:0;flex:1;font-size:12px;padding:8px 10px;"></div>`;});opM('m-wh');}}
 function svH(){const n=document.getElementById('mh-nm').value.trim();if(!n){alert('请输入名称');return;}
   db.habits.push({id:'h-'+Date.now(),name:n,time:document.getElementById('mh-tm').value,cat:document.getElementById('mh-cat').value,rec:{}});sv();clM('m-habit');rHab();}
 function svWH(){const n=document.getElementById('mwh-nm').value.trim();if(!n){alert('请输入名称');return;}
   const tasks={};WD.forEach((_,i)=>{const v=document.getElementById('whd'+i).value.trim();if(v)tasks[i]=v;});
-  db.wh.push({id:'wh-'+Date.now(),name:n,tasks,rec:{}});sv();clM('m-wh');rHab();}
+  if(editingWHId){
+    const h=db.wh.find(x=>x.id===editingWHId);
+    if(h){h.name=n;h.tasks=tasks;}
+  }else{db.wh.push({id:'wh-'+Date.now(),name:n,tasks,rec:{}});}
+  editingWHId=null;sv();clM('m-wh');rHab();}
 
 function rHab(){
   const body=document.getElementById('hab-body');body.innerHTML='';
@@ -739,12 +744,26 @@ function rHab(){
         </div>`;
       });
       const card=document.createElement('div');card.className='whcard';
-      card.innerHTML=`<div class="whcard-top"><div class="whcard-name">${e(h.name)}</div><span class="whcard-prog">${done}/${total} · ${pct}%</span></div>
+      card.innerHTML=`<div class="whcard-top"><div class="whcard-name">${e(h.name)}</div><div style="display:flex;align-items:center;gap:9px;flex:none;"><span class="whcard-prog">${done}/${total} · ${pct}%</span><button type="button" onclick="edWH('${h.id}')" style="border:0;background:var(--g3);color:var(--g2);border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;">编辑</button><button type="button" onclick="delWH('${h.id}')" style="border:0;background:none;color:var(--t3);font-size:17px;cursor:pointer;padding:0 2px;" aria-label="删除每周习惯">×</button></div></div>
         <div class="whpbar"><div class="whpfill" style="width:${pct}%"></div></div>
         <div class="whgrid">${gd}</div>`;
       body.appendChild(card);
     });
   }
+}
+function edWH(id){
+  const h=db.wh.find(x=>x.id===id);if(!h)return;
+  editingWHId=id;
+  document.querySelector('#m-wh .mttl').textContent='编辑每周习惯';
+  document.getElementById('mwh-nm').value=h.name||'';
+  const dc=document.getElementById('mwh-days');dc.innerHTML='';
+  WD.forEach((d,i)=>{dc.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;color:var(--t2);width:28px;flex:none;">${d}</span><input class="minp" id="whd${i}" placeholder="这天的任务" value="${e(h.tasks&&h.tasks[i]||'')}" style="margin:0;flex:1;font-size:12px;padding:8px 10px;"></div>`;});
+  opM('m-wh');
+}
+function delWH(id){
+  const h=db.wh.find(x=>x.id===id);if(!h)return;
+  if(!confirm(`确定删除每周习惯「${h.name}」吗？此操作会删除该习惯及其完成记录。`))return;
+  db.wh=db.wh.filter(x=>x.id!==id);sv();rHab();
 }
 function togHT(id){const h=db.habits.find(x=>x.id===id);if(!h)return;const t=tds();
   if(h.rec[t]==='done'||h.rec[t]===true)delete h.rec[t];else h.rec[t]='done';sv();rHab();}

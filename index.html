@@ -744,7 +744,7 @@ function rHab(){
         </div>`;
       });
       const card=document.createElement('div');card.className='whcard';
-      card.innerHTML=`<div class="whcard-top"><div class="whcard-name">${e(h.name)}</div><div style="display:flex;align-items:center;gap:9px;flex:none;"><span class="whcard-prog">${done}/${total} · ${pct}%</span><button type="button" onclick="edWH('${h.id}')" style="border:0;background:var(--g3);color:var(--g2);border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;">编辑</button><button type="button" onclick="delWH('${h.id}')" style="border:0;background:none;color:var(--t3);font-size:17px;cursor:pointer;padding:0 2px;" aria-label="删除每周习惯">×</button></div></div>
+      card.innerHTML=`<div class="whcard-top"><div class="whcard-name">${e(h.name)}</div><div style="display:flex;align-items:center;gap:9px;flex:none;"><span class="whcard-prog">${done}/${total} · ${pct}%</span><button type="button" onclick="edWH('${h.id}')" style="border:0;background:var(--g3);color:var(--g2);border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;">编辑</button><button type="button" onclick="event.stopPropagation();delWH('${h.id}')" style="border:1px solid #D9A39A;background:#FFF5F2;color:#A94335;border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;touch-action:manipulation;" aria-label="删除每周习惯">删除</button></div></div>
         <div class="whpbar"><div class="whpfill" style="width:${pct}%"></div></div>
         <div class="whgrid">${gd}</div>`;
       body.appendChild(card);
@@ -761,9 +761,12 @@ function edWH(id){
   opM('m-wh');
 }
 function delWH(id){
-  const h=db.wh.find(x=>x.id===id);if(!h)return;
-  if(!confirm(`确定删除每周习惯「${h.name}」吗？此操作会删除该习惯及其完成记录。`))return;
-  db.wh=db.wh.filter(x=>x.id!==id);sv();rHab();
+  const idx=db.wh.findIndex(x=>String(x.id)===String(id));
+  if(idx<0){console.warn('未找到要删除的每周习惯：',id);return;}
+  // 不使用 confirm，部分 Android WebView / 应用壳不会正常显示原生确认框。
+  db.wh.splice(idx,1);
+  sv();
+  rHab();
 }
 function togHT(id){const h=db.habits.find(x=>x.id===id);if(!h)return;const t=tds();
   if(h.rec[t]==='done'||h.rec[t]===true)delete h.rec[t];else h.rec[t]='done';sv();rHab();}

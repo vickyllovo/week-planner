@@ -67,7 +67,6 @@ nav{flex:none;height:var(--nav);background:rgba(253,252,249,0.95);border-top:1px
   border:1px solid var(--sep);overflow:hidden;}
 .pdc-head{padding:16px 16px 12px;border-bottom:1px solid var(--sep);
   display:flex;justify-content:space-between;align-items:center;}
-.pdc-title{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:5px;letter-spacing:.2px;}
 .pdc-date{font-size:22px;font-weight:700;color:var(--t);font-family:'Playfair Display',serif;}
 .pdc-dow{font-size:13px;color:var(--t2);margin-left:6px;}
 .pdc-note-btn{font-size:11px;color:var(--g);background:var(--g3);border:none;border-radius:20px;
@@ -368,7 +367,7 @@ button,label,.scell,.wday{touch-action:manipulation;}
   <div class="sy" style="padding-bottom:16px;">
     <div class="plan-day-card">
       <div class="pdc-head">
-        <div><div class="pdc-title" id="pdc-title">自定义昵称的今日计划</div><span class="pdc-date" id="pdc-date"></span><span class="pdc-dow" id="pdc-dow"></span></div>
+        <div><span class="pdc-date" id="pdc-date"></span><span class="pdc-dow" id="pdc-dow"></span></div>
         <button class="pdc-note-btn" onclick="openDayNote()">写总结</button>
       </div>
       <div class="pdc-tasks" id="pdc-tasks"></div>
@@ -400,7 +399,7 @@ button,label,.scell,.wday{touch-action:manipulation;}
 <div class="pg" id="pg-sum">
   <div class="sum-top">
     <div class="sum-eyebrow">Life Archive · 生活留档</div>
-    <div class="sum-title" id="sum-title">自定义昵称的一天。</div>
+    <div class="sum-title">把这个月，<br>翻成一本书。</div>
   </div>
   <div class="sy" style="padding-bottom:20px;">
     <div class="sum-cal" id="sum-cal"></div>
@@ -426,7 +425,7 @@ button,label,.scell,.wday{touch-action:manipulation;}
         <img id="avimg" src="" style="display:none;"><span id="avem">🌿</span>
         <div class="my-av-ed">换头像</div>
       </div>
-      <div class="my-nm" id="my-nm">自定义昵称</div>
+      <div class="my-nm" id="my-nm">Vicky</div>
       <div class="my-sub" onclick="edNm()">修改昵称</div>
     </div>
     <div class="my-sec">
@@ -517,16 +516,15 @@ button,label,.scell,.wday{touch-action:manipulation;}
 </div></div>
 
 <div class="mov" id="m-sync"><div class="msh">
-  <div class="mhdl"></div><div class="mttl">Supabase 云端储存</div>
-  <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px;">云端服务已由 VickyLog 配置好。你只需要注册或登录自己的账号，无需填写项目 URL 或 key。</div>
-  <div style="height:1px;background:var(--sep);margin:14px 0;"></div>
-  <input class="minp" id="sb-email" type="email" placeholder="邮箱地址" autocomplete="email">
-  <input class="minp" id="sb-password" type="password" placeholder="密码（至少 6 位）" autocomplete="current-password">
+  <div class="mhdl"></div><div class="mttl">云端同步</div>
+  <input class="minp" id="sy-u" placeholder="Gitee 用户名">
+  <input class="minp" id="sy-r" placeholder="Gitee 仓库名">
+  <input class="minp" id="sy-t" type="password" placeholder="私人令牌 Token">
+  <button class="mbtn" onclick="svSync()">保存配置</button>
   <div style="display:flex;gap:8px;margin-top:8px;">
-    <button style="flex:1;background:var(--g3);color:var(--g2);border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:500;cursor:pointer;" onclick="sbSignUp()">注册账号</button>
-    <button style="flex:1;background:var(--bg2);color:var(--t);border:none;border-radius:12px;padding:12px;font-size:13px;cursor:pointer;" onclick="sbSignIn()">登录并同步</button>
+    <button style="flex:1;background:var(--g3);color:var(--g2);border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:500;cursor:pointer;" onclick="upCloud()">⬆ 上传</button>
+    <button style="flex:1;background:var(--bg2);color:var(--t);border:none;border-radius:12px;padding:12px;font-size:13px;cursor:pointer;" onclick="dlCloud()">⬇ 下载</button>
   </div>
-  <button class="mbtn2" onclick="sbSignOut()">退出登录</button>
   <button class="mbtn2" onclick="clM('m-sync')">关闭</button>
 </div></div>
 
@@ -547,13 +545,10 @@ button,label,.scell,.wday{touch-action:manipulation;}
 
 <input type="file" id="av-file" accept="image/*" style="display:none;" onchange="hdAv(event)">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SK='vl-free',SBK='vl-supabase-config';
-let sbClient=null,sbUser=null,sbSaveTimer=null,sbApplyingCloud=false,sbBusy=false;
+const SK='vl-free',SYK='vl-sync';
 const WD=['周一','周二','周三','周四','周五','周六','周日'];
-let db={tasks:[],inbox:[],habits:[],wh:[],notes:{},sum:{},lists:[],photos:{},gph:[],nm:'自定义昵称',av:'',yn:{}};
-let editingWHId=null;
+let db={tasks:[],inbox:[],habits:[],wh:[],notes:{},sum:{},lists:[],photos:{},gph:[],nm:'Vicky',av:'',yn:{}};
 let cMon=getMon(new Date()),cWK=getWK(cMon),selD=tdi(),htab='daily',selPhotoDay=null;
 
 function tdi(){const d=new Date().getDay();return d===0?6:d-1;}
@@ -564,8 +559,8 @@ function tds(){return fd(new Date());}
 function gdd(i){const d=new Date(cMon);d.setDate(d.getDate()+i);return d;}
 function e(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-function ld(){try{const d=localStorage.getItem(SK);if(d){const parsed=JSON.parse(d);db=normalizeImportedData(parsed);}}catch(err){console.warn('本地数据读取失败',err);} ['tasks','inbox','habits','wh','lists','gph'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[];});['notes','sum','photos','yn'].forEach(k=>{if(!db[k]||typeof db[k]!=='object')db[k]={};});if(!db.nm)db.nm='自定义昵称';if(!db.av)db.av='';}
-function sv(){try{localStorage.setItem(SK,JSON.stringify(db));}catch(e){if(e.name==='QuotaExceededError')alert('本地存储已满，请导出备份并清理部分照片。');}if(!sbApplyingCloud&&sbClient&&sbUser)scheduleSbSave();}
+function ld(){try{const d=localStorage.getItem(SK);if(d){const parsed=JSON.parse(d);db=normalizeImportedData(parsed);}}catch(err){console.warn('本地数据读取失败',err);} ['tasks','inbox','habits','wh','lists','gph'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[];});['notes','sum','photos','yn'].forEach(k=>{if(!db[k]||typeof db[k]!=='object')db[k]={};});if(!db.nm)db.nm='Vicky';if(!db.av)db.av='';}
+function sv(){try{localStorage.setItem(SK,JSON.stringify(db));}catch(e){if(e.name==='QuotaExceededError')alert('存储已满。');}}
 
 // NAV
 function sw(name,el){
@@ -606,7 +601,6 @@ function rPlan(){
   rIbList();
   // day card
   const dt=gdd(selD);const isT=fd(dt)===tds();
-  document.getElementById('pdc-title').textContent=`${db.nm||'自定义昵称'}的今日计划`;
   document.getElementById('pdc-date').textContent=`${dt.getMonth()+1}月${dt.getDate()}日`;
   document.getElementById('pdc-dow').textContent=` ${WD[selD]}`;
   const tasks=db.tasks.filter(t=>t.wk===cWK&&t.d===selD);
@@ -688,17 +682,13 @@ function swHTab(tab){htab=tab;
   document.getElementById('htab-'+tab).style.cssText='flex:1;padding:9px;border-radius:10px;border:1px solid var(--g);background:var(--g);color:#fff;font-size:12px;font-weight:600;cursor:pointer;';
   rHab();}
 function opAddH(){if(htab==='daily'){document.getElementById('mh-nm').value='';document.getElementById('mh-tm').value='';opM('m-habit');}
-  else{editingWHId=null;document.querySelector('#m-wh .mttl').textContent='新建每周习惯';document.getElementById('mwh-nm').value='';const dc=document.getElementById('mwh-days');dc.innerHTML='';
+  else{document.getElementById('mwh-nm').value='';const dc=document.getElementById('mwh-days');dc.innerHTML='';
     WD.forEach((d,i)=>{dc.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;color:var(--t2);width:28px;flex:none;">${d}</span><input class="minp" id="whd${i}" placeholder="这天的任务" style="margin:0;flex:1;font-size:12px;padding:8px 10px;"></div>`;});opM('m-wh');}}
 function svH(){const n=document.getElementById('mh-nm').value.trim();if(!n){alert('请输入名称');return;}
   db.habits.push({id:'h-'+Date.now(),name:n,time:document.getElementById('mh-tm').value,cat:document.getElementById('mh-cat').value,rec:{}});sv();clM('m-habit');rHab();}
 function svWH(){const n=document.getElementById('mwh-nm').value.trim();if(!n){alert('请输入名称');return;}
   const tasks={};WD.forEach((_,i)=>{const v=document.getElementById('whd'+i).value.trim();if(v)tasks[i]=v;});
-  if(editingWHId){
-    const h=db.wh.find(x=>x.id===editingWHId);
-    if(h){h.name=n;h.tasks=tasks;}
-  }else{db.wh.push({id:'wh-'+Date.now(),name:n,tasks,rec:{}});}
-  editingWHId=null;sv();clM('m-wh');rHab();}
+  db.wh.push({id:'wh-'+Date.now(),name:n,tasks,rec:{}});sv();clM('m-wh');rHab();}
 
 function rHab(){
   const body=document.getElementById('hab-body');body.innerHTML='';
@@ -744,29 +734,12 @@ function rHab(){
         </div>`;
       });
       const card=document.createElement('div');card.className='whcard';
-      card.innerHTML=`<div class="whcard-top"><div class="whcard-name">${e(h.name)}</div><div style="display:flex;align-items:center;gap:9px;flex:none;"><span class="whcard-prog">${done}/${total} · ${pct}%</span><button type="button" onclick="edWH('${h.id}')" style="border:0;background:var(--g3);color:var(--g2);border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;">编辑</button><button type="button" onclick="event.stopPropagation();delWH('${h.id}')" style="border:1px solid #D9A39A;background:#FFF5F2;color:#A94335;border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;touch-action:manipulation;" aria-label="删除每周习惯">删除</button></div></div>
+      card.innerHTML=`<div class="whcard-top"><div class="whcard-name">${e(h.name)}</div><span class="whcard-prog">${done}/${total} · ${pct}%</span></div>
         <div class="whpbar"><div class="whpfill" style="width:${pct}%"></div></div>
         <div class="whgrid">${gd}</div>`;
       body.appendChild(card);
     });
   }
-}
-function edWH(id){
-  const h=db.wh.find(x=>x.id===id);if(!h)return;
-  editingWHId=id;
-  document.querySelector('#m-wh .mttl').textContent='编辑每周习惯';
-  document.getElementById('mwh-nm').value=h.name||'';
-  const dc=document.getElementById('mwh-days');dc.innerHTML='';
-  WD.forEach((d,i)=>{dc.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;color:var(--t2);width:28px;flex:none;">${d}</span><input class="minp" id="whd${i}" placeholder="这天的任务" value="${e(h.tasks&&h.tasks[i]||'')}" style="margin:0;flex:1;font-size:12px;padding:8px 10px;"></div>`;});
-  opM('m-wh');
-}
-function delWH(id){
-  const idx=db.wh.findIndex(x=>String(x.id)===String(id));
-  if(idx<0){console.warn('未找到要删除的每周习惯：',id);return;}
-  // 不使用 confirm，部分 Android WebView / 应用壳不会正常显示原生确认框。
-  db.wh.splice(idx,1);
-  sv();
-  rHab();
 }
 function togHT(id){const h=db.habits.find(x=>x.id===id);if(!h)return;const t=tds();
   if(h.rec[t]==='done'||h.rec[t]===true)delete h.rec[t];else h.rec[t]='done';sv();rHab();}
@@ -781,7 +754,6 @@ let openDayKey=null;
 let sumMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 function chgSumMonth(delta){sumMonth=new Date(sumMonth.getFullYear(),sumMonth.getMonth()+delta,1);rSum();}
 function rSum(){
-  const title=document.getElementById('sum-title');if(title)title.textContent=`${db.nm||'自定义昵称'}的一天。`;
   const y=sumMonth.getFullYear(),m=sumMonth.getMonth(),mn=(m+1)+'月';
   const cal=document.getElementById('sum-cal');
   const dim=new Date(y,m+1,0).getDate();
@@ -870,13 +842,8 @@ function svList(){const n=document.getElementById('ml-nm').value.trim();if(!n){a
   const raw=document.getElementById('ml-items').value.trim();
   const items=raw?raw.split('\n').map(t=>t.trim()).filter(t=>t).map(text=>({id:'i-'+Date.now()+Math.random().toString(36).slice(2),text,done:false})):[];
   db.lists.push({id:'l-'+Date.now(),name:n,items});sv();clM('m-list');rLists();}
-function rLists(restoreScroll=true){
-  const body=document.getElementById('lists-body');
-  // 重绘清单前记录页面和每张清单内部的滚动位置，避免勾选后跳回顶部。
-  const pageScroll=body ? body.scrollTop : 0;
-  const listScroll={};
-  if(body) body.querySelectorAll('.litems').forEach((el,idx)=>{listScroll[idx]=el.scrollTop;});
-  body.innerHTML='';
+function rLists(){
+  const body=document.getElementById('lists-body');body.innerHTML='';
   if(!db.lists.length){body.innerHTML='<div style="text-align:center;color:var(--t3);padding:60px 0;font-style:italic;margin:0 16px;">还没有清单，点右下角 + 新建</div>';return;}
   db.lists.forEach(list=>{
     const total=list.items.length,done=list.items.filter(i=>i.done).length,pct=total?Math.round(done/total*100):0;
@@ -890,15 +857,6 @@ function rLists(restoreScroll=true){
     </div>`;
     body.appendChild(card);
   });
-  if(restoreScroll){
-    body.scrollTop=pageScroll;
-    body.querySelectorAll('.litems').forEach((el,idx)=>{if(listScroll[idx]!==undefined)el.scrollTop=listScroll[idx];});
-    // 部分移动端 WebView 在 DOM 重绘后会异步重置滚动位置，再补一次恢复。
-    requestAnimationFrame(()=>{
-      body.scrollTop=pageScroll;
-      body.querySelectorAll('.litems').forEach((el,idx)=>{if(listScroll[idx]!==undefined)el.scrollTop=listScroll[idx];});
-    });
-  }
 }
 function togLI(lid,iid){const l=db.lists.find(x=>x.id===lid);const i=l&&l.items.find(x=>x.id===iid);if(i){i.done=!i.done;sv();rLists();}}
 function delLI(lid,iid){const l=db.lists.find(x=>x.id===lid);if(l){l.items=l.items.filter(x=>x.id!==iid);sv();rLists();}}
@@ -907,29 +865,21 @@ function delList(id){if(!confirm('删除？'))return;db.lists=db.lists.filter(x=
 
 // MY
 function rMy(){
-  document.getElementById('my-nm').textContent=db.nm||'自定义昵称';
+  document.getElementById('my-nm').textContent=db.nm||'Vicky';
   const img=document.getElementById('avimg'),em=document.getElementById('avem');
   if(db.av){img.src=db.av;img.style.display='block';em.style.display='none';}
   else{img.style.display='none';em.style.display='block';}
-  const cfg=getSbConfig();
-  const status=sbUser?'已登录 · 云端同步':(cfg.url&&cfg.key?'已配置，未登录':'未配置');
-  document.getElementById('sync-st').textContent=status;
-  document.getElementById('sync-last').textContent=db.lsy?new Date(db.lsy).toLocaleString():(sbUser?'已连接，等待同步':'—');
+  const c=gSyc();
+  document.getElementById('sync-st').textContent=c.u?'已配置':'未配置';
+  document.getElementById('sync-last').textContent=db.lsy?new Date(db.lsy).toLocaleString():'—';
 }
-function edNm(){const n=prompt('给自己起个昵称：',db.nm==='自定义昵称'?'':(db.nm||''));if(n===null)return;db.nm=n.trim()||'自定义昵称';sv();rMy();rPlan();rSum();}
+function edNm(){const n=prompt('输入新昵称：',db.nm||'Vicky');if(n===null)return;db.nm=n.trim()||'Vicky';sv();rMy();}
 function pickAv(){document.getElementById('av-file').click();}
 function hdAv(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=x=>{db.av=x.target.result;sv();rMy();};r.readAsDataURL(f);ev.target.value='';}
-const DEFAULT_SB_CONFIG={url:'https://jmewslkbgeosflwwbmuo.supabase.co',key:'sb_publishable_V-Zm4NqpiKcfw2KXQGRjoA_uHs-ix2s'};
-function getSbConfig(){try{const saved=JSON.parse(localStorage.getItem(SBK));if(saved&&saved.url&&saved.key)return saved;}catch(e){}return DEFAULT_SB_CONFIG;}
-function initSbClient(){const c=getSbConfig();if(!c.url||!c.key||!window.supabase)return false;try{sbClient=window.supabase.createClient(c.url,c.key);return true;}catch(e){console.error(e);return false;}}
-function saveSbConfig(){const url=document.getElementById('sb-url').value.trim().replace(/\/$/,''),key=document.getElementById('sb-key').value.trim();if(!/^https:\/\/[a-zA-Z0-9-]+\.supabase\.co$/.test(url)){alert('请填写正确的 Supabase Project URL');return;}if(!key){alert('请填写 anon / publishable key');return;}localStorage.setItem(SBK,JSON.stringify({url,key}));if(!initSbClient()){alert('连接配置已保存，但 Supabase SDK 加载失败。请检查网络后刷新页面。');return;}alert('连接配置已保存。现在可以注册或登录账号。');rMy();}
-async function sbSignUp(){if(!sbClient&&!initSbClient()){alert('请先填写并保存 Supabase 项目配置。');return;}const email=document.getElementById('sb-email').value.trim(),password=document.getElementById('sb-password').value;if(!email||password.length<6){alert('请输入邮箱和至少 6 位密码。');return;}try{const {data,error}=await sbClient.auth.signUp({email,password});if(error)throw error;if(data.session){sbUser=data.user;await afterSbLogin();alert('注册成功，云端储存已连接。');}else alert('注册请求已提交。请先到邮箱完成验证，再回来登录。');rMy();}catch(e){alert('注册失败：'+(e.message||'请检查网络及 Supabase 邮箱验证设置。'));}}
-async function sbSignIn(){if(!sbClient&&!initSbClient()){alert('请先填写并保存 Supabase 项目配置。');return;}const email=document.getElementById('sb-email').value.trim(),password=document.getElementById('sb-password').value;if(!email||!password){alert('请输入邮箱和密码。');return;}try{const {data,error}=await sbClient.auth.signInWithPassword({email,password});if(error)throw error;sbUser=data.user;await afterSbLogin();rMy();clM('m-sync');alert('登录成功，数据已同步。');}catch(e){alert('登录失败：'+(e.message||'请检查邮箱和密码。'));}}
-async function afterSbLogin(){if(!sbUser)return;try{const {data,error}=await sbClient.from('vickylog_data').select('data,updated_at').eq('user_id',sbUser.id).maybeSingle();if(error)throw error;if(data&&data.data){if(confirm('检测到该账号已有云端数据。点击“确定”将用云端数据替换本设备当前数据；点击“取消”则保留本地数据并上传到云端。')){sbApplyingCloud=true;db=normalizeImportedData(data.data);db.lsy=data.updated_at||Date.now();localStorage.setItem(SK,JSON.stringify(db));sbApplyingCloud=false;refreshAllDataViews();}else{await saveSbNow();}}else{await saveSbNow();}}catch(e){sbUser=null;throw new Error('已登录，但读取云端数据失败：'+(e.message||'请确认已执行 Supabase SQL 初始化脚本。'));}}
-function refreshAllDataViews(){rPlan();rHab();rSum();rLists();rMy();}
-function scheduleSbSave(){clearTimeout(sbSaveTimer);sbSaveTimer=setTimeout(()=>saveSbNow().catch(e=>{console.error('云端自动保存失败',e);document.getElementById('sync-st').textContent='同步失败';}),900);}
-async function saveSbNow(){if(!sbClient||!sbUser)return;if(sbBusy){scheduleSbSave();return;}sbBusy=true;try{const payload=JSON.parse(JSON.stringify(db));delete payload.lsy;const {error}=await sbClient.from('vickylog_data').upsert({user_id:sbUser.id,data:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;db.lsy=Date.now();localStorage.setItem(SK,JSON.stringify(db));if(document.getElementById('pg-my').classList.contains('on'))rMy();}finally{sbBusy=false;}}
-async function sbSignOut(){if(!sbClient){alert('当前没有登录 Supabase。');return;}try{await sbClient.auth.signOut();sbUser=null;clearTimeout(sbSaveTimer);rMy();alert('已退出云端账号。本地数据仍保留在这台设备上。');}catch(e){alert('退出失败：'+e.message);}}
+function gSyc(){try{return JSON.parse(localStorage.getItem(SYK))||{};}catch(e){return {};}}
+function svSync(){const c={u:document.getElementById('sy-u').value.trim(),r:document.getElementById('sy-r').value.trim(),t:document.getElementById('sy-t').value.trim()};if(!c.u||!c.r||!c.t){alert('请完整填写');return;}localStorage.setItem(SYK,JSON.stringify(c));alert('已保存');rMy();}
+async function upCloud(){const c=gSyc();if(!c.u){alert('请先配置');return;}try{let sha=null;const gr=await fetch(`https://gitee.com/api/v5/repos/${c.u}/${c.r}/contents/vl-data.json?access_token=${c.t}&ref=master`);if(gr.ok){const g=await gr.json();sha=g.sha;}const body={access_token:c.t,content:btoa(unescape(encodeURIComponent(JSON.stringify(db)))),message:'VickyLog '+new Date().toLocaleString(),branch:'master'};if(sha)body.sha=sha;const pr=await fetch(`https://gitee.com/api/v5/repos/${c.u}/${c.r}/contents/vl-data.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(pr.ok){db.lsy=Date.now();sv();alert('上传成功');rMy();}else alert('上传失败');}catch(e){alert('网络错误');}}
+async function dlCloud(){const c=gSyc();if(!c.u){alert('请先配置');return;}if(!confirm('从云端下载将覆盖本地数据，确定？'))return;try{const r=await fetch(`https://gitee.com/api/v5/repos/${c.u}/${c.r}/contents/vl-data.json?access_token=${c.t}&ref=master`);if(!r.ok){alert('云端没有数据');return;}const d=await r.json();db=JSON.parse(decodeURIComponent(escape(atob(d.content))));['tasks','inbox','habits','wh','lists','gph'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[];});['notes','sum','photos','yn'].forEach(k=>{if(!db[k])db[k]={};});sv();rPlan();rHab();rSum();rLists();rMy();alert('下载成功');}catch(e){alert('下载失败');}}
 function expData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.download='vickylog-'+fd(new Date())+'.json';a.click();URL.revokeObjectURL(a.href);}
 function normalizeImportedData(raw){
   if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error('JSON 顶层必须是对象');
@@ -939,7 +889,7 @@ function normalizeImportedData(raw){
     else if(src&&typeof src==='object'&&!Array.isArray(src)&&src.data&&typeof src.data==='object'&&!Array.isArray(src.data))src=src.data;
     else break;
   }
-  const out={tasks:[],inbox:[],habits:[],wh:[],notes:{},sum:{},lists:[],photos:{},gph:[],nm:'自定义昵称',av:'',yn:{},weeklyPlans:{},reminderState:{},photoHistory:[]};
+  const out={tasks:[],inbox:[],habits:[],wh:[],notes:{},sum:{},lists:[],photos:{},gph:[],nm:'Vicky',av:'',yn:{},weeklyPlans:{},reminderState:{},photoHistory:[]};
   // Support both the current VickyLog schema and the older vicky-planner backup schema.
   const arr=(...keys)=>{for(const k of keys)if(Array.isArray(src[k]))return src[k];return [];};
   const obj=(...keys)=>{for(const k of keys)if(src[k]&&typeof src[k]==='object'&&!Array.isArray(src[k]))return src[k];return {};};
@@ -1008,7 +958,71 @@ document.getElementById('task-inp').addEventListener('keydown',ev=>{if(ev.key===
 document.getElementById('add-task-btn').onclick=ev=>{ev.preventDefault();ev.stopPropagation();addTask();};
 
 ld();rPlan();
-(function bootSupabase(){if(initSbClient()){sbClient.auth.getSession().then(async({data,error})=>{if(error)throw error;if(data.session){sbUser=data.session.user;try{await afterSbLogin();rMy();}catch(e){console.error(e);document.getElementById('sync-st').textContent='同步异常';}}}).catch(e=>console.error('Supabase 初始化失败',e));}})();
 </script>
+
+<!-- 云端公告弹窗：独立模块，不改动原有页面功能 -->
+<style>
+#vicky-announcement-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(38,29,24,.46);backdrop-filter:blur(4px)}
+#vicky-announcement-card{position:relative;box-sizing:border-box;width:min(100%,390px);padding:28px 24px 24px;border:1px solid #ead9ca;border-radius:24px;background:#fffdf9;color:#59463b;box-shadow:0 18px 60px rgba(42,29,20,.2);text-align:center;animation:vickyNoticeIn .28s ease-out}
+#vicky-announcement-card .vicky-notice-tag{font-size:11px;letter-spacing:2px;color:#b18a70;margin-bottom:15px}
+#vicky-announcement-card .vicky-notice-heart{font-size:34px;line-height:1.3;margin-bottom:12px}
+#vicky-announcement-card h2{margin:0 0 12px;font-size:22px;line-height:1.55;font-weight:650;color:#70462f}
+#vicky-announcement-card .vicky-notice-body{margin:0 0 23px;font-size:14px;line-height:1.8;color:#8b7565;white-space:pre-wrap;overflow-wrap:anywhere}
+#vicky-announcement-close{border:0;border-radius:999px;background:#d97736;color:#fff;padding:12px 30px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 5px 12px rgba(217,119,54,.22);transition:transform .15s,background .15s}
+#vicky-announcement-close:active{transform:scale(.96);background:#c3652a}
+#vicky-announcement-card .vicky-notice-foot{font-size:11px;color:#b5a193;margin-top:15px}
+@keyframes vickyNoticeIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){#vicky-announcement-card{animation:none}}
+</style>
+<div id="vicky-announcement-overlay" role="dialog" aria-modal="true" aria-labelledby="vicky-announcement-title">
+  <section id="vicky-announcement-card">
+    <div class="vicky-notice-tag">A LITTLE ANNOUNCEMENT</div>
+    <div class="vicky-notice-heart" aria-hidden="true">♡</div>
+    <h2 id="vicky-announcement-title">你怎么知道今天是我和消遣文的第1000天</h2>
+    <p class="vicky-notice-body" id="vicky-announcement-body">一千天纪念日快乐！这可是值得昭告天下的大事。</p>
+    <button id="vicky-announcement-close" type="button">祝99 ♡</button>
+    <div class="vicky-notice-foot">感谢配合本人的纪念日宣传工作</div>
+  </section>
+</div>
+<script>
+(function(){
+  const endpoint = '/announcement.json'; // 云端公告配置文件，与应用代码分开
+  const overlay = document.getElementById('vicky-announcement-overlay');
+  const title = document.getElementById('vicky-announcement-title');
+  const body = document.getElementById('vicky-announcement-body');
+  const close = document.getElementById('vicky-announcement-close');
+  if (!overlay || !title || !body || !close) return;
+  let announcementId = 'anniversary-1000-v1';
+  const storageKey = 'vicky-announcement-dismissed';
+  function showAnnouncement(data){
+    if (!data || data.enabled === false) return;
+    announcementId = String(data.id || 'anniversary-1000-v1');
+    let dismissed = [];
+    try { dismissed = JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch (_) {}
+    if (!Array.isArray(dismissed)) dismissed = [];
+    if (dismissed.includes(announcementId)) return;
+    title.textContent = String(data.title || '你怎么知道今天是我和消遣文的第1000天');
+    body.textContent = String(data.body || '一千天纪念日快乐！这可是值得昭告天下的大事。');
+    close.textContent = String(data.buttonText || '祝99 ♡');
+    overlay.style.display = 'flex';
+  }
+  close.addEventListener('click', function(){
+    let dismissed = [];
+    try { dismissed = JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch (_) {}
+    if (!Array.isArray(dismissed)) dismissed = [];
+    if (!dismissed.includes(announcementId)) dismissed.push(announcementId);
+    try { localStorage.setItem(storageKey, JSON.stringify(dismissed)); } catch (_) {}
+    overlay.style.display = 'none';
+    close.blur();
+  });
+  // 先显示默认纪念日公告，避免网络慢时完全没有弹窗；云端配置加载后再更新内容。
+  showAnnouncement({id:announcementId,title:title.textContent,body:body.textContent,buttonText:close.textContent});
+  fetch(endpoint + '?t=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw new Error('公告配置暂不可用'); return r.json(); })
+    .then(showAnnouncement)
+    .catch(function(){}); // 离线时保留默认公告，不影响主应用
+})();
+</script>
+
 </body>
 </html>
